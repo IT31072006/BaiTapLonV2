@@ -1,0 +1,32 @@
+[
+  {
+    "directory": "/home/quan/Nam 3/Ltht/BaiTapLonV2",
+    "command": "/usr/bin/gcc -Wall -Wextra -pthread -O2 -g -std=gnu11 -I./include -I./include/curl -I/opt/lampp/include -c src/common.c -o build/common.o",
+    "file": "src/common.c"
+  },
+  {
+    "directory": "/home/quan/Nam 3/Ltht/BaiTapLonV2",
+    "command": "/usr/bin/gcc -Wall -Wextra -pthread -O2 -g -std=gnu11 -I./include -I./include/curl -I/opt/lampp/include -c src/network_producer.c -o build/network_producer.o",
+    "file": "src/network_producer.c"
+  },
+  {
+    "directory": "/home/quan/Nam 3/Ltht/BaiTapLonV2",
+    "command": "/usr/bin/gcc -Wall -Wextra -pthread -O2 -g -std=gnu11 -I./include -I./include/curl -I/opt/lampp/include -c src/storage_consumer.c -o build/storage_consumer.o",
+    "file": "src/storage_consumer.c"
+  },
+  {
+    "directory": "/home/quan/Nam 3/Ltht/BaiTapLonV2",
+    "command": "/usr/bin/gcc -Wall -Wextra -pthread -O2 -g -std=gnu11 -I./include -I./include/curl -I/opt/lampp/include -c src/cli_benchmark.c -o build/cli_benchmark.o",
+    "file": "src/cli_benchmark.c"
+  },
+  {
+    "directory": "/home/quan/Nam 3/Ltht/BaiTapLonV2",
+    "command": "/usr/bin/gcc -Wall -Wextra -pthread -O2 -g -std=gnu11 -I./include -I./include/curl -I/opt/lampp/include `pkg-config --cflags gtk+-3.0` -c src/gui_dashboard.c -o build/gui_dashboard.o",
+    "file": "src/gui_dashboard.c"
+  },
+  {
+    "directory": "/home/quan/Nam 3/Ltht/BaiTapLonV2",
+    "command": "/usr/bin/gcc -Wall -Wextra -pthread -O2 -g -std=gnu11 -I./include -I./include/curl -I/opt/lampp/include `pkg-config --cflags gtk+-3.0` -c src/main.c -o build/main.o",
+    "file": "src/main.c"
+  }
+]

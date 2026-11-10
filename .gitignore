@@ -1,0 +1,15 @@
+# Build and binary artifacts
+build/*.o
+build/*
+bin/*
+!bin/.gitkeep
+
+# Temporary and benchmark files
+test_data/*.bin
+*.log
+
+# Caches and editor files
+.cache/
+.DS_Store
+*.swp
+*~

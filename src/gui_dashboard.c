@@ -1,0 +1,1255 @@
+#include "gui_dashboard.h"
+#include "network_producer.h"
+#include "storage_consumer.h"
+#include <math.h>
+
+/* =========================================================================
+ * HIGH-DENSITY INDUSTRIAL WORKSTATION THEME (MATTE CARBON & OXIDE)
+ * Strictly adheres to Anti-AI design guidelines:
+ * - No neon glows, no gradients, no emojis.
+ * - Hairline 1px borders, 2-3px radius, crisp typography.
+ * ========================================================================= */
+static const char *WORKSTATION_CSS = 
+    "* {\n"
+    "    font-family: 'Ubuntu Sans', 'Inter', 'Cantarell', sans-serif;\n"
+    "    font-size: 12px;\n"
+    "    color: #E5E5E0;\n"
+    "}\n"
+    "window, .main-window {\n"
+    "    background-color: #121211;\n"
+    "}\n"
+    ".top-toolbar {\n"
+    "    background-color: #181816;\n"
+    "    border-bottom: 1px solid #282824;\n"
+    "    padding: 6px 12px;\n"
+    "}\n"
+    ".sidebar-panel {\n"
+    "    background-color: #161614;\n"
+    "    border-right: 1px solid #262622;\n"
+    "    padding: 10px 12px;\n"
+    "}\n"
+    ".workspace-panel {\n"
+    "    background-color: #121211;\n"
+    "    padding: 10px 14px;\n"
+    "}\n"
+    ".bottom-panel {\n"
+    "    background-color: #161614;\n"
+    "    border-top: 1px solid #262622;\n"
+    "    padding: 8px 14px;\n"
+    "}\n"
+    ".telemetry-card {\n"
+    "    background-color: #1A1A18;\n"
+    "    border: 1px solid #2A2A25;\n"
+    "    border-radius: 3px;\n"
+    "    padding: 6px 10px;\n"
+    "    margin-bottom: 5px;\n"
+    "}\n"
+    ".section-header {\n"
+    "    font-size: 10.5px;\n"
+    "    font-weight: 700;\n"
+    "    letter-spacing: 0.9px;\n"
+    "    color: #7E7E78;\n"
+    "    margin-bottom: 4px;\n"
+    "}\n"
+    ".telemetry-key {\n"
+    "    font-size: 10.5px;\n"
+    "    font-weight: 600;\n"
+    "    color: #85857F;\n"
+    "    letter-spacing: 0.4px;\n"
+    "}\n"
+    ".telemetry-val {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 13px;\n"
+    "    font-weight: 600;\n"
+    "    color: #E5E5E0;\n"
+    "    font-feature-settings: 'tnum' 1;\n"
+    "}\n"
+    ".telemetry-val-large {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 17px;\n"
+    "    font-weight: 700;\n"
+    "    color: #E5E5E0;\n"
+    "    font-feature-settings: 'tnum' 1;\n"
+    "}\n"
+    ".telemetry-val-alert {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 14px;\n"
+    "    font-weight: 700;\n"
+    "    color: #C94A4A;\n"
+    "    font-feature-settings: 'tnum' 1;\n"
+    "}\n"
+    ".telemetry-val-success {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 13px;\n"
+    "    font-weight: 600;\n"
+    "    color: #4E9A67;\n"
+    "}\n"
+    "button.btn-primary {\n"
+    "    background-color: #E5E5E0;\n"
+    "    color: #121211;\n"
+    "    font-weight: 700;\n"
+    "    letter-spacing: 0.5px;\n"
+    "    border: 1px solid #E5E5E0;\n"
+    "    border-radius: 3px;\n"
+    "    padding: 5px 16px;\n"
+    "}\n"
+    "button.btn-primary:hover {\n"
+    "    background-color: #FFFFFF;\n"
+    "}\n"
+    "button.btn-secondary {\n"
+    "    background-color: #1F1F1D;\n"
+    "    color: #E5E5E0;\n"
+    "    font-weight: 600;\n"
+    "    border: 1px solid #30302B;\n"
+    "    border-radius: 3px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-secondary:hover {\n"
+    "    background-color: #282824;\n"
+    "}\n"
+    "button.btn-steel {\n"
+    "    background-color: #24415C;\n"
+    "    color: #E5E5E0;\n"
+    "    font-weight: 600;\n"
+    "    border: 1px solid #355E85;\n"
+    "    border-radius: 3px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-steel:hover {\n"
+    "    background-color: #2F5375;\n"
+    "}\n"
+    "entry {\n"
+    "    background-color: #0E0E0D;\n"
+    "    color: #E5E5E0;\n"
+    "    border: 1px solid #282824;\n"
+    "    border-radius: 3px;\n"
+    "    padding: 4px 8px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    "textview text {\n"
+    "    background-color: #0E0E0D;\n"
+    "    color: #E5E5E0;\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    "progressbar trough {\n"
+    "    background-color: #0E0E0D;\n"
+    "    border: 1px solid #282824;\n"
+    "    border-radius: 2px;\n"
+    "    min-height: 8px;\n"
+    "}\n"
+    "progressbar progress {\n"
+    "    background-color: #4E9A67;\n"
+    "    border-radius: 0px;\n"
+    "}\n"
+    ".badge-idle {\n"
+    "    background-color: #1A1A18;\n"
+    "    color: #85857F;\n"
+    "    border: 1px solid #2D2D28;\n"
+    "    border-radius: 2px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-running {\n"
+    "    background-color: #162432;\n"
+    "    color: #4A88C7;\n"
+    "    border: 1px solid #294D70;\n"
+    "    border-radius: 2px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-verified {\n"
+    "    background-color: #15251A;\n"
+    "    color: #4E9A67;\n"
+    "    border: 1px solid #264A30;\n"
+    "    border-radius: 2px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-corrupted {\n"
+    "    background-color: #2D1414;\n"
+    "    color: #C94A4A;\n"
+    "    border: 1px solid #5A2424;\n"
+    "    border-radius: 2px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".mode-synced {\n"
+    "    color: #4E9A67;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    ".mode-unsynced {\n"
+    "    color: #C94A4A;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    "separator {\n"
+    "    background-color: #262622;\n"
+    "    min-width: 1px;\n"
+    "    min-height: 1px;\n"
+    "}\n";
+
+/* =========================================================================
+ * BACKGROUND ENGINE COORDINATOR THREAD
+ * ========================================================================= */
+static void* engine_coordinator_thread(void *arg) {
+    GuiDashboard *gui = (GuiDashboard *)arg;
+    AppContext *ctx = gui->ctx;
+
+    app_log(ctx, "ENGINE_MGR", "START", "Starting multi-threaded transfer pipeline...");
+
+    mkdir("test_data", 0755);
+    const char *out_file = (ctx->sync_mode == SYNC_MODE_SYNCHRONIZED) 
+                           ? "test_data/output_sync.bin" 
+                           : "test_data/output_unsync.bin";
+
+    if (prepare_output_file(ctx, out_file) != 0) {
+        app_log(ctx, "ENGINE_MGR", "ERROR", "Could not initialize target storage container");
+        ctx->state = STATE_ERROR;
+        gui->worker_running = false;
+        return NULL;
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &ctx->start_time);
+    ctx->state = STATE_RUNNING;
+
+    /* Launch Storage Consumers first */
+    start_consumer_pool(ctx);
+
+    /* Launch Network Producers to fetch chunks */
+    start_producer_pool(ctx);
+
+    /* Wait for Producers to finish downloading */
+    wait_producer_pool(ctx);
+
+    /* Wait for Consumers to finish writing */
+    wait_consumer_pool(ctx);
+
+    clock_gettime(CLOCK_MONOTONIC, &ctx->end_time);
+
+    /* Post-transfer cryptographic audit */
+    verify_file_integrity(ctx);
+
+    ctx->state = STATE_COMPLETED;
+    gui->worker_running = false;
+
+    app_log(ctx, "ENGINE_MGR", "COMPLETE", "Transfer pipeline concluded. Integrity verified: %s",
+            ctx->sha256_verified ? "YES" : "NO (CORRUPTED)");
+
+    return NULL;
+}
+
+/* =========================================================================
+ * CAIRO 2D DRAWING: RAM BOUNDED BUFFER INSPECTOR (TOP CANVAS)
+ * ========================================================================= */
+gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+
+    int width = gtk_widget_get_allocated_width(widget);
+    int height = gtk_widget_get_allocated_height(widget);
+
+    /* Dark Deep Inset Background */
+    cairo_set_source_rgb(cr, 0.055, 0.055, 0.051); /* #0E0E0D */
+    cairo_rectangle(cr, 0, 0, width, height);
+    cairo_fill(cr);
+
+    /* Technical Border */
+    cairo_set_source_rgb(cr, 0.150, 0.150, 0.138); /* #262623 */
+    cairo_set_line_width(cr, 1.0);
+    cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
+    cairo_stroke(cr);
+
+    /* Layout geometry: 32 slots horizontally */
+    double margin_x = 20.0;
+    double slot_top_y = 32.0;
+    double slot_height = 42.0;
+    double available_w = width - (2 * margin_x);
+    double gap = 3.0;
+    double slot_w = (available_w - ((BUFFER_CAPACITY - 1) * gap)) / (double)BUFFER_CAPACITY;
+
+    pthread_mutex_lock(&ctx->buffer_mutex);
+    int head_idx = ctx->buffer.head;
+    int tail_idx = ctx->buffer.tail;
+    int count = ctx->buffer.count;
+    pthread_mutex_unlock(&ctx->buffer_mutex);
+
+    cairo_select_font_face(cr, "monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+
+    for (int i = 0; i < BUFFER_CAPACITY; i++) {
+        double x = margin_x + i * (slot_w + gap);
+        bool is_occupied = ctx->buffer.slots[i].is_occupied;
+
+        /* Micro memory address label above (0x00, 0x01 ... 0x1F) */
+        cairo_set_source_rgb(cr, 0.40, 0.40, 0.38);
+        cairo_set_font_size(cr, 7.5);
+        char hex_addr[8];
+        snprintf(hex_addr, sizeof(hex_addr), "%02X", i);
+        cairo_text_extents_t aext;
+        cairo_text_extents(cr, hex_addr, &aext);
+        cairo_move_to(cr, x + (slot_w - aext.width) / 2.0 - aext.x_bearing, slot_top_y - 14.0);
+        cairo_show_text(cr, hex_addr);
+
+        /* Slot Body */
+        if (is_occupied) {
+            /* Warm Ochre: Queued in RAM */
+            cairo_set_source_rgb(cr, 0.831, 0.592, 0.231); /* #D4973B */
+            cairo_rectangle(cr, x, slot_top_y, slot_w, slot_height);
+            cairo_fill(cr);
+
+            /* Chunk ID inside slot */
+            cairo_set_source_rgb(cr, 0.078, 0.078, 0.075); /* #141413 */
+            cairo_set_font_size(cr, 9.0);
+            char cid_str[16];
+            snprintf(cid_str, sizeof(cid_str), "%d", ctx->buffer.slots[i].chunk_id);
+            cairo_text_extents_t ext;
+            cairo_text_extents(cr, cid_str, &ext);
+            cairo_move_to(cr, x + (slot_w - ext.width) / 2.0 - ext.x_bearing,
+                              slot_top_y + (slot_height / 2.0) - 2.0);
+            cairo_show_text(cr, cid_str);
+
+            /* Producer ID badge (P1..P4) */
+            int pid = ctx->buffer.slots[i].producer_id;
+            if (pid > 0) {
+                cairo_set_source_rgb(cr, 0.20, 0.20, 0.18);
+                cairo_set_font_size(cr, 7.5);
+                char pid_str[16];
+                snprintf(pid_str, sizeof(pid_str), "P%d", pid);
+                cairo_text_extents_t pext;
+                cairo_text_extents(cr, pid_str, &pext);
+                cairo_move_to(cr, x + (slot_w - pext.width) / 2.0 - pext.x_bearing,
+                                  slot_top_y + slot_height - 6.0);
+                cairo_show_text(cr, pid_str);
+            }
+        } else {
+            /* Empty slot */
+            cairo_set_source_rgb(cr, 0.090, 0.090, 0.086); /* Inset dark */
+            cairo_rectangle(cr, x, slot_top_y, slot_w, slot_height);
+            cairo_fill(cr);
+        }
+
+        /* Slot Hairline Border */
+        cairo_set_source_rgb(cr, 0.160, 0.160, 0.145);
+        cairo_set_line_width(cr, 1.0);
+        cairo_rectangle(cr, x + 0.5, slot_top_y + 0.5, slot_w - 1, slot_height - 1);
+        cairo_stroke(cr);
+
+        /* Decimal slot index below */
+        cairo_set_source_rgb(cr, 0.50, 0.50, 0.48);
+        cairo_set_font_size(cr, 8.0);
+        char idx_str[8];
+        snprintf(idx_str, sizeof(idx_str), "%02d", i);
+        cairo_text_extents_t iext;
+        cairo_text_extents(cr, idx_str, &iext);
+        cairo_move_to(cr, x + (slot_w - iext.width) / 2.0 - iext.x_bearing, slot_top_y + slot_height + 11.0);
+        cairo_show_text(cr, idx_str);
+
+        /* =============================================================
+         * HEAD (IN) POINTER: STEEL BLUE ARROW ABOVE
+         * ============================================================= */
+        if (i == head_idx) {
+            double center_x = x + slot_w / 2.0;
+            cairo_set_source_rgb(cr, 0.290, 0.533, 0.780); /* #4A88C7 */
+
+            cairo_move_to(cr, center_x, slot_top_y - 2.0);
+            cairo_line_to(cr, center_x - 4.5, slot_top_y - 7.5);
+            cairo_line_to(cr, center_x + 4.5, slot_top_y - 7.5);
+            cairo_close_path(cr);
+            cairo_fill(cr);
+
+            cairo_set_font_size(cr, 8.5);
+            const char *head_lbl = "HEAD";
+            cairo_text_extents_t hext;
+            cairo_text_extents(cr, head_lbl, &hext);
+            cairo_move_to(cr, center_x - hext.width / 2.0 - hext.x_bearing, slot_top_y - 8.5);
+            cairo_show_text(cr, head_lbl);
+        }
+
+        /* =============================================================
+         * TAIL (OUT) POINTER: SAGE GREEN ARROW BELOW
+         * ============================================================= */
+        if (i == tail_idx) {
+            double center_x = x + slot_w / 2.0;
+            double arrow_base_y = slot_top_y + slot_height + 14.0;
+            cairo_set_source_rgb(cr, 0.306, 0.604, 0.404); /* #4E9A67 */
+
+            cairo_move_to(cr, center_x, arrow_base_y);
+            cairo_line_to(cr, center_x - 4.5, arrow_base_y + 5.5);
+            cairo_line_to(cr, center_x + 4.5, arrow_base_y + 5.5);
+            cairo_close_path(cr);
+            cairo_fill(cr);
+
+            cairo_set_font_size(cr, 8.5);
+            const char *tail_lbl = "TAIL";
+            cairo_text_extents_t text;
+            cairo_text_extents(cr, tail_lbl, &text);
+            cairo_move_to(cr, center_x - text.width / 2.0 - text.x_bearing, arrow_base_y + 15.0);
+            cairo_show_text(cr, tail_lbl);
+        }
+    }
+
+    /* Top Left Status Text */
+    cairo_set_source_rgb(cr, 0.70, 0.70, 0.68);
+    cairo_set_font_size(cr, 9.5);
+    cairo_move_to(cr, margin_x, 14.0);
+    cairo_show_text(cr, "CIRCULAR BUFFER MAP // 32 SLOTS (64KB EACH)");
+
+    /* Top Right Occupancy Gauge */
+    double pct = (count / (double)BUFFER_CAPACITY) * 100.0;
+    char occ_str[64];
+    snprintf(occ_str, sizeof(occ_str), "OCCUPANCY: %02d/32 (%.1f%%)", count, pct);
+    cairo_text_extents_t oext;
+    cairo_text_extents(cr, occ_str, &oext);
+    cairo_set_source_rgb(cr, 0.831, 0.592, 0.231);
+    cairo_move_to(cr, width - margin_x - oext.width, 14.0);
+    cairo_show_text(cr, occ_str);
+
+    return FALSE;
+}
+
+/* =========================================================================
+ * CAIRO 2D DRAWING: DISK BLOCK ALLOCATION MATRIX (BOTTOM CANVAS)
+ * ========================================================================= */
+gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+
+    int width = gtk_widget_get_allocated_width(widget);
+    int height = gtk_widget_get_allocated_height(widget);
+
+    /* Background */
+    cairo_set_source_rgb(cr, 0.055, 0.055, 0.051); /* #0E0E0D */
+    cairo_rectangle(cr, 0, 0, width, height);
+    cairo_fill(cr);
+
+    /* Border */
+    cairo_set_source_rgb(cr, 0.150, 0.150, 0.138); /* #262623 */
+    cairo_set_line_width(cr, 1.0);
+    cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
+    cairo_stroke(cr);
+
+    /* Matrix Layout: 32 columns x 8 rows = 256 blocks */
+    int cols = 32;
+    int rows = 8;
+    double margin_x = 16.0;
+    double margin_y = 12.0;
+    double gap = 2.0;
+
+    double avail_w = width - (2 * margin_x);
+    double cell_w = (avail_w - (cols - 1) * gap) / cols;
+    double avail_h = height - (2 * margin_y) - 24.0; /* Reserve space for legend */
+    double cell_h = (avail_h - (rows - 1) * gap) / rows;
+
+    int total_to_render = (ctx->total_chunks > 0 && ctx->total_chunks <= MAX_CHUNKS) ? ctx->total_chunks : 256;
+
+    int count_unassigned = 0;
+    int count_downloading = 0;
+    int count_queued = 0;
+    int count_written = 0;
+    int count_corrupted = 0;
+
+    for (int i = 0; i < total_to_render; i++) {
+        int r = i / cols;
+        int c = i % cols;
+        if (r >= rows) break;
+
+        double x = margin_x + c * (cell_w + gap);
+        double y = margin_y + r * (cell_h + gap);
+
+        BlockStatus st = ctx->block_statuses[i];
+
+        switch (st) {
+            case BLOCK_UNASSIGNED:
+                cairo_set_source_rgb(cr, 0.137, 0.137, 0.129); /* #232321 */
+                count_unassigned++;
+                break;
+            case BLOCK_DOWNLOADING:
+                cairo_set_source_rgb(cr, 0.290, 0.533, 0.780); /* #4A88C7 Steel Blue */
+                count_downloading++;
+                break;
+            case BLOCK_QUEUED:
+                cairo_set_source_rgb(cr, 0.831, 0.592, 0.231); /* #D4973B Warm Ochre */
+                count_queued++;
+                break;
+            case BLOCK_WRITTEN:
+                cairo_set_source_rgb(cr, 0.306, 0.604, 0.404); /* #4E9A67 Sage Green */
+                count_written++;
+                break;
+            case BLOCK_CORRUPTED:
+                cairo_set_source_rgb(cr, 0.788, 0.290, 0.290); /* #C94A4A Brick Crimson */
+                count_corrupted++;
+                break;
+        }
+
+        cairo_rectangle(cr, x, y, cell_w, cell_h);
+        cairo_fill(cr);
+
+        /* If corrupted, draw bold white cross indicator */
+        if (st == BLOCK_CORRUPTED) {
+            cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
+            cairo_set_line_width(cr, 1.5);
+            cairo_move_to(cr, x + 2.5, y + 2.5);
+            cairo_line_to(cr, x + cell_w - 2.5, y + cell_h - 2.5);
+            cairo_move_to(cr, x + cell_w - 2.5, y + 2.5);
+            cairo_line_to(cr, x + 2.5, y + cell_h - 2.5);
+            cairo_stroke(cr);
+        }
+
+        /* 1px Cell Border */
+        cairo_set_source_rgb(cr, 0.090, 0.090, 0.085);
+        cairo_set_line_width(cr, 1.0);
+        cairo_rectangle(cr, x + 0.5, y + 0.5, cell_w - 1, cell_h - 1);
+        cairo_stroke(cr);
+    }
+
+    /* =============================================================
+     * DYNAMIC TECHNICAL LEGEND WITH LIVE BLOCK COUNTERS
+     * ============================================================= */
+    double leg_y = height - 12.0;
+    double leg_x = margin_x;
+
+    typedef struct {
+        const char *label;
+        int count;
+        double r, g, b;
+    } LegendEntry;
+
+    LegendEntry legend_entries[] = {
+        {"UNASSIGNED", count_unassigned, 0.137, 0.137, 0.129},
+        {"PRODUCER ACTIVE", count_downloading, 0.290, 0.533, 0.780},
+        {"QUEUED (RAM)", count_queued, 0.831, 0.592, 0.231},
+        {"COMMITTED (SAFE)", count_written, 0.306, 0.604, 0.404},
+        {"RACE CORRUPTED", count_corrupted, 0.788, 0.290, 0.290}
+    };
+
+    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 9.0);
+
+    for (int k = 0; k < 5; k++) {
+        /* 8x8px square badge */
+        cairo_set_source_rgb(cr, legend_entries[k].r, legend_entries[k].g, legend_entries[k].b);
+        cairo_rectangle(cr, leg_x, leg_y - 7.5, 8, 8);
+        cairo_fill(cr);
+
+        cairo_set_source_rgb(cr, 0.55, 0.55, 0.52);
+        char str_item[64];
+        snprintf(str_item, sizeof(str_item), "%s: %d", legend_entries[k].label, legend_entries[k].count);
+        cairo_move_to(cr, leg_x + 12, leg_y);
+        cairo_show_text(cr, str_item);
+
+        cairo_text_extents_t lext;
+        cairo_text_extents(cr, str_item, &lext);
+        leg_x += lext.width + 24.0;
+    }
+
+    return FALSE;
+}
+
+/* =========================================================================
+ * CAIRO 2D DRAWING: REAL-TIME THROUGHPUT SPARKLINE GRAPH (SIDEBAR)
+ * ========================================================================= */
+gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+
+    int width = gtk_widget_get_allocated_width(widget);
+    int height = gtk_widget_get_allocated_height(widget);
+
+    /* Dark Background */
+    cairo_set_source_rgb(cr, 0.055, 0.055, 0.051); /* #0E0E0D */
+    cairo_rectangle(cr, 0, 0, width, height);
+    cairo_fill(cr);
+
+    /* Border */
+    cairo_set_source_rgb(cr, 0.150, 0.150, 0.138);
+    cairo_set_line_width(cr, 1.0);
+    cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
+    cairo_stroke(cr);
+
+    /* Reference Grid Lines (0, 150, 300 MB/s) */
+    cairo_set_source_rgb(cr, 0.110, 0.110, 0.100);
+    cairo_set_line_width(cr, 0.8);
+    for (int g = 1; g <= 2; g++) {
+        double gy = height - (g * (height / 3.0));
+        cairo_move_to(cr, 4, gy);
+        cairo_line_to(cr, width - 4, gy);
+        cairo_stroke(cr);
+    }
+
+    double max_scale = (gui->max_speed_recorded > 10.0) ? (gui->max_speed_recorded * 1.15) : 100.0;
+
+    /* Plot Curve */
+    cairo_set_line_width(cr, 1.5);
+    cairo_set_source_rgb(cr, 0.290, 0.533, 0.780); /* Steel Blue */
+
+    double step_x = (double)(width - 8) / (double)(SPARKLINE_POINTS - 1);
+
+    for (int p = 0; p < SPARKLINE_POINTS; p++) {
+        int idx = (gui->speed_history_idx + p) % SPARKLINE_POINTS;
+        double val = gui->speed_history[idx];
+        double py = height - 4.0 - ((val / max_scale) * (height - 12.0));
+        double px = 4.0 + p * step_x;
+
+        if (p == 0) cairo_move_to(cr, px, py);
+        else cairo_line_to(cr, px, py);
+    }
+    cairo_stroke_preserve(cr);
+
+    /* Gradient Shading Underneath Curve */
+    cairo_line_to(cr, width - 4.0, height - 2.0);
+    cairo_line_to(cr, 4.0, height - 2.0);
+    cairo_close_path(cr);
+    cairo_set_source_rgba(cr, 0.290, 0.533, 0.780, 0.15);
+    cairo_fill(cr);
+
+    /* Max watermark text */
+    cairo_select_font_face(cr, "monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 8.5);
+    cairo_set_source_rgb(cr, 0.45, 0.45, 0.43);
+    char max_lbl[32];
+    snprintf(max_lbl, sizeof(max_lbl), "PEAK: %.1f MB/s", gui->max_speed_recorded);
+    cairo_move_to(cr, 8, 12);
+    cairo_show_text(cr, max_lbl);
+
+    return FALSE;
+}
+
+/* =========================================================================
+ * COLORIZED LOG PARSER & FORMATTER (IDE-GRADE SYNTAX HIGHLIGHTING)
+ * ========================================================================= */
+static void append_colorized_log_line(GuiDashboard *gui, const char *raw_line) {
+    GtkTextIter end_iter;
+    gtk_text_buffer_get_end_iter(gui->text_buffer_logs, &end_iter);
+
+    /* Expected format: "14:22:05.104 | P_THREAD_02 | ENQUEUE  | details..." */
+    char buf[256];
+    strncpy(buf, raw_line, sizeof(buf) - 1);
+    buf[sizeof(buf) - 1] = '\0';
+
+    char *saveptr = NULL;
+    char *timestamp = strtok_r(buf, "|", &saveptr);
+    char *thread_tag = strtok_r(NULL, "|", &saveptr);
+    char *action = strtok_r(NULL, "|", &saveptr);
+    char *detail = strtok_r(NULL, "\n", &saveptr);
+
+    if (timestamp && thread_tag && action && detail) {
+        /* Trim trailing/leading whitespace */
+        gtk_text_buffer_insert_with_tags(gui->text_buffer_logs, &end_iter, timestamp, -1, gui->tag_timestamp, NULL);
+        gtk_text_buffer_insert(gui->text_buffer_logs, &end_iter, "|", -1);
+
+        /* Tag Thread type */
+        if (strstr(thread_tag, "P_THREAD")) {
+            gtk_text_buffer_insert_with_tags(gui->text_buffer_logs, &end_iter, thread_tag, -1, gui->tag_producer, NULL);
+        } else if (strstr(thread_tag, "C_THREAD")) {
+            gtk_text_buffer_insert_with_tags(gui->text_buffer_logs, &end_iter, thread_tag, -1, gui->tag_consumer, NULL);
+        } else {
+            gtk_text_buffer_insert_with_tags(gui->text_buffer_logs, &end_iter, thread_tag, -1, gui->tag_action_sys, NULL);
+        }
+        gtk_text_buffer_insert(gui->text_buffer_logs, &end_iter, "|", -1);
+
+        /* Tag Action type */
+        if (strstr(action, "RACE_ERR")) {
+            gtk_text_buffer_insert_with_tags(gui->text_buffer_logs, &end_iter, action, -1, gui->tag_action_race, NULL);
+        } else if (strstr(action, "COMMIT")) {
+            gtk_text_buffer_insert_with_tags(gui->text_buffer_logs, &end_iter, action, -1, gui->tag_action_commit, NULL);
+        } else if (strstr(action, "ENQUEUE") || strstr(action, "DEQUEUE")) {
+            gtk_text_buffer_insert_with_tags(gui->text_buffer_logs, &end_iter, action, -1, gui->tag_action_enqueue, NULL);
+        } else {
+            gtk_text_buffer_insert_with_tags(gui->text_buffer_logs, &end_iter, action, -1, gui->tag_action_sys, NULL);
+        }
+        gtk_text_buffer_insert(gui->text_buffer_logs, &end_iter, "|", -1);
+
+        /* Detail string */
+        gtk_text_buffer_insert(gui->text_buffer_logs, &end_iter, detail, -1);
+        gtk_text_buffer_insert(gui->text_buffer_logs, &end_iter, "\n", -1);
+    } else {
+        /* Fallback: insert unformatted line */
+        gtk_text_buffer_insert(gui->text_buffer_logs, &end_iter, raw_line, -1);
+        gtk_text_buffer_insert(gui->text_buffer_logs, &end_iter, "\n", -1);
+    }
+}
+
+/* =========================================================================
+ * PERIODIC TELEMETRY TICK (30 FPS / ~33ms)
+ * ========================================================================= */
+gboolean on_gui_telemetry_tick(gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+
+    /* Calculate Moving Speed */
+    double elapsed = 0.001;
+    if (ctx->state == STATE_RUNNING) {
+        struct timespec now;
+        clock_gettime(CLOCK_MONOTONIC, &now);
+        elapsed = (now.tv_sec - ctx->start_time.tv_sec) + 
+                  (now.tv_nsec - ctx->start_time.tv_nsec) / 1e9;
+    } else if (ctx->state == STATE_COMPLETED) {
+        elapsed = (ctx->end_time.tv_sec - ctx->start_time.tv_sec) + 
+                  (ctx->end_time.tv_nsec - ctx->start_time.tv_nsec) / 1e9;
+    }
+    if (elapsed <= 0.0) elapsed = 0.001;
+
+    double mb_written = ctx->bytes_written / (1024.0 * 1024.0);
+    double mb_downloaded = ctx->bytes_downloaded / (1024.0 * 1024.0);
+    double total_mb = ctx->total_file_size / (1024.0 * 1024.0);
+    double speed_mbps = (ctx->state == STATE_RUNNING) ? (mb_written / elapsed) : 0.0;
+    if (ctx->state == STATE_COMPLETED) speed_mbps = mb_written / elapsed;
+
+    /* Push speed to history buffer for Sparkline */
+    gui->speed_history[gui->speed_history_idx] = speed_mbps;
+    gui->speed_history_idx = (gui->speed_history_idx + 1) % SPARKLINE_POINTS;
+    if (speed_mbps > gui->max_speed_recorded) {
+        gui->max_speed_recorded = speed_mbps;
+    }
+
+    char str_buf[128];
+
+    /* Engine State Label */
+    const char *state_str = "STANDBY [IDLE]";
+    if (ctx->state == STATE_RUNNING) state_str = ctx->is_paused ? "PAUSED" : "ACTIVE [TRANSFERRING]";
+    else if (ctx->state == STATE_COMPLETED) state_str = "FINISHED [COMPLETED]";
+    else if (ctx->state == STATE_ERROR) state_str = "FAULT [ERROR]";
+    gtk_label_set_text(GTK_LABEL(gui->lbl_engine_state), state_str);
+
+    /* Transfer Rate */
+    snprintf(str_buf, sizeof(str_buf), "%6.2f MB/s", speed_mbps);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_rate), str_buf);
+
+    /* Semaphores */
+    int sem_empty_cnt = 0, sem_full_cnt = 0;
+    sem_getvalue(&ctx->empty_slots, &sem_empty_cnt);
+    sem_getvalue(&ctx->full_slots, &sem_full_cnt);
+    snprintf(str_buf, sizeof(str_buf), "%02d / %d SLOTS", sem_empty_cnt, BUFFER_CAPACITY);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_sem_empty), str_buf);
+    snprintf(str_buf, sizeof(str_buf), "%02d / %d SLOTS", sem_full_cnt, BUFFER_CAPACITY);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_sem_full), str_buf);
+
+    /* Mutex Contentions */
+    snprintf(str_buf, sizeof(str_buf), "%lu EVENTS", (unsigned long)ctx->mutex_contentions);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_contentions), str_buf);
+
+    /* Race Overwrite Errors */
+    snprintf(str_buf, sizeof(str_buf), "%lu BLOCKS", (unsigned long)ctx->race_corrupted_blocks);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_race_errors), str_buf);
+
+    GtkStyleContext *race_sc = gtk_widget_get_style_context(gui->lbl_race_errors);
+    if (ctx->race_corrupted_blocks > 0) {
+        gtk_style_context_remove_class(race_sc, "telemetry-val");
+        gtk_style_context_add_class(race_sc, "telemetry-val-alert");
+    } else {
+        gtk_style_context_remove_class(race_sc, "telemetry-val-alert");
+        gtk_style_context_add_class(race_sc, "telemetry-val");
+    }
+
+    /* Progress & Storage */
+    snprintf(str_buf, sizeof(str_buf), "%.2f / %.2f MB", mb_downloaded, total_mb);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_bytes_downloaded), str_buf);
+
+    snprintf(str_buf, sizeof(str_buf), "%.2f / %.2f MB", mb_written, total_mb);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_bytes_written), str_buf);
+
+    double fraction = (total_mb > 0.0) ? (mb_written / total_mb) : 0.0;
+    if (fraction > 1.0) fraction = 1.0;
+    if (fraction < 0.0) fraction = 0.0;
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gui->progress_bar), fraction);
+
+    /* Update SHA-256 Widgets */
+    if (ctx->expected_sha256[0]) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_expected_sha), ctx->expected_sha256);
+    }
+    if (ctx->actual_sha256[0]) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_actual_sha), ctx->actual_sha256);
+    }
+
+    /* Integrity Badge */
+    GtkStyleContext *b_sc = gtk_widget_get_style_context(gui->lbl_integrity_badge);
+    if (ctx->state == STATE_IDLE) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: STANDBY // IDLE ]");
+        gtk_style_context_add_class(b_sc, "badge-idle");
+        gtk_style_context_remove_class(b_sc, "badge-running");
+        gtk_style_context_remove_class(b_sc, "badge-verified");
+        gtk_style_context_remove_class(b_sc, "badge-corrupted");
+    } else if (ctx->state == STATE_RUNNING) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: TRANSFER IN PROGRESS ]");
+        gtk_style_context_add_class(b_sc, "badge-running");
+        gtk_style_context_remove_class(b_sc, "badge-idle");
+        gtk_style_context_remove_class(b_sc, "badge-verified");
+        gtk_style_context_remove_class(b_sc, "badge-corrupted");
+    } else if (ctx->state == STATE_COMPLETED) {
+        gtk_style_context_remove_class(b_sc, "badge-idle");
+        gtk_style_context_remove_class(b_sc, "badge-running");
+        if (ctx->sha256_verified) {
+            gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: VERIFIED // BYTE-TO-BYTE INTEGRITY CONFIRMED ]");
+            gtk_style_context_add_class(b_sc, "badge-verified");
+            gtk_style_context_remove_class(b_sc, "badge-corrupted");
+        } else {
+            gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: CORRUPTED // DATA RACE DETECTED (SHA MISMATCH) ]");
+            gtk_style_context_add_class(b_sc, "badge-corrupted");
+            gtk_style_context_remove_class(b_sc, "badge-verified");
+        }
+    }
+
+    /* Feed Colorized Log Stream */
+    pthread_mutex_lock(&ctx->log_mutex);
+    if (ctx->log_count > gui->last_rendered_log_count) {
+        for (int m = gui->last_rendered_log_count; m < ctx->log_count; m++) {
+            int slot = (ctx->log_head + m) % LOG_BUFFER_CAPACITY;
+            append_colorized_log_line(gui, ctx->log_messages[slot]);
+        }
+        gui->last_rendered_log_count = ctx->log_count;
+
+        /* Auto-scroll to newest entry */
+        GtkTextIter end_iter;
+        gtk_text_buffer_get_end_iter(gui->text_buffer_logs, &end_iter);
+        GtkTextMark *mark = gtk_text_buffer_create_mark(gui->text_buffer_logs, NULL, &end_iter, FALSE);
+        gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(gui->text_view_logs), mark, 0.0, TRUE, 0.0, 1.0);
+    }
+    pthread_mutex_unlock(&ctx->log_mutex);
+
+    /* Redraw Cairo visualizers */
+    gtk_widget_queue_draw(gui->drawing_ram_buffer);
+    gtk_widget_queue_draw(gui->drawing_block_matrix);
+    gtk_widget_queue_draw(gui->drawing_sidebar_sparkline);
+
+    return TRUE;
+}
+
+/* =========================================================================
+ * SIGNAL HANDLERS
+ * ========================================================================= */
+void on_btn_start_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+
+    if (gui->worker_running) return;
+
+    const char *url = gtk_entry_get_text(GTK_ENTRY(gui->entry_url));
+    if (strlen(url) == 0) {
+        on_btn_gen_file_clicked(NULL, user_data);
+    } else {
+        strncpy(ctx->target_url, url, sizeof(ctx->target_url) - 1);
+    }
+
+    ctx->num_producers = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spin_producers));
+    ctx->num_consumers = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spin_consumers));
+
+    if (probe_remote_target(ctx, ctx->target_url) != 0) {
+        app_log(ctx, "UI_ACTION", "ERROR", "Probe of target URL '%s' failed", ctx->target_url);
+        return;
+    }
+
+    gui->worker_running = true;
+    pthread_create(&gui->engine_worker_thread, NULL, engine_coordinator_thread, gui);
+}
+
+void on_btn_pause_clicked(GtkButton *button, gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+
+    if (!gui->worker_running) return;
+
+    pthread_mutex_lock(&ctx->control_mutex);
+    ctx->is_paused = !ctx->is_paused;
+    if (!ctx->is_paused) {
+        pthread_cond_broadcast(&ctx->pause_cond);
+        gtk_button_set_label(button, "PAUSE");
+        app_log(ctx, "UI_ACTION", "CONTROL", "Pipeline resumed");
+    } else {
+        gtk_button_set_label(button, "RESUME");
+        app_log(ctx, "UI_ACTION", "CONTROL", "Pipeline paused via user action");
+    }
+    pthread_mutex_unlock(&ctx->control_mutex);
+}
+
+void on_btn_reset_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+
+    if (gui->worker_running) {
+        ctx->stop_requested = true;
+        pthread_cond_broadcast(&ctx->pause_cond);
+        pthread_join(gui->engine_worker_thread, NULL);
+        gui->worker_running = false;
+    }
+
+    app_context_reset(ctx);
+    gui->last_rendered_log_count = 0;
+    gui->max_speed_recorded = 0.0;
+    memset(gui->speed_history, 0, sizeof(gui->speed_history));
+
+    gtk_text_buffer_set_text(gui->text_buffer_logs, "", -1);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_actual_sha), "----------------------------------------------------------------");
+    gtk_button_set_label(GTK_BUTTON(gui->btn_pause), "PAUSE");
+
+    app_log(ctx, "UI_ACTION", "RESET", "Workspace reset to initial clean state");
+}
+
+void on_btn_gen_file_clicked(GtkButton *button, gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+
+    bool is_32mb = (button == GTK_BUTTON(gui->btn_gen_32mb));
+    size_t size = is_32mb ? (32 * 1024 * 1024) : (16 * 1024 * 1024);
+    const char *path = is_32mb ? "test_data/benchmark_32mb.bin" : "test_data/benchmark_16mb.bin";
+
+    mkdir("test_data", 0755);
+    app_log(ctx, "UI_ACTION", "GENERATE", "Generating %s synthetic binary dataset...", is_32mb ? "32 MB" : "16 MB");
+
+    if (generate_benchmark_file(path, size, ctx->expected_sha256) != 0) {
+        app_log(ctx, "UI_ACTION", "ERROR", "Failed to generate benchmark dataset");
+        return;
+    }
+
+    int port = 0;
+    start_local_http_server(ctx, path, &port);
+
+    gtk_entry_set_text(GTK_ENTRY(gui->entry_url), ctx->target_url);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_expected_sha), ctx->expected_sha256);
+}
+
+void on_switch_sync_toggled(GtkSwitch *widget, gboolean state, gpointer user_data) {
+    (void)widget;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+
+    ctx->sync_mode = state ? SYNC_MODE_SYNCHRONIZED : SYNC_MODE_UNSYNCHRONIZED;
+
+    GtkStyleContext *sc = gtk_widget_get_style_context(gui->lbl_sync_mode);
+
+    if (state) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_sync_mode), "MODE: SYNCHRONIZED (MUTEX/SEM)");
+        gtk_style_context_remove_class(sc, "mode-unsynced");
+        gtk_style_context_add_class(sc, "mode-synced");
+        app_log(ctx, "UI_ACTION", "CONFIG", "Concurrency mode changed to SYNCHRONIZED (Guarded with Mutex & Semaphores)");
+    } else {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_sync_mode), "MODE: UNSYNCHRONIZED (RACE CONDITION)");
+        gtk_style_context_remove_class(sc, "mode-synced");
+        gtk_style_context_add_class(sc, "mode-unsynced");
+        app_log(ctx, "UI_ACTION", "CONFIG", "Concurrency mode changed to UNSYNCHRONIZED (Race conditions active!)");
+    }
+}
+
+/* =========================================================================
+ * DASHBOARD INITIALIZATION & WIDGET TREE CONSTRUCTION
+ * ========================================================================= */
+int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **argv) {
+    gtk_init(&argc, &argv);
+
+    gui->ctx = ctx;
+    gui->worker_running = false;
+    gui->last_rendered_log_count = 0;
+    gui->max_speed_recorded = 0.0;
+    memset(gui->speed_history, 0, sizeof(gui->speed_history));
+
+    /* Load Industrial Matte Carbon & Oxide CSS */
+    GtkCssProvider *css_provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_data(css_provider, WORKSTATION_CSS, -1, NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+                                              GTK_STYLE_PROVIDER(css_provider),
+                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+    /* Main Window: 1240 x 780 */
+    gui->main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(gui->main_window),
+                         "SYSTEM PROGRAMMING WORKSTATION // MULTI-THREADED DOWNLOAD MANAGER & CONCURRENCY LAB");
+    gtk_window_set_default_size(GTK_WINDOW(gui->main_window), 1240, 780);
+    gtk_window_set_position(GTK_WINDOW(gui->main_window), GTK_WIN_POS_CENTER);
+    g_signal_connect(gui->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    /* Root Vertical Layout */
+    GtkWidget *root_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_container_add(GTK_CONTAINER(gui->main_window), root_box);
+
+    /* =====================================================================
+     * 1. TOP TOOLBAR (FLAT HIGH-DENSITY WORKSTATION HEADER)
+     * ===================================================================== */
+    GtkWidget *toolbar_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    gtk_style_context_add_class(gtk_widget_get_style_context(toolbar_box), "top-toolbar");
+    gtk_box_pack_start(GTK_BOX(root_box), toolbar_box, FALSE, FALSE, 0);
+
+    /* URL Entry */
+    GtkWidget *lbl_url = gtk_label_new("TARGET URL:");
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_url), "section-header");
+    gtk_box_pack_start(GTK_BOX(toolbar_box), lbl_url, FALSE, FALSE, 0);
+
+    gui->entry_url = gtk_entry_new();
+    gtk_widget_set_size_request(gui->entry_url, 310, 28);
+    gtk_entry_set_placeholder_text(GTK_ENTRY(gui->entry_url), "http://127.0.0.1:<port>/benchmark.bin");
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->entry_url, TRUE, TRUE, 0);
+
+    /* Benchmark File Buttons */
+    gui->btn_gen_16mb = gtk_button_new_with_label("[GEN 16MB]");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_gen_16mb), "btn-secondary");
+    g_signal_connect(gui->btn_gen_16mb, "clicked", G_CALLBACK(on_btn_gen_file_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_gen_16mb, FALSE, FALSE, 0);
+
+    gui->btn_gen_32mb = gtk_button_new_with_label("[GEN 32MB]");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_gen_32mb), "btn-steel");
+    g_signal_connect(gui->btn_gen_32mb, "clicked", G_CALLBACK(on_btn_gen_file_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_gen_32mb, FALSE, FALSE, 0);
+
+    /* Separator */
+    GtkWidget *sep1 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), sep1, FALSE, FALSE, 4);
+
+    /* Producers SpinButton */
+    GtkWidget *lbl_p = gtk_label_new("PRODUCERS:");
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_p), "section-header");
+    gtk_box_pack_start(GTK_BOX(toolbar_box), lbl_p, FALSE, FALSE, 0);
+
+    gui->spin_producers = gtk_spin_button_new_with_range(1, 8, 1);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spin_producers), 4);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->spin_producers, FALSE, FALSE, 0);
+
+    /* Consumers SpinButton */
+    GtkWidget *lbl_c = gtk_label_new("CONSUMERS:");
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_c), "section-header");
+    gtk_box_pack_start(GTK_BOX(toolbar_box), lbl_c, FALSE, FALSE, 0);
+
+    gui->spin_consumers = gtk_spin_button_new_with_range(1, 8, 1);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spin_consumers), 2);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->spin_consumers, FALSE, FALSE, 0);
+
+    /* Mode Switch */
+    gui->switch_sync_mode = gtk_switch_new();
+    gtk_switch_set_active(GTK_SWITCH(gui->switch_sync_mode), TRUE);
+    g_signal_connect(gui->switch_sync_mode, "state-set", G_CALLBACK(on_switch_sync_toggled), gui);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->switch_sync_mode, FALSE, FALSE, 0);
+
+    gui->lbl_sync_mode = gtk_label_new("MODE: SYNCHRONIZED (MUTEX/SEM)");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_sync_mode), "mode-synced");
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->lbl_sync_mode, FALSE, FALSE, 0);
+
+    /* Control Buttons */
+    gui->btn_start = gtk_button_new_with_label("START TRANSFER");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_start), "btn-primary");
+    g_signal_connect(gui->btn_start, "clicked", G_CALLBACK(on_btn_start_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_start, FALSE, FALSE, 0);
+
+    gui->btn_pause = gtk_button_new_with_label("PAUSE");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_pause), "btn-secondary");
+    g_signal_connect(gui->btn_pause, "clicked", G_CALLBACK(on_btn_pause_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_pause, FALSE, FALSE, 0);
+
+    gui->btn_reset = gtk_button_new_with_label("RESET");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_reset), "btn-secondary");
+    g_signal_connect(gui->btn_reset, "clicked", G_CALLBACK(on_btn_reset_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_reset, FALSE, FALSE, 0);
+
+    /* =====================================================================
+     * 2. MAIN HORIZONTAL SPLIT: SIDEBAR (LEFT) + WORKSPACE (RIGHT)
+     * ===================================================================== */
+    GtkWidget *body_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(root_box), body_box, TRUE, TRUE, 0);
+
+    /* ---------------------------------------------------------------------
+     * LEFT SIDEBAR: SYSTEM TELEMETRY & SPARKLINE GRAPH (WIDTH: 270px)
+     * --------------------------------------------------------------------- */
+    GtkWidget *sidebar_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+    gtk_widget_set_size_request(sidebar_box, 270, -1);
+    gtk_style_context_add_class(gtk_widget_get_style_context(sidebar_box), "sidebar-panel");
+    gtk_box_pack_start(GTK_BOX(body_box), sidebar_box, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_side_title = gtk_label_new("SYSTEM TELEMETRY");
+    gtk_widget_set_halign(lbl_side_title, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_side_title), "section-header");
+    gtk_box_pack_start(GTK_BOX(sidebar_box), lbl_side_title, FALSE, FALSE, 0);
+
+    /* Card 1: Engine State & Transfer Rate */
+    GtkWidget *card_speed = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    gtk_style_context_add_class(gtk_widget_get_style_context(card_speed), "telemetry-card");
+    gtk_box_pack_start(GTK_BOX(sidebar_box), card_speed, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_rate_hdr = gtk_label_new("INSTANTANEOUS THROUGHPUT");
+    gtk_widget_set_halign(lbl_rate_hdr, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_rate_hdr), "telemetry-key");
+    gtk_box_pack_start(GTK_BOX(card_speed), lbl_rate_hdr, FALSE, FALSE, 0);
+
+    gui->lbl_rate = gtk_label_new("  0.00 MB/s");
+    gtk_widget_set_halign(gui->lbl_rate, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_rate), "telemetry-val-large");
+    gtk_box_pack_start(GTK_BOX(card_speed), gui->lbl_rate, FALSE, FALSE, 0);
+
+    /* Card 2: Real-time Throughput Sparkline Graph */
+    gui->drawing_sidebar_sparkline = gtk_drawing_area_new();
+    gtk_widget_set_size_request(gui->drawing_sidebar_sparkline, -1, 60);
+    g_signal_connect(gui->drawing_sidebar_sparkline, "draw", G_CALLBACK(on_draw_sidebar_sparkline), gui);
+    gtk_box_pack_start(GTK_BOX(sidebar_box), gui->drawing_sidebar_sparkline, FALSE, FALSE, 0);
+
+    /* Card 3: Semaphore State */
+    GtkWidget *card_sem = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+    gtk_style_context_add_class(gtk_widget_get_style_context(card_sem), "telemetry-card");
+    gtk_box_pack_start(GTK_BOX(sidebar_box), card_sem, FALSE, FALSE, 0);
+
+    #define MAKE_KEYVAL_ROW(k_text, val_lbl) do { \
+        GtkWidget *row = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8); \
+        GtkWidget *k = gtk_label_new(k_text); \
+        gtk_widget_set_halign(k, GTK_ALIGN_START); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(k), "telemetry-key"); \
+        gtk_box_pack_start(GTK_BOX(row), k, FALSE, FALSE, 0); \
+        gtk_widget_set_halign(val_lbl, GTK_ALIGN_END); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(val_lbl), "telemetry-val"); \
+        gtk_box_pack_end(GTK_BOX(row), val_lbl, FALSE, FALSE, 0); \
+        gtk_box_pack_start(GTK_BOX(card_sem), row, FALSE, FALSE, 0); \
+    } while(0)
+
+    gui->lbl_engine_state = gtk_label_new("STANDBY [IDLE]");
+    MAKE_KEYVAL_ROW("PIPELINE STATE", gui->lbl_engine_state);
+
+    gui->lbl_sem_empty = gtk_label_new("32 / 32 SLOTS");
+    MAKE_KEYVAL_ROW("SEM_EMPTY", gui->lbl_sem_empty);
+
+    gui->lbl_sem_full = gtk_label_new("00 / 32 SLOTS");
+    MAKE_KEYVAL_ROW("SEM_FULL", gui->lbl_sem_full);
+
+    gui->lbl_contentions = gtk_label_new("0 EVENTS");
+    MAKE_KEYVAL_ROW("MUTEX LOCK COLLISIONS", gui->lbl_contentions);
+
+    gui->lbl_race_errors = gtk_label_new("0 BLOCKS");
+    MAKE_KEYVAL_ROW("RACE OVERWRITES", gui->lbl_race_errors);
+
+    /* Card 4: Storage Progress */
+    GtkWidget *card_prog = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+    gtk_style_context_add_class(gtk_widget_get_style_context(card_prog), "telemetry-card");
+    gtk_box_pack_start(GTK_BOX(sidebar_box), card_prog, FALSE, FALSE, 0);
+
+    gui->lbl_bytes_downloaded = gtk_label_new("0.00 / 0.00 MB");
+    MAKE_KEYVAL_ROW("DOWNLOADED", gui->lbl_bytes_downloaded);
+
+    gui->lbl_bytes_written = gtk_label_new("0.00 / 0.00 MB");
+    MAKE_KEYVAL_ROW("COMMITTED", gui->lbl_bytes_written);
+
+    gui->progress_bar = gtk_progress_bar_new();
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gui->progress_bar), 0.0);
+    gtk_box_pack_start(GTK_BOX(card_prog), gui->progress_bar, FALSE, FALSE, 4);
+
+    /* Card 5: Static Topology */
+    GtkWidget *card_topo = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
+    gtk_style_context_add_class(gtk_widget_get_style_context(card_topo), "telemetry-card");
+    gtk_box_pack_start(GTK_BOX(sidebar_box), card_topo, FALSE, FALSE, 0);
+
+    #define MAKE_TOPO_ROW(k_text, v_text) do { \
+        GtkWidget *row = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8); \
+        GtkWidget *k = gtk_label_new(k_text); \
+        gtk_widget_set_halign(k, GTK_ALIGN_START); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(k), "telemetry-key"); \
+        gtk_box_pack_start(GTK_BOX(row), k, FALSE, FALSE, 0); \
+        GtkWidget *v = gtk_label_new(v_text); \
+        gtk_widget_set_halign(v, GTK_ALIGN_END); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(v), "telemetry-val"); \
+        gtk_box_pack_end(GTK_BOX(row), v, FALSE, FALSE, 0); \
+        gtk_box_pack_start(GTK_BOX(card_topo), row, FALSE, FALSE, 0); \
+    } while(0)
+
+    MAKE_TOPO_ROW("CHUNK SIZE", "64 KB (65,536 B)");
+    MAKE_TOPO_ROW("BUFFER FOOTPRINT", "32 SLOTS (2.0 MB)");
+    MAKE_TOPO_ROW("HASH ALGORITHM", "SHA-256 (EVP)");
+
+    /* ---------------------------------------------------------------------
+     * CENTER WORKSPACE: 2 CAIRO 2D INSPECTORS
+     * --------------------------------------------------------------------- */
+    GtkWidget *workspace_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+    gtk_style_context_add_class(gtk_widget_get_style_context(workspace_box), "workspace-panel");
+    gtk_box_pack_start(GTK_BOX(body_box), workspace_box, TRUE, TRUE, 0);
+
+    /* Top Cairo: RAM Circular Bounded Buffer */
+    GtkWidget *lbl_cairo_top = gtk_label_new("RAM BOUNDED BUFFER INSPECTOR // 32 SLOTS MEMORY GEOMETRY");
+    gtk_widget_set_halign(lbl_cairo_top, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_cairo_top), "section-header");
+    gtk_box_pack_start(GTK_BOX(workspace_box), lbl_cairo_top, FALSE, FALSE, 0);
+
+    gui->drawing_ram_buffer = gtk_drawing_area_new();
+    gtk_widget_set_size_request(gui->drawing_ram_buffer, -1, 115);
+    g_signal_connect(gui->drawing_ram_buffer, "draw", G_CALLBACK(on_draw_ram_buffer), gui);
+    gtk_box_pack_start(GTK_BOX(workspace_box), gui->drawing_ram_buffer, FALSE, FALSE, 0);
+
+    /* Bottom Cairo: Disk Block Allocation Matrix */
+    GtkWidget *lbl_cairo_bot = gtk_label_new("DISK BLOCK ALLOCATION MATRIX // 256 BLOCKS (16-32 MB STORAGE MAP)");
+    gtk_widget_set_halign(lbl_cairo_bot, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_cairo_bot), "section-header");
+    gtk_box_pack_start(GTK_BOX(workspace_box), lbl_cairo_bot, FALSE, FALSE, 4);
+
+    gui->drawing_block_matrix = gtk_drawing_area_new();
+    gtk_widget_set_size_request(gui->drawing_block_matrix, -1, 195);
+    g_signal_connect(gui->drawing_block_matrix, "draw", G_CALLBACK(on_draw_block_matrix), gui);
+    gtk_box_pack_start(GTK_BOX(workspace_box), gui->drawing_block_matrix, TRUE, TRUE, 0);
+
+    /* =====================================================================
+     * 3. BOTTOM PANEL: SHA-256 AUDIT & COLORIZED KERNEL LOG STREAM
+     * ===================================================================== */
+    GtkWidget *bot_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+    gtk_style_context_add_class(gtk_widget_get_style_context(bot_panel), "bottom-panel");
+    gtk_box_pack_start(GTK_BOX(root_box), bot_panel, FALSE, FALSE, 0);
+
+    /* Checksum Audit Row */
+    GtkWidget *sha_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_box_pack_start(GTK_BOX(bot_panel), sha_box, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_exp_tag = gtk_label_new("EXPECTED SHA-256:");
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_exp_tag), "section-header");
+    gtk_box_pack_start(GTK_BOX(sha_box), lbl_exp_tag, FALSE, FALSE, 0);
+
+    gui->lbl_expected_sha = gtk_label_new("----------------------------------------------------------------");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_expected_sha), "telemetry-val");
+    gtk_box_pack_start(GTK_BOX(sha_box), gui->lbl_expected_sha, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_act_tag = gtk_label_new("ACTUAL SHA-256:");
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_act_tag), "section-header");
+    gtk_box_pack_start(GTK_BOX(sha_box), lbl_act_tag, FALSE, FALSE, 8);
+
+    gui->lbl_actual_sha = gtk_label_new("----------------------------------------------------------------");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_actual_sha), "telemetry-val");
+    gtk_box_pack_start(GTK_BOX(sha_box), gui->lbl_actual_sha, FALSE, FALSE, 0);
+
+    gui->lbl_integrity_badge = gtk_label_new("[ STATUS: STANDBY // IDLE ]");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_integrity_badge), "badge-idle");
+    gtk_box_pack_end(GTK_BOX(sha_box), gui->lbl_integrity_badge, FALSE, FALSE, 0);
+
+    /* Monospace Technical Log Area with Syntax Highlighting Tags */
+    GtkWidget *scrolled_log = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_set_size_request(scrolled_log, -1, 130);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_log), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_box_pack_start(GTK_BOX(bot_panel), scrolled_log, FALSE, FALSE, 0);
+
+    gui->text_view_logs = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(gui->text_view_logs), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(gui->text_view_logs), FALSE);
+    gtk_text_view_set_monospace(GTK_TEXT_VIEW(gui->text_view_logs), TRUE);
+    gui->text_buffer_logs = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gui->text_view_logs));
+    gtk_container_add(GTK_CONTAINER(scrolled_log), gui->text_view_logs);
+
+    /* Setup Text Tags for Syntax Highlighting */
+    gui->tag_timestamp = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_timestamp",
+        "foreground", "#7E7E78", NULL);
+    gui->tag_producer = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_producer",
+        "foreground", "#4A88C7", "weight", PANGO_WEIGHT_BOLD, NULL);
+    gui->tag_consumer = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_consumer",
+        "foreground", "#4E9A67", "weight", PANGO_WEIGHT_BOLD, NULL);
+    gui->tag_action_enqueue = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_enqueue",
+        "foreground", "#D4973B", NULL);
+    gui->tag_action_commit = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_commit",
+        "foreground", "#5CB87A", "weight", PANGO_WEIGHT_BOLD, NULL);
+    gui->tag_action_race = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_race",
+        "foreground", "#E05353", "weight", PANGO_WEIGHT_BOLD, NULL);
+    gui->tag_action_sys = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_sys",
+        "foreground", "#A0A09A", NULL);
+
+    /* Initial Announcement */
+    app_log(ctx, "SYS_INIT", "WORKSTATION", "Native GTK3 Concurrency Workstation initialized. System ready.");
+
+    /* Start High-Frequency Telemetry Timer (30 FPS / ~33ms) */
+    gui->timer_id = g_timeout_add(33, on_gui_telemetry_tick, gui);
+
+    gtk_widget_show_all(gui->main_window);
+    return 0;
+}
