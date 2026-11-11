@@ -98,8 +98,19 @@ Cửa sổ Native kích thước **1240 x 780** chuẩn công nghiệp (Anti-AI 
    * **Bảng Console Log:** Báo lỗi dồn dập bằng các dòng đỏ:  
      `C_THREAD_01 | RACE_ERR | lseek collision detected at offset=0x...`
    * **Đáy màn hình:** Huy hiệu đổi màu đỏ thẫm:  
-     `[ STATUS: CORRUPTED // DATA RACE DETECTED (SHA MISMATCH) ]`  
+     `[ STATUS: CORRUPTED // DATA RACE DETECTED ]`  
      Mã băm SHA-256 thực tế bị sai lệch hoàn toàn so với gốc!
+
+#### Bước D: Thử nghiệm 3 - TẢI ĐƯỜNG DẪN TRÊN MẠNG THẬT (LIVE INTERNET URL)
+Ứng dụng hỗ trợ 100% tải các đường link file thực tế trên Internet qua HTTP/HTTPS:
+1. Copy một link file tĩnh bất kỳ trên Internet hỗ trợ HTTP Range (Ví dụ: `https://proof.ovh.net/files/1Mb.dat` hoặc `http://speedtest.tele2.net/1MB.zip`).
+2. Dán link vào ô nhập liệu **TARGET URL** trên đỉnh giao diện.
+3. Chọn số luồng Producers (1 - 8) và Consumers (1 - 8).
+4. Bấm **`[START TRANSFER]`**:
+   - `libcurl` sẽ gửi gói tin `HTTP HEAD` thăm dò, đọc kích thước và kiểm tra tiêu đề `Accept-Ranges: bytes`.
+   - Các luồng Producer sẽ gửi các yêu cầu `Range: bytes=start-end` song song kéo từng khối 64KB về RAM Bounded Buffer.
+   - Các luồng Consumer đồng bộ ghi dữ liệu xuống đĩa an toàn.
+   - Kết thúc quá trình, OpenSSL tự động tính mã băm SHA-256 thực tế của file đã lưu.
 
 ---
 
@@ -107,18 +118,18 @@ Cửa sổ Native kích thước **1240 x 780** chuẩn công nghiệp (Anti-AI 
 
 Nếu đang kết nối qua SSH hoặc máy chủ không có giao diện đồ họa, bạn có thể chạy bộ kiểm thử CLI độc lập:
 
-### Chạy tự động cả 2 chế độ để so sánh:
+### Chạy tự động kiểm thử nội bộ (Local Loopback):
 ```bash
 make test
 ```
 
-### Hoặc chạy thủ công từng chế độ:
+### Hoặc chạy với đường link mạng thật (Live Internet):
 ```bash
-# 1. Chạy chế độ Đồng bộ (Mutex & Semaphore):
-./bin/cli_benchmark
+# 1. Tải link mạng thật ở chế độ Đồng bộ an toàn (0 lỗi):
+./bin/cli_benchmark https://proof.ovh.net/files/1Mb.dat
 
-# 2. Chạy chế độ Xung đột Race Condition:
-./bin/cli_benchmark --race
+# 2. Tải link mạng thật ở chế độ Race Condition (Gây xung đột lseek):
+./bin/cli_benchmark --race https://proof.ovh.net/files/1Mb.dat
 ```
 
 **Bảng kết quả đối chứng thực tế trên Terminal:**
@@ -199,3 +210,4 @@ BaiTapLonV2/
 
 ---
 *Tác giả: Quân Phạm Huỳnh (IT31072006) - Đồ án Lập trình Hệ thống VKU.*
+

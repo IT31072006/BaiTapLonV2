@@ -9,8 +9,15 @@
 
 int main(int argc, char **argv) {
   SyncMode mode_to_test = SYNC_MODE_SYNCHRONIZED;
-  if (argc > 1 && strcmp(argv[1], "--race") == 0) {
-    mode_to_test = SYNC_MODE_UNSYNCHRONIZED;
+  const char *custom_url = NULL;
+
+  for (int i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "--race") == 0) {
+      mode_to_test = SYNC_MODE_UNSYNCHRONIZED;
+    } else if (strncmp(argv[i], "http://", 7) == 0 ||
+               strncmp(argv[i], "https://", 8) == 0) {
+      custom_url = argv[i];
+    }
   }
 
   printf("=================================================================\n");
@@ -18,6 +25,9 @@ int main(int argc, char **argv) {
   printf("TEST MODE: %s\n", (mode_to_test == SYNC_MODE_SYNCHRONIZED)
                                 ? "SYNCHRONIZED (MUTEX/SEMAPHORE)"
                                 : "UNSYNCHRONIZED (RACE CONDITION)");
+  if (custom_url) {
+    printf("TARGET   : %s (LIVE INTERNET DOWNLOAD)\n", custom_url);
+  }
   printf("=================================================================\n");
 
   curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -28,33 +38,41 @@ int main(int argc, char **argv) {
   ctx.num_producers = 4;
   ctx.num_consumers = 2;
 
-  /* 1. Generate 16MB (256 chunks) synthetic file */
-  const char *source_file = "test_data/benchmark_src.bin";
   const char *dest_file = (mode_to_test == SYNC_MODE_SYNCHRONIZED)
                               ? "test_data/output_sync.bin"
                               : "test_data/output_unsync.bin";
-  size_t file_size = 256 * CHUNK_SIZE; /* 16,777,216 bytes */
 
-  printf("[1/5] Generating 16 MB benchmark source file...\n");
-  if (generate_benchmark_file(source_file, file_size, ctx.expected_sha256) !=
-      0) {
-    fprintf(stderr, "Failed to generate benchmark file\n");
-    return 1;
-  }
-  printf("      Source SHA-256: %s\n", ctx.expected_sha256);
+  if (custom_url) {
+    strncpy(ctx.target_url, custom_url, sizeof(ctx.target_url) - 1);
+    ctx.expected_sha256[0] = '\0';
+    printf("[1/5] Target external URL: %s\n", custom_url);
+    printf("[2/5] Skipping embedded server (Direct Internet Transfer)...\n");
+  } else {
+    /* 1. Generate 16MB (256 chunks) synthetic file */
+    const char *source_file = "test_data/benchmark_src.bin";
+    size_t file_size = 256 * CHUNK_SIZE; /* 16,777,216 bytes */
 
-  /* 2. Start embedded HTTP Range loopback server */
-  printf("[2/5] Starting embedded loopback HTTP server...\n");
-  int port = 0;
-  if (start_local_http_server(&ctx, source_file, &port) != 0) {
-    fprintf(stderr, "Failed to launch embedded server\n");
-    return 1;
+    printf("[1/5] Generating 16 MB benchmark source file...\n");
+    if (generate_benchmark_file(source_file, file_size, ctx.expected_sha256) !=
+        0) {
+      fprintf(stderr, "Failed to generate benchmark file\n");
+      return 1;
+    }
+    printf("      Source SHA-256: %s\n", ctx.expected_sha256);
+
+    /* 2. Start embedded HTTP Range loopback server */
+    printf("[2/5] Starting embedded loopback HTTP server...\n");
+    int port = 0;
+    if (start_local_http_server(&ctx, source_file, &port) != 0) {
+      fprintf(stderr, "Failed to launch embedded server\n");
+      return 1;
+    }
   }
 
   /* 3. Probe target with libcurl */
-  printf("[3/5] Probing loopback URL via libcurl...\n");
+  printf("[3/5] Probing target URL via libcurl...\n");
   if (probe_remote_target(&ctx, ctx.target_url) != 0) {
-    fprintf(stderr, "Failed to probe remote target\n");
+    fprintf(stderr, "Failed to probe target URL: %s\n", ctx.target_url);
     return 1;
   }
 

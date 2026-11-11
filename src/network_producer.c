@@ -465,15 +465,18 @@ void *producer_worker(void *arg) {
 
     curl_easy_setopt(curl, CURLOPT_URL, ctx->target_url);
     curl_easy_setopt(curl, CURLOPT_RANGE, range_header);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_chunk_write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &chunk);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30L);
 
     CURLcode res = curl_easy_perform(curl);
-    if (res != CURLE_OK) {
-      app_log(ctx, thread_tag, "NET_ERR", "Range %s transfer failed: %s",
-              range_header, curl_easy_strerror(res));
+    long http_code = 0;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
+    if (res != CURLE_OK || (http_code != 200 && http_code != 206)) {
+      app_log(ctx, thread_tag, "NET_ERR", "Range %s transfer failed (HTTP %ld): %s",
+              range_header, http_code, curl_easy_strerror(res));
       continue;
     }
 

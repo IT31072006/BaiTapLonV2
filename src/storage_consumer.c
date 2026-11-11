@@ -248,19 +248,34 @@ int verify_file_integrity(AppContext *ctx) {
     return -1;
   }
 
-  ctx->sha256_verified =
-      (strcmp(ctx->expected_sha256, ctx->actual_sha256) == 0);
+  if (ctx->expected_sha256[0] != '\0') {
+    ctx->sha256_verified =
+        (strcmp(ctx->expected_sha256, ctx->actual_sha256) == 0);
 
-  if (ctx->sha256_verified) {
-    app_log(ctx, "SYS_ENGINE", "CHECKSUM", "STATUS: VERIFIED [SHA-256 MATCH]");
-    app_log(ctx, "SYS_ENGINE", "DIGEST", "EXPECTED: %s", ctx->expected_sha256);
-    app_log(ctx, "SYS_ENGINE", "DIGEST", "ACTUAL  : %s", ctx->actual_sha256);
+    if (ctx->sha256_verified) {
+      app_log(ctx, "SYS_ENGINE", "CHECKSUM", "STATUS: VERIFIED [SHA-256 MATCH]");
+      app_log(ctx, "SYS_ENGINE", "DIGEST", "EXPECTED: %s", ctx->expected_sha256);
+      app_log(ctx, "SYS_ENGINE", "DIGEST", "ACTUAL  : %s", ctx->actual_sha256);
+    } else {
+      app_log(ctx, "SYS_ENGINE", "CHECKSUM",
+              "STATUS: CORRUPTED - DATA RACE DETECTED");
+      app_log(ctx, "SYS_ENGINE", "DIGEST", "EXPECTED: %s", ctx->expected_sha256);
+      app_log(ctx, "SYS_ENGINE", "DIGEST", "ACTUAL  : %s", ctx->actual_sha256);
+    }
+    return ctx->sha256_verified ? 0 : 1;
   } else {
-    app_log(ctx, "SYS_ENGINE", "CHECKSUM",
-            "STATUS: CORRUPTED - DATA RACE DETECTED");
-    app_log(ctx, "SYS_ENGINE", "DIGEST", "EXPECTED: %s", ctx->expected_sha256);
-    app_log(ctx, "SYS_ENGINE", "DIGEST", "ACTUAL  : %s", ctx->actual_sha256);
+    /* External Internet URL: No pre-known hash, verify via race collision metrics */
+    ctx->sha256_verified = (ctx->race_corrupted_blocks == 0);
+    app_log(ctx, "SYS_ENGINE", "DIGEST", "ACTUAL SHA-256: %s", ctx->actual_sha256);
+    if (ctx->race_corrupted_blocks > 0) {
+      app_log(ctx, "SYS_ENGINE", "CHECKSUM",
+              "STATUS: CORRUPTED - %lu DATA RACE COLLISIONS DETECTED",
+              (unsigned long)ctx->race_corrupted_blocks);
+      return 1;
+    } else {
+      app_log(ctx, "SYS_ENGINE", "CHECKSUM",
+              "STATUS: VERIFIED [EXTERNAL DOWNLOAD - 0 RACE ERRORS]");
+      return 0;
+    }
   }
-
-  return ctx->sha256_verified ? 0 : 1;
 }

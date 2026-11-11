@@ -787,11 +787,15 @@ gboolean on_gui_telemetry_tick(gpointer user_data) {
         gtk_style_context_remove_class(b_sc, "badge-idle");
         gtk_style_context_remove_class(b_sc, "badge-running");
         if (ctx->sha256_verified) {
-            gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: VERIFIED // BYTE-TO-BYTE INTEGRITY CONFIRMED ]");
+            if (ctx->expected_sha256[0] != '\0') {
+                gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: VERIFIED // BYTE-TO-BYTE INTEGRITY CONFIRMED ]");
+            } else {
+                gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: VERIFIED // EXTERNAL DOWNLOAD COMPLETE (0 RACE ERRORS) ]");
+            }
             gtk_style_context_add_class(b_sc, "badge-verified");
             gtk_style_context_remove_class(b_sc, "badge-corrupted");
         } else {
-            gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: CORRUPTED // DATA RACE DETECTED (SHA MISMATCH) ]");
+            gtk_label_set_text(GTK_LABEL(gui->lbl_integrity_badge), "[ STATUS: CORRUPTED // DATA RACE DETECTED ]");
             gtk_style_context_add_class(b_sc, "badge-corrupted");
             gtk_style_context_remove_class(b_sc, "badge-verified");
         }
@@ -837,6 +841,10 @@ void on_btn_start_clicked(GtkButton *button, gpointer user_data) {
         on_btn_gen_file_clicked(NULL, user_data);
     } else {
         strncpy(ctx->target_url, url, sizeof(ctx->target_url) - 1);
+        if (strncmp(url, "http://127.0.0.1", 16) != 0) {
+            ctx->expected_sha256[0] = '\0';
+            gtk_label_set_text(GTK_LABEL(gui->lbl_expected_sha), "NONE (EXTERNAL INTERNET URL)");
+        }
     }
 
     ctx->num_producers = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spin_producers));
