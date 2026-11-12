@@ -5,7 +5,8 @@ bin/*
 !bin/.gitkeep
 
 # Temporary and benchmark files
-test_data/*.bin
+test_data/*
+!test_data/.gitkeep
 *.log
 
 # Caches and editor files

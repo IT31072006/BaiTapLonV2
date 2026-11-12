@@ -129,6 +129,25 @@ int main(int argc, char **argv) {
     printf("RESULT  : [STATUS: CORRUPTED - DATA RACE DETECTED] Race condition "
            "proved!\n");
   }
+  printf("Saved Container      : %s (%zu bytes)\n", dest_file, ctx.total_file_size);
+
+  /* For external URLs with a recognized filename, also link as original filename */
+  const char *last_slash = strrchr(ctx.target_url, '/');
+  if (last_slash && strlen(last_slash + 1) > 0 && strncmp(ctx.target_url, "http://127.0.0.1", 16) != 0) {
+    char orig_fname[256];
+    strncpy(orig_fname, last_slash + 1, sizeof(orig_fname) - 1);
+    orig_fname[sizeof(orig_fname) - 1] = '\0';
+    char *q = strchr(orig_fname, '?');
+    if (q) *q = '\0';
+    if (strlen(orig_fname) > 0 && strcmp(orig_fname, "output_sync.bin") != 0 && strcmp(orig_fname, "output_unsync.bin") != 0) {
+      char link_dest[512];
+      snprintf(link_dest, sizeof(link_dest), "test_data/%s", orig_fname);
+      unlink(link_dest);
+      if (link(dest_file, link_dest) == 0) {
+        printf("Original File Link   : %s\n", link_dest);
+      }
+    }
+  }
   printf("=================================================================\n");
 
   stop_local_http_server(&ctx);

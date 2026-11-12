@@ -239,11 +239,28 @@ static void* engine_coordinator_thread(void *arg) {
     /* Post-transfer cryptographic audit */
     verify_file_integrity(ctx);
 
+    /* For external URLs, also expose original filename in test_data/ */
+    const char *last_slash = strrchr(ctx->target_url, '/');
+    if (last_slash && strlen(last_slash + 1) > 0 && strncmp(ctx->target_url, "http://127.0.0.1", 16) != 0) {
+        char orig_fname[256];
+        strncpy(orig_fname, last_slash + 1, sizeof(orig_fname) - 1);
+        orig_fname[sizeof(orig_fname) - 1] = '\0';
+        char *q = strchr(orig_fname, '?');
+        if (q) *q = '\0';
+        if (strlen(orig_fname) > 0 && strcmp(orig_fname, "output_sync.bin") != 0 && strcmp(orig_fname, "output_unsync.bin") != 0) {
+            char link_dest[512];
+            snprintf(link_dest, sizeof(link_dest), "test_data/%s", orig_fname);
+            unlink(link_dest);
+            if (link(out_file, link_dest) == 0) {
+                app_log(ctx, "ENGINE_MGR", "SAVED", "Saved with original name: %s", link_dest);
+            }
+        }
+    }
+
     ctx->state = STATE_COMPLETED;
     gui->worker_running = false;
 
-    app_log(ctx, "ENGINE_MGR", "COMPLETE", "Transfer pipeline concluded. Integrity verified: %s",
-            ctx->sha256_verified ? "YES" : "NO (CORRUPTED)");
+    app_log(ctx, "ENGINE_MGR", "COMPLETE", "Transfer pipeline concluded. File stored at: %s", out_file);
 
     return NULL;
 }
@@ -1161,6 +1178,7 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
 
     MAKE_TOPO_ROW("CHUNK SIZE", "64 KB (65,536 B)");
     MAKE_TOPO_ROW("BUFFER FOOTPRINT", "32 SLOTS (2.0 MB)");
+    MAKE_TOPO_ROW("STORAGE DIR", "test_data/");
     MAKE_TOPO_ROW("HASH ALGORITHM", "SHA-256 (EVP)");
 
     /* ---------------------------------------------------------------------
