@@ -242,7 +242,159 @@ static const char *WORKSTATION_CSS =
     "    background-color: #262622;\n"
     "    min-width: 1px;\n"
     "    min-height: 1px;\n"
+    "}\n"
+    "/* Left Navigation Sidebar (Industrial White/Slate) */\n"
+    ".nav-sidebar {\n"
+    "    background-color: #0E0F12;\n"
+    "    border-right: 1px solid #22252E;\n"
+    "    padding: 12px 10px;\n"
+    "}\n"
+    ".nav-brand-title {\n"
+    "    font-size: 13px;\n"
+    "    font-weight: 800;\n"
+    "    letter-spacing: 0.8px;\n"
+    "    color: #FFFFFF;\n"
+    "}\n"
+    ".nav-brand-subtitle {\n"
+    "    font-size: 10px;\n"
+    "    font-weight: 600;\n"
+    "    color: #717A8C;\n"
+    "    letter-spacing: 0.5px;\n"
+    "    margin-bottom: 8px;\n"
+    "}\n"
+    ".nav-section-label {\n"
+    "    font-size: 9.5px;\n"
+    "    font-weight: 700;\n"
+    "    color: #64748B;\n"
+    "    letter-spacing: 0.8px;\n"
+    "    margin-top: 8px;\n"
+    "    margin-bottom: 6px;\n"
+    "    padding-left: 4px;\n"
+    "}\n"
+    "button.nav-item {\n"
+    "    background-color: transparent;\n"
+    "    color: #94A3B8;\n"
+    "    border: 1px solid transparent;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 8px 10px;\n"
+    "    font-size: 12px;\n"
+    "    font-weight: 600;\n"
+    "}\n"
+    "button.nav-item:hover {\n"
+    "    background-color: #1A1D24;\n"
+    "    color: #FFFFFF;\n"
+    "    border: 1px solid #282C37;\n"
+    "}\n"
+    "button.nav-item-active {\n"
+    "    background-color: #1F2430;\n"
+    "    color: #FFFFFF;\n"
+    "    border: 1px solid #363E52;\n"
+    "    border-left: 3px solid #FFFFFF;\n"
+    "    font-weight: 700;\n"
+    "}\n"
+    ".nav-badge-count {\n"
+    "    background-color: #1E232F;\n"
+    "    color: #93C5FD;\n"
+    "    border: 1px solid #2B3448;\n"
+    "    border-radius: 10px;\n"
+    "    padding: 1px 7px;\n"
+    "    font-size: 10px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-weight: 700;\n"
+    "}\n"
+    ".nav-footer-box {\n"
+    "    background-color: #13151A;\n"
+    "    border: 1px solid #20242D;\n"
+    "    border-radius: 3px;\n"
+    "    padding: 8px;\n"
+    "    margin-top: 6px;\n"
+    "}\n"
+    ".nav-footer-text {\n"
+    "    font-size: 10px;\n"
+    "    color: #64748B;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    "/* Page 2: Download History Panel */\n"
+    ".history-page {\n"
+    "    background-color: #121316;\n"
+    "    padding: 16px 20px;\n"
+    "}\n"
+    ".history-header-title {\n"
+    "    font-size: 16px;\n"
+    "    font-weight: 800;\n"
+    "    letter-spacing: 0.5px;\n"
+    "    color: #FFFFFF;\n"
+    "}\n"
+    ".history-header-desc {\n"
+    "    font-size: 11.5px;\n"
+    "    color: #858997;\n"
+    "    margin-bottom: 12px;\n"
+    "}\n"
+    ".history-card-metric {\n"
+    "    background-color: #171920;\n"
+    "    border: 1px solid #262A36;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 10px 14px;\n"
+    "}\n"
+    ".history-metric-title {\n"
+    "    font-size: 10px;\n"
+    "    font-weight: 700;\n"
+    "    color: #7E8597;\n"
+    "    letter-spacing: 0.6px;\n"
+    "}\n"
+    ".history-metric-val {\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 20px;\n"
+    "    font-weight: 700;\n"
+    "    color: #FFFFFF;\n"
+    "}\n"
+    ".history-metric-val-ok {\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 20px;\n"
+    "    font-weight: 700;\n"
+    "    color: #4E9A67;\n"
+    "}\n"
+    ".history-metric-val-err {\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 20px;\n"
+    "    font-weight: 700;\n"
+    "    color: #C94A4A;\n"
+    "}\n"
+    "treeview.history-tree {\n"
+    "    background-color: #0E0F12;\n"
+    "    color: #D1D5DB;\n"
+    "    border: 1px solid #22252E;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "treeview.history-tree:selected {\n"
+    "    background-color: #242936;\n"
+    "    color: #FFFFFF;\n"
+    "}\n"
+    "treeview.history-tree header button {\n"
+    "    background-color: #171920;\n"
+    "    color: #9CA3AF;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 10.5px;\n"
+    "    border: 1px solid #22252E;\n"
+    "    padding: 6px;\n"
     "}\n";
+
+/* =========================================================================
+ * ASYNC IDLE HANDLER FOR HISTORY UPDATES
+ * ========================================================================= */
+typedef struct {
+    GuiDashboard *gui;
+    DownloadHistoryRecord rec;
+} HistoryIdleData;
+
+static gboolean on_history_idle_cb(gpointer user_data) {
+    HistoryIdleData *data = (HistoryIdleData *)user_data;
+    if (data && data->gui) {
+        gui_add_history_record(data->gui, &data->rec);
+    }
+    free(data);
+    return G_SOURCE_REMOVE;
+}
 
 /* =========================================================================
  * BACKGROUND ENGINE COORDINATOR THREAD
@@ -262,6 +414,27 @@ static void* engine_coordinator_thread(void *arg) {
         app_log(ctx, "ENGINE_MGR", "ERROR", "Could not initialize target storage container");
         ctx->state = STATE_ERROR;
         gui->worker_running = false;
+
+        /* Record failed download attempt in History */
+        HistoryIdleData *hid = (HistoryIdleData *)malloc(sizeof(HistoryIdleData));
+        if (hid) {
+            hid->gui = gui;
+            time_t now = time(NULL);
+            struct tm tm_buf;
+            localtime_r(&now, &tm_buf);
+            strftime(hid->rec.timestamp, sizeof(hid->rec.timestamp), "%H:%M:%S", &tm_buf);
+            snprintf(hid->rec.filename, sizeof(hid->rec.filename), "DOWNLOAD_FAILED");
+            snprintf(hid->rec.filepath, sizeof(hid->rec.filepath), "-");
+            snprintf(hid->rec.target_url, sizeof(hid->rec.target_url), "%s", ctx->target_url);
+            hid->rec.file_size = 0;
+            hid->rec.duration_sec = 0.0;
+            hid->rec.speed_mbps = 0.0;
+            hid->rec.sync_mode = ctx->sync_mode;
+            hid->rec.is_verified = false;
+            hid->rec.race_errors = 1;
+            snprintf(hid->rec.sha256, sizeof(hid->rec.sha256), "N/A - NETWORK ERROR");
+            g_idle_add(on_history_idle_cb, hid);
+        }
         return NULL;
     }
 
@@ -286,6 +459,9 @@ static void* engine_coordinator_thread(void *arg) {
     verify_file_integrity(ctx);
 
     /* For external URLs, also expose original filename in test_data/ */
+    char final_filepath[512];
+    snprintf(final_filepath, sizeof(final_filepath), "%s", out_file);
+
     const char *last_slash = strrchr(ctx->target_url, '/');
     if (last_slash && strlen(last_slash + 1) > 0 && strncmp(ctx->target_url, "http://127.0.0.1", 16) != 0) {
         char orig_fname[256];
@@ -299,6 +475,7 @@ static void* engine_coordinator_thread(void *arg) {
             unlink(link_dest);
             if (link(out_file, link_dest) == 0) {
                 app_log(ctx, "ENGINE_MGR", "SAVED", "Saved with original name: %s", link_dest);
+                snprintf(final_filepath, sizeof(final_filepath), "%s", link_dest);
             }
         }
     }
@@ -307,6 +484,35 @@ static void* engine_coordinator_thread(void *arg) {
     gui->worker_running = false;
 
     app_log(ctx, "ENGINE_MGR", "COMPLETE", "Transfer pipeline concluded. File stored at: %s", out_file);
+
+    /* Record completed transfer in Session History */
+    HistoryIdleData *hid = (HistoryIdleData *)malloc(sizeof(HistoryIdleData));
+    if (hid) {
+        hid->gui = gui;
+        time_t now = time(NULL);
+        struct tm tm_buf;
+        localtime_r(&now, &tm_buf);
+        strftime(hid->rec.timestamp, sizeof(hid->rec.timestamp), "%H:%M:%S", &tm_buf);
+
+        const char *slash = strrchr(final_filepath, '/');
+        const char *fname = slash ? slash + 1 : final_filepath;
+        snprintf(hid->rec.filename, sizeof(hid->rec.filename), "%.255s", fname);
+        snprintf(hid->rec.filepath, sizeof(hid->rec.filepath), "%.511s", final_filepath);
+        snprintf(hid->rec.target_url, sizeof(hid->rec.target_url), "%.511s", ctx->target_url);
+        hid->rec.file_size = ctx->total_file_size;
+
+        double elapsed = (ctx->end_time.tv_sec - ctx->start_time.tv_sec) +
+                         (ctx->end_time.tv_nsec - ctx->start_time.tv_nsec) / 1e9;
+        if (elapsed <= 0.001) elapsed = 0.001;
+        hid->rec.duration_sec = elapsed;
+        hid->rec.speed_mbps = (ctx->total_file_size / (1024.0 * 1024.0)) / elapsed;
+        hid->rec.sync_mode = ctx->sync_mode;
+        hid->rec.is_verified = (ctx->race_corrupted_blocks == 0 && ctx->sha256_verified);
+        hid->rec.race_errors = ctx->race_corrupted_blocks;
+        snprintf(hid->rec.sha256, sizeof(hid->rec.sha256), "%s", ctx->actual_sha256);
+
+        g_idle_add(on_history_idle_cb, hid);
+    }
 
     return NULL;
 }
@@ -1146,6 +1352,378 @@ void on_switch_sync_toggled(GtkSwitch *widget, gboolean state, gpointer user_dat
 }
 
 /* =========================================================================
+ * NAVIGATION & DOWNLOAD HISTORY CALLBACKS
+ * ========================================================================= */
+void on_nav_workspace_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    gtk_stack_set_visible_child_name(GTK_STACK(gui->main_stack), "workspace");
+
+    GtkStyleContext *sc_w = gtk_widget_get_style_context(gui->btn_nav_workspace);
+    GtkStyleContext *sc_h = gtk_widget_get_style_context(gui->btn_nav_history);
+    gtk_style_context_add_class(sc_w, "nav-item-active");
+    gtk_style_context_remove_class(sc_h, "nav-item-active");
+}
+
+void on_nav_history_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    gtk_stack_set_visible_child_name(GTK_STACK(gui->main_stack), "history");
+
+    GtkStyleContext *sc_w = gtk_widget_get_style_context(gui->btn_nav_workspace);
+    GtkStyleContext *sc_h = gtk_widget_get_style_context(gui->btn_nav_history);
+    gtk_style_context_remove_class(sc_w, "nav-item-active");
+    gtk_style_context_add_class(sc_h, "nav-item-active");
+}
+
+void on_btn_open_storage_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    (void)user_data;
+    mkdir("test_data", 0755);
+    int ret = system("xdg-open test_data/ >/dev/null 2>&1 &");
+    (void)ret;
+}
+
+void on_btn_clear_history_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    if (gui->history_store) {
+        gtk_list_store_clear(gui->history_store);
+    }
+    gui->history_count = 0;
+    if (gui->lbl_hist_total) gtk_label_set_text(GTK_LABEL(gui->lbl_hist_total), "0");
+    if (gui->lbl_hist_verified) gtk_label_set_text(GTK_LABEL(gui->lbl_hist_verified), "0");
+    if (gui->lbl_hist_corrupted) gtk_label_set_text(GTK_LABEL(gui->lbl_hist_corrupted), "0");
+    if (gui->lbl_hist_volume) gtk_label_set_text(GTK_LABEL(gui->lbl_hist_volume), "0.00 MB");
+    if (gui->lbl_nav_hist_badge) gtk_label_set_text(GTK_LABEL(gui->lbl_nav_hist_badge), "0");
+    app_log(gui->ctx, "HISTORY", "CLEAR", "Download session history wiped.");
+}
+
+void on_btn_copy_sha_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    if (!gui || !gui->tree_history) return;
+
+    GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gui->tree_history));
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+    if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
+        gchar *sha = NULL;
+        gtk_tree_model_get(model, &iter, 5, &sha, -1);
+        if (sha) {
+            GtkClipboard *cb = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+            gtk_clipboard_set_text(cb, sha, -1);
+            app_log(gui->ctx, "HISTORY", "CLIPBOARD", "Copied SHA-256 to clipboard: %s", sha);
+            g_free(sha);
+        }
+    }
+}
+
+static void on_tree_history_row_activated(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer user_data) {
+    (void)tree_view;
+    (void)path;
+    (void)column;
+    on_btn_open_storage_clicked(NULL, user_data);
+}
+
+void gui_add_history_record(GuiDashboard *gui, const DownloadHistoryRecord *rec) {
+    if (!gui || !rec) return;
+
+    if (gui->history_count < MAX_HISTORY_RECORDS) {
+        gui->history_items[gui->history_count] = *rec;
+        gui->history_count++;
+    }
+
+    char size_buf[32];
+    if (rec->file_size >= 1024 * 1024) {
+        snprintf(size_buf, sizeof(size_buf), "%.2f MB", rec->file_size / (1024.0 * 1024.0));
+    } else if (rec->file_size >= 1024) {
+        snprintf(size_buf, sizeof(size_buf), "%.1f KB", rec->file_size / 1024.0);
+    } else {
+        snprintf(size_buf, sizeof(size_buf), "%zu B", rec->file_size);
+    }
+
+    char mode_buf[32];
+    snprintf(mode_buf, sizeof(mode_buf), "%s", 
+             (rec->sync_mode == SYNC_MODE_SYNCHRONIZED) ? "SYNC (MUTEX)" : "UNSYNC (RACE)");
+
+    char status_buf[48];
+    if (rec->file_size == 0 || strcmp(rec->filename, "DOWNLOAD_FAILED") == 0) {
+        snprintf(status_buf, sizeof(status_buf), "⚠ NETWORK ERROR");
+    } else if (rec->is_verified && rec->race_errors == 0) {
+        snprintf(status_buf, sizeof(status_buf), "✔ VERIFIED [OK]");
+    } else {
+        snprintf(status_buf, sizeof(status_buf), "✖ RACE CORRUPTED (%lu)", (unsigned long)rec->race_errors);
+    }
+
+    char speed_buf[48];
+    snprintf(speed_buf, sizeof(speed_buf), "%.2fs (%.2f MB/s)", rec->duration_sec, rec->speed_mbps);
+
+    if (gui->history_store) {
+        GtkTreeIter iter;
+        gtk_list_store_prepend(gui->history_store, &iter);
+        gtk_list_store_set(gui->history_store, &iter,
+                           0, rec->timestamp,
+                           1, rec->filename,
+                           2, size_buf,
+                           3, mode_buf,
+                           4, status_buf,
+                           5, rec->sha256,
+                           6, speed_buf,
+                           -1);
+    }
+
+    /* Recalculate summary metrics */
+    int total = gui->history_count;
+    int verified = 0;
+    int corrupted = 0;
+    size_t total_bytes = 0;
+
+    for (int i = 0; i < gui->history_count; i++) {
+        if (gui->history_items[i].is_verified && gui->history_items[i].race_errors == 0 && gui->history_items[i].file_size > 0) {
+            verified++;
+        } else {
+            corrupted++;
+        }
+        total_bytes += gui->history_items[i].file_size;
+    }
+
+    char buf[64];
+    snprintf(buf, sizeof(buf), "%d", total);
+    if (gui->lbl_hist_total) gtk_label_set_text(GTK_LABEL(gui->lbl_hist_total), buf);
+    if (gui->lbl_nav_hist_badge) gtk_label_set_text(GTK_LABEL(gui->lbl_nav_hist_badge), buf);
+
+    snprintf(buf, sizeof(buf), "%d", verified);
+    if (gui->lbl_hist_verified) gtk_label_set_text(GTK_LABEL(gui->lbl_hist_verified), buf);
+
+    snprintf(buf, sizeof(buf), "%d", corrupted);
+    if (gui->lbl_hist_corrupted) gtk_label_set_text(GTK_LABEL(gui->lbl_hist_corrupted), buf);
+
+    snprintf(buf, sizeof(buf), "%.2f MB", total_bytes / (1024.0 * 1024.0));
+    if (gui->lbl_hist_volume) gtk_label_set_text(GTK_LABEL(gui->lbl_hist_volume), buf);
+}
+
+/* =========================================================================
+ * NAVIGATION SIDEBAR CONSTRUCTOR (PAGE SWITCHER)
+ * ========================================================================= */
+static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
+    GtkWidget *sidebar = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_widget_set_size_request(sidebar, 215, -1);
+    gtk_style_context_add_class(gtk_widget_get_style_context(sidebar), "nav-sidebar");
+
+    /* App Header / Brand */
+    GtkWidget *brand_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    gtk_box_pack_start(GTK_BOX(sidebar), brand_box, FALSE, FALSE, 4);
+
+    GtkWidget *lbl_brand = gtk_label_new("CONCURRENCY LAB");
+    gtk_widget_set_halign(lbl_brand, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_brand), "nav-brand-title");
+    gtk_box_pack_start(GTK_BOX(brand_box), lbl_brand, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_sub = gtk_label_new("POSIX THREADS v2.0");
+    gtk_widget_set_halign(lbl_sub, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sub), "nav-brand-subtitle");
+    gtk_box_pack_start(GTK_BOX(brand_box), lbl_sub, FALSE, FALSE, 0);
+
+    /* Separator */
+    GtkWidget *sep_top = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_box_pack_start(GTK_BOX(sidebar), sep_top, FALSE, FALSE, 6);
+
+    /* Section label */
+    GtkWidget *lbl_sec = gtk_label_new("WORKSPACES");
+    gtk_widget_set_halign(lbl_sec, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sec), "nav-section-label");
+    gtk_box_pack_start(GTK_BOX(sidebar), lbl_sec, FALSE, FALSE, 2);
+
+    /* Menu Item 1: TRANSFER ENGINE (Active by default) */
+    gui->btn_nav_workspace = gtk_button_new();
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_nav_workspace), "nav-item");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_nav_workspace), "nav-item-active");
+
+    GtkWidget *box_item1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    GtkWidget *icon1 = gtk_label_new("⚡");
+    GtkWidget *lbl_item1 = gtk_label_new("Transfer Engine");
+    gtk_box_pack_start(GTK_BOX(box_item1), icon1, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box_item1), lbl_item1, FALSE, FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(gui->btn_nav_workspace), box_item1);
+    g_signal_connect(gui->btn_nav_workspace, "clicked", G_CALLBACK(on_nav_workspace_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_nav_workspace, FALSE, FALSE, 3);
+
+    /* Menu Item 2: DOWNLOAD HISTORY */
+    gui->btn_nav_history = gtk_button_new();
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_nav_history), "nav-item");
+
+    GtkWidget *box_item2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    GtkWidget *icon2 = gtk_label_new("📋");
+    GtkWidget *lbl_item2 = gtk_label_new("Download History");
+    gtk_box_pack_start(GTK_BOX(box_item2), icon2, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box_item2), lbl_item2, TRUE, TRUE, 0);
+
+    gui->lbl_nav_hist_badge = gtk_label_new("0");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_nav_hist_badge), "nav-badge-count");
+    gtk_box_pack_end(GTK_BOX(box_item2), gui->lbl_nav_hist_badge, FALSE, FALSE, 0);
+    gtk_container_add(GTK_CONTAINER(gui->btn_nav_history), box_item2);
+    g_signal_connect(gui->btn_nav_history, "clicked", G_CALLBACK(on_nav_history_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_nav_history, FALSE, FALSE, 3);
+
+    /* Vertical Spacer to push quick actions to bottom */
+    GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_box_pack_start(GTK_BOX(sidebar), spacer, TRUE, TRUE, 0);
+
+    /* Bottom Quick Action: Open test_data/ Storage Folder */
+    GtkWidget *btn_open_storage = gtk_button_new_with_label("📁 Mở thư mục tải về");
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn_open_storage), "btn-secondary");
+    g_signal_connect(btn_open_storage, "clicked", G_CALLBACK(on_btn_open_storage_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(sidebar), btn_open_storage, FALSE, FALSE, 4);
+
+    /* Footer info */
+    GtkWidget *footer_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    gtk_style_context_add_class(gtk_widget_get_style_context(footer_box), "nav-footer-box");
+    gtk_box_pack_start(GTK_BOX(sidebar), footer_box, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_f1 = gtk_label_new("TARGET: test_data/");
+    gtk_widget_set_halign(lbl_f1, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_f1), "nav-footer-text");
+    gtk_box_pack_start(GTK_BOX(footer_box), lbl_f1, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_f2 = gtk_label_new("POSIX ARCH: Linux 64-bit");
+    gtk_widget_set_halign(lbl_f2, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_f2), "nav-footer-text");
+    gtk_box_pack_start(GTK_BOX(footer_box), lbl_f2, FALSE, FALSE, 0);
+
+    return sidebar;
+}
+
+/* =========================================================================
+ * PAGE 2: DOWNLOAD HISTORY & INTEGRITY AUDIT VIEW
+ * ========================================================================= */
+static GtkWidget* create_history_page(GuiDashboard *gui) {
+    GtkWidget *hist_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 12);
+    gtk_style_context_add_class(gtk_widget_get_style_context(hist_box), "history-page");
+
+    /* Header */
+    GtkWidget *header_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    gtk_box_pack_start(GTK_BOX(hist_box), header_box, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_title = gtk_label_new("DOWNLOAD SESSION HISTORY & INTEGRITY AUDIT");
+    gtk_widget_set_halign(lbl_title, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_title), "history-header-title");
+    gtk_box_pack_start(GTK_BOX(header_box), lbl_title, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_desc = gtk_label_new("Log of multi-threaded transfers, SHA-256 cryptographic verification, and Race Condition audit records.");
+    gtk_widget_set_halign(lbl_desc, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_desc), "history-header-desc");
+    gtk_box_pack_start(GTK_BOX(header_box), lbl_desc, FALSE, FALSE, 0);
+
+    /* Metric Cards Grid */
+    GtkWidget *metrics_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
+    gtk_box_pack_start(GTK_BOX(hist_box), metrics_box, FALSE, FALSE, 0);
+
+    #define MAKE_HIST_CARD(parent, title_text, val_widget, val_class) do { \
+        GtkWidget *card = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(card), "history-card-metric"); \
+        GtkWidget *t = gtk_label_new(title_text); \
+        gtk_widget_set_halign(t, GTK_ALIGN_START); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(t), "history-metric-title"); \
+        gtk_box_pack_start(GTK_BOX(card), t, FALSE, FALSE, 0); \
+        gtk_widget_set_halign(val_widget, GTK_ALIGN_START); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(val_widget), val_class); \
+        gtk_box_pack_start(GTK_BOX(card), val_widget, FALSE, FALSE, 0); \
+        gtk_box_pack_start(GTK_BOX(parent), card, TRUE, TRUE, 0); \
+    } while(0)
+
+    gui->lbl_hist_total = gtk_label_new("0");
+    MAKE_HIST_CARD(metrics_box, "TOTAL SESSIONS", gui->lbl_hist_total, "history-metric-val");
+
+    gui->lbl_hist_verified = gtk_label_new("0");
+    MAKE_HIST_CARD(metrics_box, "VERIFIED SAFE (SHA-256)", gui->lbl_hist_verified, "history-metric-val-ok");
+
+    gui->lbl_hist_corrupted = gtk_label_new("0");
+    MAKE_HIST_CARD(metrics_box, "RACE CORRUPTED / FAILED", gui->lbl_hist_corrupted, "history-metric-val-err");
+
+    gui->lbl_hist_volume = gtk_label_new("0.00 MB");
+    MAKE_HIST_CARD(metrics_box, "TOTAL VOLUME DOWNLOADED", gui->lbl_hist_volume, "history-metric-val");
+
+    /* Action Toolbar for History */
+    GtkWidget *act_bar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    gtk_box_pack_start(GTK_BOX(hist_box), act_bar, FALSE, FALSE, 0);
+
+    GtkWidget *btn_open_storage = gtk_button_new_with_label("📁 Mở thư mục tải về (test_data/)");
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn_open_storage), "btn-steel");
+    g_signal_connect(btn_open_storage, "clicked", G_CALLBACK(on_btn_open_storage_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(act_bar), btn_open_storage, FALSE, FALSE, 0);
+
+    GtkWidget *btn_copy_sha = gtk_button_new_with_label("📋 Sao chép mã SHA-256");
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn_copy_sha), "btn-secondary");
+    g_signal_connect(btn_copy_sha, "clicked", G_CALLBACK(on_btn_copy_sha_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(act_bar), btn_copy_sha, FALSE, FALSE, 0);
+
+    GtkWidget *btn_clear = gtk_button_new_with_label("🗑 Xóa lịch sử");
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn_clear), "btn-secondary");
+    g_signal_connect(btn_clear, "clicked", G_CALLBACK(on_btn_clear_history_clicked), gui);
+    gtk_box_pack_end(GTK_BOX(act_bar), btn_clear, FALSE, FALSE, 0);
+
+    /* Scrolled TreeView Table */
+    GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    gtk_box_pack_start(GTK_BOX(hist_box), scrolled, TRUE, TRUE, 0);
+
+    gui->history_store = gtk_list_store_new(7, 
+                                            G_TYPE_STRING, /* 0: Timestamp */
+                                            G_TYPE_STRING, /* 1: Filename */
+                                            G_TYPE_STRING, /* 2: Size */
+                                            G_TYPE_STRING, /* 3: Mode */
+                                            G_TYPE_STRING, /* 4: Status */
+                                            G_TYPE_STRING, /* 5: SHA-256 */
+                                            G_TYPE_STRING  /* 6: Speed & Time */
+                                            );
+    gui->tree_history = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gui->history_store));
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->tree_history), "history-tree");
+    gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gui->tree_history), TRUE);
+    g_signal_connect(gui->tree_history, "row-activated", G_CALLBACK(on_tree_history_row_activated), gui);
+
+    GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
+    GtkTreeViewColumn *col;
+
+    col = gtk_tree_view_column_new_with_attributes("THỜI GIAN", renderer, "text", 0, NULL);
+    gtk_tree_view_column_set_resizable(col, TRUE);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(gui->tree_history), col);
+
+    col = gtk_tree_view_column_new_with_attributes("TÊN TỆP TIN", renderer, "text", 1, NULL);
+    gtk_tree_view_column_set_resizable(col, TRUE);
+    gtk_tree_view_column_set_min_width(col, 200);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(gui->tree_history), col);
+
+    col = gtk_tree_view_column_new_with_attributes("DUNG LƯỢNG", renderer, "text", 2, NULL);
+    gtk_tree_view_column_set_resizable(col, TRUE);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(gui->tree_history), col);
+
+    col = gtk_tree_view_column_new_with_attributes("CHẾ ĐỘ", renderer, "text", 3, NULL);
+    gtk_tree_view_column_set_resizable(col, TRUE);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(gui->tree_history), col);
+
+    col = gtk_tree_view_column_new_with_attributes("TRẠNG THÁI KIỂM TOÁN", renderer, "text", 4, NULL);
+    gtk_tree_view_column_set_resizable(col, TRUE);
+    gtk_tree_view_column_set_min_width(col, 160);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(gui->tree_history), col);
+
+    GtkCellRenderer *sha_renderer = gtk_cell_renderer_text_new();
+    g_object_set(sha_renderer, "family", "monospace", NULL);
+    col = gtk_tree_view_column_new_with_attributes("MÃ SHA-256 THỰC TẾ", sha_renderer, "text", 5, NULL);
+    gtk_tree_view_column_set_resizable(col, TRUE);
+    gtk_tree_view_column_set_min_width(col, 280);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(gui->tree_history), col);
+
+    col = gtk_tree_view_column_new_with_attributes("TỐC ĐỘ / THỜI GIAN", renderer, "text", 6, NULL);
+    gtk_tree_view_column_set_resizable(col, TRUE);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(gui->tree_history), col);
+
+    gtk_container_add(GTK_CONTAINER(scrolled), gui->tree_history);
+
+    return hist_box;
+}
+
+/* =========================================================================
  * DASHBOARD INITIALIZATION & WIDGET TREE CONSTRUCTION
  * ========================================================================= */
 int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **argv) {
@@ -1165,24 +1743,40 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
                                               GTK_STYLE_PROVIDER(css_provider),
                                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-    /* Main Window: 1240 x 780 */
+    /* Main Window: 1300 x 820 */
     gui->main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(gui->main_window),
                          "SYSTEM PROGRAMMING WORKSTATION // MULTI-THREADED DOWNLOAD MANAGER & CONCURRENCY LAB");
-    gtk_window_set_default_size(GTK_WINDOW(gui->main_window), 1240, 780);
+    gtk_window_set_default_size(GTK_WINDOW(gui->main_window), 1300, 820);
     gtk_window_set_position(GTK_WINDOW(gui->main_window), GTK_WIN_POS_CENTER);
     g_signal_connect(gui->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    /* Root Vertical Layout */
-    GtkWidget *root_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_container_add(GTK_CONTAINER(gui->main_window), root_box);
+    /* Root Horizontal Box: Sidebar on left, Stack on right */
+    GtkWidget *root_h_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_container_add(GTK_CONTAINER(gui->main_window), root_h_box);
+
+    /* 1. Left Navigation Sidebar */
+    GtkWidget *nav_sidebar = create_navigation_sidebar(gui);
+    gtk_box_pack_start(GTK_BOX(root_h_box), nav_sidebar, FALSE, FALSE, 0);
+
+    /* 2. Main Stack Container */
+    gui->main_stack = gtk_stack_new();
+    gtk_stack_set_transition_type(GTK_STACK(gui->main_stack), GTK_STACK_TRANSITION_TYPE_CROSSFADE);
+    gtk_stack_set_transition_duration(GTK_STACK(gui->main_stack), 150);
+    gtk_box_pack_start(GTK_BOX(root_h_box), gui->main_stack, TRUE, TRUE, 0);
+
+    /* =====================================================================
+     * PAGE 1: TRANSFER ENGINE WORKSPACE
+     * ===================================================================== */
+    gui->page_workspace = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+    gtk_stack_add_named(GTK_STACK(gui->main_stack), gui->page_workspace, "workspace");
 
     /* =====================================================================
      * 1. TOP TOOLBAR (FLAT HIGH-DENSITY WORKSTATION HEADER)
      * ===================================================================== */
     GtkWidget *toolbar_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
     gtk_style_context_add_class(gtk_widget_get_style_context(toolbar_box), "top-toolbar");
-    gtk_box_pack_start(GTK_BOX(root_box), toolbar_box, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(gui->page_workspace), toolbar_box, FALSE, FALSE, 0);
 
     /* URL Entry */
     GtkWidget *lbl_url = gtk_label_new("TARGET URL:");
@@ -1265,7 +1859,7 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
      * 2. MAIN HORIZONTAL SPLIT: SIDEBAR (LEFT) + WORKSPACE (RIGHT)
      * ===================================================================== */
     GtkWidget *body_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-    gtk_box_pack_start(GTK_BOX(root_box), body_box, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(gui->page_workspace), body_box, TRUE, TRUE, 0);
 
     /* ---------------------------------------------------------------------
      * LEFT SIDEBAR: SYSTEM TELEMETRY & SPARKLINE GRAPH (WIDTH: 270px)
@@ -1417,7 +2011,7 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
      * ===================================================================== */
     GtkWidget *bot_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
     gtk_style_context_add_class(gtk_widget_get_style_context(bot_panel), "bottom-panel");
-    gtk_box_pack_start(GTK_BOX(root_box), bot_panel, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(gui->page_workspace), bot_panel, FALSE, FALSE, 0);
 
     /* Checksum Audit Row */
     GtkWidget *sha_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
@@ -1471,6 +2065,15 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
         "foreground", "#E05353", "weight", PANGO_WEIGHT_BOLD, NULL);
     gui->tag_action_sys = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_sys",
         "foreground", "#A0A09A", NULL);
+
+    /* =====================================================================
+     * PAGE 2: DOWNLOAD HISTORY & AUDIT VIEW
+     * ===================================================================== */
+    gui->page_history = create_history_page(gui);
+    gtk_stack_add_named(GTK_STACK(gui->main_stack), gui->page_history, "history");
+
+    /* Default to Transfer Engine Workspace page */
+    gtk_stack_set_visible_child_name(GTK_STACK(gui->main_stack), "workspace");
 
     /* Initial Announcement */
     app_log(ctx, "SYS_INIT", "WORKSTATION", "Native GTK3 Concurrency Workstation initialized. System ready.");
