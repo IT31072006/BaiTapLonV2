@@ -124,6 +124,26 @@ static const char *WORKSTATION_CSS =
     "    border: 1px solid #4A88C7;\n"
     "    font-weight: 700;\n"
     "}\n"
+    "button.btn-auto-on {\n"
+    "    background-color: #162E44;\n"
+    "    color: #5AA9E6;\n"
+    "    border: 1px solid #2B5B84;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    border-radius: 3px;\n"
+    "    padding: 4px 10px;\n"
+    "}\n"
+    "button.btn-auto-off {\n"
+    "    background-color: #1F1F1D;\n"
+    "    color: #85857F;\n"
+    "    border: 1px solid #30302B;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    border-radius: 3px;\n"
+    "    padding: 4px 10px;\n"
+    "}\n"
     ".badge-dataset {\n"
     "    background-color: #121E2B;\n"
     "    color: #4A88C7;\n"
@@ -870,18 +890,92 @@ gboolean on_gui_telemetry_tick(gpointer user_data) {
 }
 
 /* =========================================================================
+ * ADAPTIVE CONCURRENCY TUNER (AUTO-OPTIMIZATION ENGINE)
+ * ========================================================================= */
+void auto_optimize_concurrency(GuiDashboard *gui) {
+    if (!gui || !gui->auto_tune_enabled) return;
+    AppContext *ctx = gui->ctx;
+
+    bool is_local = (strncmp(ctx->target_url, "http://127.0.0.1", 16) == 0);
+    int optimal_p = 4;
+    int optimal_c = 2;
+
+    if (is_local) {
+        /* Local loopback: virtually 0 latency, high-bandwidth I/O */
+        if (ctx->total_file_size <= 4 * 1024 * 1024) {
+            optimal_p = 2; optimal_c = 1;
+        } else if (ctx->total_file_size <= 16 * 1024 * 1024) {
+            optimal_p = 4; optimal_c = 2;
+        } else {
+            optimal_p = 6; optimal_c = 2;
+        }
+    } else {
+        /* Live Internet: Bandwidth-Delay Product (BDP) & Latency adaptive tuning */
+        double size_mb = (double)ctx->total_file_size / (1024.0 * 1024.0);
+        double rtt = (ctx->probe_rtt_ms > 0.0) ? ctx->probe_rtt_ms : 50.0;
+
+        if (size_mb < 2.0) {
+            optimal_p = (rtt > 80.0) ? 3 : 2;
+            optimal_c = 1;
+        } else if (size_mb < 15.0) {
+            optimal_p = (rtt > 100.0) ? 6 : 4;
+            optimal_c = 2;
+        } else {
+            optimal_p = (rtt > 60.0) ? 8 : 6;
+            optimal_c = (size_mb > 50.0) ? 3 : 2;
+        }
+    }
+
+    if (optimal_p > MAX_PRODUCER_THREADS) optimal_p = MAX_PRODUCER_THREADS;
+    if (optimal_p < 1) optimal_p = 1;
+    if (optimal_c > MAX_CONSUMER_THREADS) optimal_c = MAX_CONSUMER_THREADS;
+    if (optimal_c < 1) optimal_c = 1;
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spin_producers), optimal_p);
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spin_consumers), optimal_c);
+    ctx->num_producers = optimal_p;
+    ctx->num_consumers = optimal_c;
+
+    app_log(ctx, "AUTO_TUNE", "CONFIG",
+            "Target: %s (%.2f MB, RTT=%.1fms) -> Auto-optimized: %d Producers, %d Consumers",
+            is_local ? "Local" : "Remote",
+            (double)ctx->total_file_size / (1024.0 * 1024.0),
+            ctx->probe_rtt_ms, optimal_p, optimal_c);
+}
+
+void on_btn_auto_tune_toggled(GtkToggleButton *button, gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    gui->auto_tune_enabled = gtk_toggle_button_get_active(button);
+    gui->ctx->auto_tune_enabled = gui->auto_tune_enabled;
+
+    GtkStyleContext *sc = gtk_widget_get_style_context(GTK_WIDGET(button));
+    if (gui->auto_tune_enabled) {
+        gtk_button_set_label(GTK_BUTTON(button), "[AUTO-TUNE: ON]");
+        gtk_style_context_remove_class(sc, "btn-auto-off");
+        gtk_style_context_add_class(sc, "btn-auto-on");
+        app_log(gui->ctx, "UI_ACTION", "CONFIG", "Adaptive Concurrency Tuner: ENABLED");
+        if (gui->ctx->total_file_size > 0) {
+            auto_optimize_concurrency(gui);
+        }
+    } else {
+        gtk_button_set_label(GTK_BUTTON(button), "[AUTO-TUNE: OFF]");
+        gtk_style_context_remove_class(sc, "btn-auto-on");
+        gtk_style_context_add_class(sc, "btn-auto-off");
+        app_log(gui->ctx, "UI_ACTION", "CONFIG", "Adaptive Concurrency Tuner: DISABLED (Manual)");
+    }
+}
+
+/* =========================================================================
  * SIGNAL HANDLERS & TARGET SOURCE TELEMETRY
  * ========================================================================= */
 static void update_target_source_ui(GuiDashboard *gui) {
     if (!gui || !gui->entry_url || !gui->lbl_source_badge) return;
 
     const char *text = gtk_entry_get_text(GTK_ENTRY(gui->entry_url));
-    GtkStyleContext *b16_sc = gtk_widget_get_style_context(gui->btn_gen_16mb);
-    GtkStyleContext *b32_sc = gtk_widget_get_style_context(gui->btn_gen_32mb);
+    GtkStyleContext *b_test_sc = gtk_widget_get_style_context(gui->btn_test_offline);
     GtkStyleContext *badge_sc = gtk_widget_get_style_context(gui->lbl_source_badge);
 
-    gtk_style_context_remove_class(b16_sc, "btn-active");
-    gtk_style_context_remove_class(b32_sc, "btn-active");
+    gtk_style_context_remove_class(b_test_sc, "btn-active");
     gtk_style_context_remove_class(badge_sc, "badge-dataset");
     gtk_style_context_remove_class(badge_sc, "badge-dataset-net");
     gtk_style_context_remove_class(badge_sc, "badge-idle");
@@ -890,16 +984,11 @@ static void update_target_source_ui(GuiDashboard *gui) {
         gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: EMPTY ]");
         gtk_style_context_add_class(badge_sc, "badge-idle");
         if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "NOT SELECTED");
-    } else if (strstr(text, "benchmark_16mb.bin")) {
-        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: 16 MB LOCAL ]");
+    } else if (strstr(text, "benchmark_16mb.bin") || strstr(text, "127.0.0.1")) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: OFFLINE DEMO ]");
         gtk_style_context_add_class(badge_sc, "badge-dataset");
-        gtk_style_context_add_class(b16_sc, "btn-active");
-        if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "LOCAL 16 MB");
-    } else if (strstr(text, "benchmark_32mb.bin")) {
-        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: 32 MB LOCAL ]");
-        gtk_style_context_add_class(badge_sc, "badge-dataset");
-        gtk_style_context_add_class(b32_sc, "btn-active");
-        if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "LOCAL 32 MB");
+        gtk_style_context_add_class(b_test_sc, "btn-active");
+        if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "OFFLINE 16 MB");
     } else {
         gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: INTERNET URL ]");
         gtk_style_context_add_class(badge_sc, "badge-dataset-net");
@@ -926,7 +1015,7 @@ void on_btn_start_clicked(GtkButton *button, gpointer user_data) {
 
     const char *url = gtk_entry_get_text(GTK_ENTRY(gui->entry_url));
     if (strlen(url) == 0) {
-        app_log(ctx, "UI_ACTION", "WARN", "Target URL is empty. Please select [GEN 16MB], [GEN 32MB] or paste an external URL.");
+        app_log(ctx, "UI_ACTION", "WARN", "Target URL is empty. Please click [TEST OFFLINE] or paste an external URL.");
         return;
     } else {
         strncpy(ctx->target_url, url, sizeof(ctx->target_url) - 1);
@@ -936,20 +1025,26 @@ void on_btn_start_clicked(GtkButton *button, gpointer user_data) {
         }
     }
 
-    if (strstr(ctx->target_url, "benchmark_16mb.bin")) {
-        app_log(ctx, "UI_ACTION", "START", "Target: LOCAL 16 MB SYNTHETIC DATASET (256 chunks)");
-    } else if (strstr(ctx->target_url, "benchmark_32mb.bin")) {
-        app_log(ctx, "UI_ACTION", "START", "Target: LOCAL 32 MB SYNTHETIC DATASET (512 chunks)");
-    } else {
-        app_log(ctx, "UI_ACTION", "START", "Target: EXTERNAL INTERNET URL (%s)", ctx->target_url);
-    }
-
-    ctx->num_producers = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spin_producers));
-    ctx->num_consumers = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spin_consumers));
-
     if (probe_remote_target(ctx, ctx->target_url) != 0) {
         app_log(ctx, "UI_ACTION", "ERROR", "Probe of target URL '%s' failed", ctx->target_url);
         return;
+    }
+
+    /* Auto-concurrency optimization or read manual spin settings */
+    if (gui->auto_tune_enabled) {
+        auto_optimize_concurrency(gui);
+    } else {
+        ctx->num_producers = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spin_producers));
+        ctx->num_consumers = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spin_consumers));
+    }
+
+    if (strstr(ctx->target_url, "benchmark_16mb.bin") || strstr(ctx->target_url, "127.0.0.1")) {
+        app_log(ctx, "UI_ACTION", "START", "Target: OFFLINE SYNTHETIC DATASET (16 MB, %d chunks, %dP/%dC)",
+                ctx->total_chunks, ctx->num_producers, ctx->num_consumers);
+    } else {
+        app_log(ctx, "UI_ACTION", "START", "Target: LIVE INTERNET URL (%.2f MB, %d chunks, %dP/%dC)",
+                (double)ctx->total_file_size / (1024.0 * 1024.0), ctx->total_chunks,
+                ctx->num_producers, ctx->num_consumers);
     }
 
     gui->worker_running = true;
@@ -1000,16 +1095,16 @@ void on_btn_reset_clicked(GtkButton *button, gpointer user_data) {
     app_log(ctx, "UI_ACTION", "RESET", "Workspace reset to initial clean state");
 }
 
-void on_btn_gen_file_clicked(GtkButton *button, gpointer user_data) {
+void on_btn_test_offline_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
     GuiDashboard *gui = (GuiDashboard *)user_data;
     AppContext *ctx = gui->ctx;
 
-    bool is_32mb = (button == GTK_BUTTON(gui->btn_gen_32mb));
-    size_t size = is_32mb ? (32 * 1024 * 1024) : (16 * 1024 * 1024);
-    const char *path = is_32mb ? "test_data/benchmark_32mb.bin" : "test_data/benchmark_16mb.bin";
+    size_t size = 16 * 1024 * 1024;
+    const char *path = "test_data/benchmark_16mb.bin";
 
     mkdir("test_data", 0755);
-    app_log(ctx, "UI_ACTION", "GENERATE", "Generating %s synthetic binary dataset...", is_32mb ? "32 MB" : "16 MB");
+    app_log(ctx, "UI_ACTION", "GENERATE", "Preparing 16 MB offline benchmark dataset...");
 
     if (generate_benchmark_file(path, size, ctx->expected_sha256) != 0) {
         app_log(ctx, "UI_ACTION", "ERROR", "Failed to generate benchmark dataset");
@@ -1022,6 +1117,10 @@ void on_btn_gen_file_clicked(GtkButton *button, gpointer user_data) {
     gtk_entry_set_text(GTK_ENTRY(gui->entry_url), ctx->target_url);
     gtk_label_set_text(GTK_LABEL(gui->lbl_expected_sha), ctx->expected_sha256);
     update_target_source_ui(gui);
+
+    if (gui->auto_tune_enabled) {
+        auto_optimize_concurrency(gui);
+    }
 }
 
 void on_switch_sync_toggled(GtkSwitch *widget, gboolean state, gpointer user_data) {
@@ -1054,6 +1153,7 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
 
     gui->ctx = ctx;
     gui->worker_running = false;
+    gui->auto_tune_enabled = true;
     gui->last_rendered_log_count = 0;
     gui->max_speed_recorded = 0.0;
     memset(gui->speed_history, 0, sizeof(gui->speed_history));
@@ -1090,8 +1190,8 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     gtk_box_pack_start(GTK_BOX(toolbar_box), lbl_url, FALSE, FALSE, 0);
 
     gui->entry_url = gtk_entry_new();
-    gtk_widget_set_size_request(gui->entry_url, 310, 28);
-    gtk_entry_set_placeholder_text(GTK_ENTRY(gui->entry_url), "http://127.0.0.1:<port>/benchmark.bin");
+    gtk_widget_set_size_request(gui->entry_url, 360, 28);
+    gtk_entry_set_placeholder_text(GTK_ENTRY(gui->entry_url), "Paste URL (e.g. https://... or click [TEST OFFLINE])");
     gtk_box_pack_start(GTK_BOX(toolbar_box), gui->entry_url, TRUE, TRUE, 0);
 
     gui->lbl_source_badge = gtk_label_new("[ TARGET: EMPTY ]");
@@ -1100,20 +1200,22 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
 
     g_signal_connect(gui->entry_url, "changed", G_CALLBACK(on_entry_url_changed), gui);
 
-    /* Benchmark File Buttons */
-    gui->btn_gen_16mb = gtk_button_new_with_label("[GEN 16MB]");
-    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_gen_16mb), "btn-secondary");
-    g_signal_connect(gui->btn_gen_16mb, "clicked", G_CALLBACK(on_btn_gen_file_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_gen_16mb, FALSE, FALSE, 0);
-
-    gui->btn_gen_32mb = gtk_button_new_with_label("[GEN 32MB]");
-    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_gen_32mb), "btn-steel");
-    g_signal_connect(gui->btn_gen_32mb, "clicked", G_CALLBACK(on_btn_gen_file_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_gen_32mb, FALSE, FALSE, 0);
+    /* Single Consolidated Offline Benchmark Button */
+    gui->btn_test_offline = gtk_button_new_with_label("[TEST OFFLINE]");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_test_offline), "btn-steel");
+    g_signal_connect(gui->btn_test_offline, "clicked", G_CALLBACK(on_btn_test_offline_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_test_offline, FALSE, FALSE, 0);
 
     /* Separator */
     GtkWidget *sep1 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
     gtk_box_pack_start(GTK_BOX(toolbar_box), sep1, FALSE, FALSE, 4);
+
+    /* Auto-Tune Adaptive Concurrency Button */
+    gui->btn_auto_tune = gtk_toggle_button_new_with_label("[AUTO-TUNE: ON]");
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->btn_auto_tune), TRUE);
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_auto_tune), "btn-auto-on");
+    g_signal_connect(gui->btn_auto_tune, "toggled", G_CALLBACK(on_btn_auto_tune_toggled), gui);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_auto_tune, FALSE, FALSE, 0);
 
     /* Producers SpinButton */
     GtkWidget *lbl_p = gtk_label_new("PRODUCERS:");
@@ -1278,6 +1380,7 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     MAKE_TOPO_ROW("CHUNK SIZE", "64 KB (65,536 B)");
     MAKE_TOPO_ROW("BUFFER FOOTPRINT", "32 SLOTS (2.0 MB)");
     MAKE_TOPO_ROW("STORAGE DIR", "test_data/");
+    MAKE_TOPO_ROW("CONCURRENCY", "ADAPTIVE AUTO-TUNE");
     MAKE_TOPO_ROW("HASH ALGORITHM", "SHA-256 (EVP)");
 
     /* ---------------------------------------------------------------------

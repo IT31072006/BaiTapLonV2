@@ -73,12 +73,13 @@ Cửa sổ Native kích thước **1240 x 780** chuẩn công nghiệp (Anti-AI 
 ### Các bước Demo trực quan trên giao diện:
 
 #### Bước A: Khởi tạo dữ liệu kiểm thử (100% Offline)
-* Bấm vào nút **`[GEN 16MB]`** (hoặc `[GEN 32MB]`).
-* **Cơ chế:** Hệ thống tự động sinh ra một file nhị phân mẫu ngẫu nhiên có cấu trúc kiểm định, tính trước mã băm SHA-256 gốc, đồng thời tự động kích hoạt một **In-process Web Socket Server** tại địa chỉ `http://127.0.0.1:<cổng>/benchmark.bin` để mô phỏng tải qua mạng ngay trên máy mà không sợ rớt mạng.
+* Bấm vào nút **`[TEST OFFLINE]`**.
+* **Cơ chế:** Hệ thống tự động sinh ra file nhị phân mẫu 16MB chuẩn, tính trước mã băm SHA-256 gốc, đồng thời tự động kích hoạt một **In-process Web Socket Server** tại địa chỉ `http://127.0.0.1:<cổng>/benchmark_16mb.bin` để mô phỏng tải qua mạng ngay trên máy mà không sợ rớt mạng.
+* **Auto-Tune Concurrency:** Nút **`[AUTO-TUNE: ON]`** mặc định bật, hệ thống tự động nhận diện file và gán số luồng tối ưu (4 Producers, 2 Consumers).
 
 #### Bước B: Thử nghiệm 1 - Chế độ ĐỒNG BỘ AN TOÀN (`SYNCHRONIZED`)
 1. Đảm bảo công tắc ở trạng thái: **`MODE: SYNCHRONIZED (MUTEX/SEM)`** (dòng chữ có màu xanh lá).
-2. Tùy chỉnh số luồng: `PRODUCERS: 4` và `CONSUMERS: 2`.
+2. Để chế độ **`[AUTO-TUNE: ON]`** (hoặc tắt đi để tự chỉnh số luồng tùy thích).
 3. Bấm **`[START TRANSFER]`**.
 4. **Hiện tượng quan sát:**
    * **Khung RAM trên:** 32 ô nhớ của Bounded Buffer sáng màu vàng đất, mũi tên `HEAD (IN)` màu xanh thép và `TAIL (OUT)` màu xanh lá di chuyển nhịp nhàng nối đuôi nhau.
@@ -89,7 +90,7 @@ Cửa sổ Native kích thước **1240 x 780** chuẩn công nghiệp (Anti-AI 
      Hai chuỗi mã băm `EXPECTED SHA-256` và `ACTUAL SHA-256` trùng khớp $100\%$.
 
 #### Bước C: Thử nghiệm 2 - Chế độ BẪY VA CHẠM RACE CONDITION (`UNSYNCHRONIZED`)
-1. Bấm nút **`[RESET]`**, sau đó bấm lại nút **`[GEN 16MB]`**.
+1. Bấm nút **`[RESET]`**, sau đó bấm lại nút **`[TEST OFFLINE]`**.
 2. Gạt công tắc sang trái: **`MODE: UNSYNCHRONIZED (RACE CONDITION)`** (dòng chữ chuyển sang màu đỏ gạch).
 3. Bấm **`[START TRANSFER]`**.
 4. **Hiện tượng quan sát:**

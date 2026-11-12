@@ -14,8 +14,8 @@ typedef struct {
     /* Top Toolbar Controls */
     GtkWidget *entry_url;
     GtkWidget *lbl_source_badge;
-    GtkWidget *btn_gen_32mb;
-    GtkWidget *btn_gen_16mb;
+    GtkWidget *btn_test_offline;
+    GtkWidget *btn_auto_tune;
     GtkWidget *spin_producers;
     GtkWidget *spin_consumers;
     GtkWidget *switch_sync_mode;
@@ -66,6 +66,7 @@ typedef struct {
     /* Execution Control */
     pthread_t engine_worker_thread;
     bool worker_running;
+    bool auto_tune_enabled;
     guint timer_id;
 } GuiDashboard;
 
@@ -80,12 +81,14 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
 /* Periodic telemetry tick (30 FPS / 33ms) */
 gboolean on_gui_telemetry_tick(gpointer user_data);
 
-/* Signal Callbacks */
+/* Signal Callbacks & Automation */
 void on_btn_start_clicked(GtkButton *button, gpointer user_data);
 void on_btn_pause_clicked(GtkButton *button, gpointer user_data);
 void on_btn_reset_clicked(GtkButton *button, gpointer user_data);
-void on_btn_gen_file_clicked(GtkButton *button, gpointer user_data);
+void on_btn_test_offline_clicked(GtkButton *button, gpointer user_data);
+void on_btn_auto_tune_toggled(GtkToggleButton *button, gpointer user_data);
 void on_switch_sync_toggled(GtkSwitch *widget, gboolean state, gpointer user_data);
 void on_entry_url_changed(GtkEditable *editable, gpointer user_data);
+void auto_optimize_concurrency(GuiDashboard *gui);
 
 #endif /* GUI_DASHBOARD_H */

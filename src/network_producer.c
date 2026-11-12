@@ -358,6 +358,9 @@ int probe_remote_target(AppContext *ctx, const char *url) {
 #endif
   long response_code = 0;
   curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+  double total_time = 0.0;
+  curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
+  ctx->probe_rtt_ms = total_time * 1000.0;
   curl_easy_cleanup(curl);
 
   if (response_code != 200 && response_code != 206) {
@@ -383,8 +386,8 @@ int probe_remote_target(AppContext *ctx, const char *url) {
   }
 
   app_log(ctx, "SYS_ENGINE", "METADATA",
-          "Length=%zu bytes Chunks=%d RangeSupport=%s", ctx->total_file_size,
-          ctx->total_chunks,
+          "Length=%zu bytes Chunks=%d RTT=%.1fms RangeSupport=%s",
+          ctx->total_file_size, ctx->total_chunks, ctx->probe_rtt_ms,
           probe_data.accept_ranges ? "YES" : "UNKNOWN/ASSUMED");
 
   return 0;

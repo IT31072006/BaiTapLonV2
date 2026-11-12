@@ -28,6 +28,8 @@ void app_context_init(AppContext *ctx) {
   ctx->output_fd = -1;
   ctx->local_server_port = 0;
   ctx->local_server_active = false;
+  ctx->probe_rtt_ms = 0.0;
+  ctx->auto_tune_enabled = true;
 
   for (int i = 0; i < MAX_CHUNKS; i++) {
     ctx->block_statuses[i] = BLOCK_UNASSIGNED;

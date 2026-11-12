@@ -157,6 +157,10 @@ typedef struct {
     bool local_server_active;
     int local_server_port;
     char local_benchmark_file[512];
+
+    /* Network Telemetry & Auto-Tune */
+    double probe_rtt_ms;              /* Measured RTT in milliseconds during probe */
+    bool auto_tune_enabled;           /* Adaptive concurrency tuning flag */
 } AppContext;
 
 /* =========================================================================
