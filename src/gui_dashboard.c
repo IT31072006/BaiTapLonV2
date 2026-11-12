@@ -4,11 +4,12 @@
 #include <math.h>
 
 /* =========================================================================
- * MODERN ATLASSIAN / JIRA ENTERPRISE PALETTE (HARMONIOUS SLATE & BLUE)
+ * MODERN ATLASSIAN / JIRA ENTERPRISE PALETTE (TRẮNG - XANH SAAS THEME)
  * Matching ai-jira-agent styling:
  * - Canvas: #F8FAFC (Slate 50), Containers: #FFFFFF (Pure White)
- * - Borders: #E2E8F0 (Slate 200), Accent: #0C66E4 (Modern Jira Blue)
- * - Text: #0F172A (Slate 900), Muted: #64748B (Slate 500)
+ * - Sidebar: #F0F4FA (Ice-tinted Slate-Blue), Borders: #D0DFEF / #E2E8F0
+ * - Primary Accent: #0C66E4 (Royal Jira Blue), Hover: #0055CC
+ * - Dark Slate Text: #0F172A (900), Muted: #64748B (500)
  * ========================================================================= */
 static const char *WORKSTATION_CSS = 
     "* {\n"
@@ -19,10 +20,21 @@ static const char *WORKSTATION_CSS =
     "window, .main-window {\n"
     "    background-color: #F8FAFC;\n"
     "}\n"
-    "/* Left Navigation Sidebar (Atlassian / Jira Light) */\n"
+    "/* Universal Button Reset: eliminates system dark gradients */\n"
+    "button, button:hover, button:active, button:checked, button:focus, button:backdrop {\n"
+    "    background-image: none;\n"
+    "    box-shadow: none;\n"
+    "    text-shadow: none;\n"
+    "    outline: none;\n"
+    "    border-style: solid;\n"
+    "}\n"
+    "button label {\n"
+    "    color: inherit;\n"
+    "}\n"
+    "/* Left Navigation Sidebar (White & Royal Blue SaaS Style) */\n"
     ".nav-sidebar {\n"
-    "    background-color: #FFFFFF;\n"
-    "    border-right: 1px solid #E2E8F0;\n"
+    "    background-color: #F0F4FA;\n"
+    "    border-right: 1px solid #D0DFEF;\n"
     "    padding: 16px 12px;\n"
     "}\n"
     ".brand-badge {\n"
@@ -30,64 +42,96 @@ static const char *WORKSTATION_CSS =
     "    color: #FFFFFF;\n"
     "    font-size: 13px;\n"
     "    font-weight: 800;\n"
-    "    border-radius: 6px;\n"
+    "    border-radius: 7px;\n"
     "    padding: 6px 9px;\n"
     "}\n"
     ".nav-brand-title {\n"
     "    font-size: 14px;\n"
     "    font-weight: 700;\n"
     "    color: #0F172A;\n"
-    "    letter-spacing: -0.01em;\n"
     "}\n"
     ".nav-brand-subtitle {\n"
-    "    font-size: 9.5px;\n"
-    "    font-weight: 600;\n"
+    "    font-size: 9px;\n"
+    "    font-weight: 700;\n"
     "    color: #0C66E4;\n"
-    "    letter-spacing: 0.05em;\n"
     "}\n"
     ".nav-section-label {\n"
     "    font-size: 9.5px;\n"
     "    font-weight: 700;\n"
     "    color: #64748B;\n"
-    "    letter-spacing: 0.05em;\n"
     "    margin-top: 14px;\n"
     "    margin-bottom: 6px;\n"
     "    padding-left: 6px;\n"
     "}\n"
     "button.nav-item {\n"
+    "    background-image: none;\n"
     "    background-color: transparent;\n"
-    "    color: #334155;\n"
     "    border: 1px solid transparent;\n"
-    "    border-radius: 6px;\n"
+    "    border-radius: 7px;\n"
     "    padding: 8px 12px;\n"
+    "}\n"
+    "button.nav-item label {\n"
+    "    color: #334155;\n"
     "    font-size: 12.5px;\n"
-    "    font-weight: 500;\n"
-    "}\n"
-    "button.nav-item:hover {\n"
-    "    background-color: #F1F5F9;\n"
-    "    color: #0F172A;\n"
-    "    border: 1px solid #E2E8F0;\n"
-    "}\n"
-    "button.nav-item-active {\n"
-    "    background-color: #EFF6FF;\n"
-    "    color: #0C66E4;\n"
-    "    border: 1px solid #B3D4FF;\n"
     "    font-weight: 600;\n"
     "}\n"
+    "button.nav-item:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #E2ECF8;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "}\n"
+    "button.nav-item:hover label {\n"
+    "    color: #0C66E4;\n"
+    "}\n"
+    "button.nav-item-active {\n"
+    "    background-image: none;\n"
+    "    background-color: #0C66E4;\n"
+    "    border: 1px solid #0055CC;\n"
+    "    border-radius: 7px;\n"
+    "}\n"
+    "button.nav-item-active label {\n"
+    "    color: #FFFFFF;\n"
+    "    font-weight: 700;\n"
+    "}\n"
     ".nav-badge-count {\n"
-    "    background-color: #EFF6FF;\n"
+    "    background-color: #E2ECF8;\n"
     "    color: #0C66E4;\n"
     "    border: 1px solid #B3D4FF;\n"
     "    border-radius: 9999px;\n"
-    "    padding: 1px 8px;\n"
-    "    font-size: 10.5px;\n"
+    "    padding: 1px 7px;\n"
+    "    font-size: 10px;\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
     "    font-weight: 700;\n"
     "}\n"
+    "button.nav-item-active .nav-badge-count {\n"
+    "    background-color: rgba(255, 255, 255, 0.25);\n"
+    "    color: #FFFFFF;\n"
+    "    border: 1px solid rgba(255, 255, 255, 0.35);\n"
+    "}\n"
+    "button.nav-btn-action {\n"
+    "    background-image: none;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #0C66E4;\n"
+    "    border-radius: 7px;\n"
+    "    padding: 7px 12px;\n"
+    "}\n"
+    "button.nav-btn-action label {\n"
+    "    color: #0C66E4;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "button.nav-btn-action:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #0C66E4;\n"
+    "    border-color: #0055CC;\n"
+    "}\n"
+    "button.nav-btn-action:hover label {\n"
+    "    color: #FFFFFF;\n"
+    "}\n"
     ".nav-footer-box {\n"
-    "    background-color: #F8FAFC;\n"
-    "    border: 1px solid #E2E8F0;\n"
-    "    border-radius: 6px;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #D0DFEF;\n"
+    "    border-radius: 7px;\n"
     "    padding: 8px 10px;\n"
     "    margin-top: 8px;\n"
     "}\n"
@@ -100,7 +144,7 @@ static const char *WORKSTATION_CSS =
     ".top-toolbar {\n"
     "    background-color: #FFFFFF;\n"
     "    border-bottom: 1px solid #E2E8F0;\n"
-    "    padding: 7px 12px;\n"
+    "    padding: 8px 14px;\n"
     "}\n"
     ".sidebar-panel {\n"
     "    background-color: #FFFFFF;\n"
@@ -127,15 +171,12 @@ static const char *WORKSTATION_CSS =
     ".section-header {\n"
     "    font-size: 11px;\n"
     "    font-weight: 700;\n"
-    "    letter-spacing: 0.04em;\n"
     "    color: #475569;\n"
-    "    margin-bottom: 4px;\n"
     "}\n"
     ".telemetry-key {\n"
     "    font-size: 10.5px;\n"
     "    font-weight: 600;\n"
     "    color: #64748B;\n"
-    "    letter-spacing: 0.02em;\n"
     "}\n"
     ".telemetry-val {\n"
     "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
@@ -164,70 +205,139 @@ static const char *WORKSTATION_CSS =
     "    font-weight: 600;\n"
     "    color: #16A34A;\n"
     "}\n"
-    "/* Buttons (Jira / Atlassian ADS) */\n"
+    "/* Action Buttons */\n"
     "button.btn-primary {\n"
+    "    background-image: none;\n"
     "    background-color: #0C66E4;\n"
-    "    color: #FFFFFF;\n"
-    "    font-weight: 600;\n"
-    "    letter-spacing: 0.2px;\n"
-    "    border: 1px solid #0C66E4;\n"
+    "    border: 1px solid #0055CC;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 16px;\n"
+    "    padding: 5px 14px;\n"
+    "}\n"
+    "button.btn-primary label {\n"
+    "    color: #FFFFFF;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11.5px;\n"
     "}\n"
     "button.btn-primary:hover {\n"
+    "    background-image: none;\n"
     "    background-color: #0055CC;\n"
-    "    border-color: #0055CC;\n"
+    "    border-color: #0047AB;\n"
     "}\n"
     "button.btn-secondary {\n"
+    "    background-image: none;\n"
     "    background-color: #FFFFFF;\n"
-    "    color: #334155;\n"
-    "    font-weight: 500;\n"
     "    border: 1px solid #CBD5E1;\n"
     "    border-radius: 6px;\n"
     "    padding: 5px 12px;\n"
     "}\n"
+    "button.btn-secondary label {\n"
+    "    color: #334155;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
     "button.btn-secondary:hover {\n"
+    "    background-image: none;\n"
     "    background-color: #F8FAFC;\n"
-    "    color: #0F172A;\n"
     "    border-color: #94A3B8;\n"
     "}\n"
-    "button.btn-steel {\n"
-    "    background-color: #EFF6FF;\n"
-    "    color: #0C66E4;\n"
+    "button.btn-secondary:hover label {\n"
+    "    color: #0F172A;\n"
+    "}\n"
+    "button.btn-pause {\n"
+    "    background-image: none;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-pause label {\n"
+    "    color: #334155;\n"
     "    font-weight: 600;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "button.btn-pause:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #FEF3C7;\n"
+    "    border-color: #FDE68A;\n"
+    "}\n"
+    "button.btn-pause:hover label {\n"
+    "    color: #B45309;\n"
+    "}\n"
+    "button.btn-reset {\n"
+    "    background-image: none;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-reset label {\n"
+    "    color: #334155;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "button.btn-reset:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #FEE2E2;\n"
+    "    border-color: #FECACA;\n"
+    "}\n"
+    "button.btn-reset:hover label {\n"
+    "    color: #DC2626;\n"
+    "}\n"
+    "button.btn-steel {\n"
+    "    background-image: none;\n"
+    "    background-color: #EFF6FF;\n"
     "    border: 1px solid #B3D4FF;\n"
     "    border-radius: 6px;\n"
     "    padding: 5px 12px;\n"
     "}\n"
+    "button.btn-steel label {\n"
+    "    color: #0C66E4;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
     "button.btn-steel:hover {\n"
+    "    background-image: none;\n"
     "    background-color: #DBEAFE;\n"
+    "    border-color: #93C5FD;\n"
+    "}\n"
+    "button.btn-steel:hover label {\n"
     "    color: #0055CC;\n"
     "}\n"
     "button.btn-active {\n"
+    "    background-image: none;\n"
     "    background-color: #0C66E4;\n"
-    "    color: #FFFFFF;\n"
     "    border: 1px solid #0055CC;\n"
+    "}\n"
+    "button.btn-active label {\n"
+    "    color: #FFFFFF;\n"
     "    font-weight: 700;\n"
     "}\n"
     "button.btn-auto-on {\n"
+    "    background-image: none;\n"
     "    background-color: #EFF6FF;\n"
+    "    border: 1px solid #93C5FD;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 10px;\n"
+    "}\n"
+    "button.btn-auto-on label {\n"
     "    color: #0C66E4;\n"
-    "    border: 1px solid #B3D4FF;\n"
     "    font-weight: 700;\n"
     "    font-size: 11px;\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
-    "    border-radius: 6px;\n"
-    "    padding: 4px 10px;\n"
     "}\n"
     "button.btn-auto-off {\n"
-    "    background-color: #F1F5F9;\n"
-    "    color: #64748B;\n"
+    "    background-image: none;\n"
+    "    background-color: #F8FAFC;\n"
     "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 10px;\n"
+    "}\n"
+    "button.btn-auto-off label {\n"
+    "    color: #64748B;\n"
     "    font-weight: 600;\n"
     "    font-size: 11px;\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
-    "    border-radius: 6px;\n"
-    "    padding: 4px 10px;\n"
     "}\n"
     ".badge-dataset {\n"
     "    background-color: #EFF6FF;\n"
@@ -250,15 +360,60 @@ static const char *WORKSTATION_CSS =
     "    font-family: 'JetBrains Mono', monospace;\n"
     "}\n"
     "entry {\n"
+    "    background-image: none;\n"
     "    background-color: #FFFFFF;\n"
     "    color: #0F172A;\n"
     "    border: 1px solid #CBD5E1;\n"
     "    border-radius: 6px;\n"
-    "    padding: 4px 8px;\n"
+    "    padding: 4px 10px;\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
     "}\n"
     "entry:focus {\n"
-    "    border: 1px solid #0C66E4;\n"
+    "    border-color: #0C66E4;\n"
+    "}\n"
+    "spinbutton {\n"
+    "    background-image: none;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 2px 4px;\n"
+    "}\n"
+    "spinbutton entry {\n"
+    "    border: none;\n"
+    "    background-color: transparent;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 12px;\n"
+    "    color: #0C66E4;\n"
+    "}\n"
+    "spinbutton button {\n"
+    "    background-image: none;\n"
+    "    background-color: #F1F5F9;\n"
+    "    border: none;\n"
+    "    color: #475569;\n"
+    "}\n"
+    "spinbutton button:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #E2E8F0;\n"
+    "    color: #0F172A;\n"
+    "}\n"
+    "switch {\n"
+    "    background-image: none;\n"
+    "    background-color: #CBD5E1;\n"
+    "    border-radius: 12px;\n"
+    "}\n"
+    "switch:checked {\n"
+    "    background-image: none;\n"
+    "    background-color: #16A34A;\n"
+    "}\n"
+    "switch slider {\n"
+    "    background-image: none;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border-radius: 10px;\n"
+    "    min-width: 18px;\n"
+    "    min-height: 18px;\n"
+    "    margin: 1px;\n"
     "}\n"
     "textview text {\n"
     "    background-color: #F8FAFC;\n"
@@ -273,6 +428,7 @@ static const char *WORKSTATION_CSS =
     "    min-height: 8px;\n"
     "}\n"
     "progressbar progress {\n"
+    "    background-image: none;\n"
     "    background-color: #0C66E4;\n"
     "    border-radius: 4px;\n"
     "}\n"
@@ -331,49 +487,49 @@ static const char *WORKSTATION_CSS =
     "    min-width: 1px;\n"
     "    min-height: 1px;\n"
     "}\n"
-    "/* Page 2: Download History Panel */\n"
+    "/* Page 2: Download History */\n"
     ".history-page {\n"
     "    background-color: #F8FAFC;\n"
-    "    padding: 20px 24px;\n"
+    "    padding: 16px 20px;\n"
     "}\n"
     ".history-header-title {\n"
-    "    font-size: 17px;\n"
+    "    font-size: 16px;\n"
     "    font-weight: 700;\n"
     "    letter-spacing: -0.01em;\n"
     "    color: #0F172A;\n"
     "}\n"
     ".history-header-desc {\n"
-    "    font-size: 12px;\n"
+    "    font-size: 11.5px;\n"
     "    color: #64748B;\n"
-    "    margin-bottom: 14px;\n"
+    "    margin-bottom: 12px;\n"
     "}\n"
     ".history-card-metric {\n"
     "    background-color: #FFFFFF;\n"
     "    border: 1px solid #E2E8F0;\n"
     "    border-radius: 8px;\n"
-    "    padding: 12px 16px;\n"
+    "    padding: 10px 14px;\n"
     "}\n"
     ".history-metric-title {\n"
-    "    font-size: 10.5px;\n"
+    "    font-size: 10px;\n"
     "    font-weight: 600;\n"
     "    color: #64748B;\n"
     "    letter-spacing: 0.03em;\n"
     "}\n"
     ".history-metric-val {\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 22px;\n"
+    "    font-size: 20px;\n"
     "    font-weight: 700;\n"
     "    color: #0F172A;\n"
     "}\n"
     ".history-metric-val-ok {\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 22px;\n"
+    "    font-size: 20px;\n"
     "    font-weight: 700;\n"
     "    color: #16A34A;\n"
     "}\n"
     ".history-metric-val-err {\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 22px;\n"
+    "    font-size: 20px;\n"
     "    font-weight: 700;\n"
     "    color: #DC2626;\n"
     "}\n"
@@ -389,12 +545,17 @@ static const char *WORKSTATION_CSS =
     "    color: #0C66E4;\n"
     "}\n"
     "treeview.history-tree header button {\n"
+    "    background-image: none;\n"
     "    background-color: #F1F5F9;\n"
     "    color: #334155;\n"
     "    font-weight: 600;\n"
     "    font-size: 11px;\n"
     "    border: 1px solid #E2E8F0;\n"
-    "    padding: 7px;\n"
+    "    padding: 6px 8px;\n"
+    "}\n"
+    "treeview.history-tree header button label {\n"
+    "    color: #334155;\n"
+    "    font-weight: 700;\n"
     "}\n";
 
 /* =========================================================================
@@ -1208,16 +1369,16 @@ static void update_target_source_ui(GuiDashboard *gui) {
     gtk_style_context_remove_class(badge_sc, "badge-idle");
 
     if (strlen(text) == 0) {
-        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: EMPTY ]");
+        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ CHƯA CHỌN TỆP ]");
         gtk_style_context_add_class(badge_sc, "badge-idle");
         if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "NOT SELECTED");
     } else if (strstr(text, "benchmark_16mb.bin") || strstr(text, "127.0.0.1")) {
-        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: OFFLINE DEMO ]");
+        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TỆP TEST OFFLINE 16MB ]");
         gtk_style_context_add_class(badge_sc, "badge-dataset");
         gtk_style_context_add_class(b_test_sc, "btn-active");
         if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "OFFLINE 16 MB");
     } else {
-        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: INTERNET URL ]");
+        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ LIÊN KẾT INTERNET ]");
         gtk_style_context_add_class(badge_sc, "badge-dataset-net");
         if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "INTERNET URL");
         if (gui->ctx->expected_sha256[0] != '\0') {
@@ -1288,10 +1449,10 @@ void on_btn_pause_clicked(GtkButton *button, gpointer user_data) {
     ctx->is_paused = !ctx->is_paused;
     if (!ctx->is_paused) {
         pthread_cond_broadcast(&ctx->pause_cond);
-        gtk_button_set_label(button, "PAUSE");
+        gtk_button_set_label(button, "⏸ TẠM DỪNG");
         app_log(ctx, "UI_ACTION", "CONTROL", "Pipeline resumed");
     } else {
-        gtk_button_set_label(button, "RESUME");
+        gtk_button_set_label(button, "▶ TIẾP TỤC");
         app_log(ctx, "UI_ACTION", "CONTROL", "Pipeline paused via user action");
     }
     pthread_mutex_unlock(&ctx->control_mutex);
@@ -1316,7 +1477,7 @@ void on_btn_reset_clicked(GtkButton *button, gpointer user_data) {
 
     gtk_text_buffer_set_text(gui->text_buffer_logs, "", -1);
     gtk_label_set_text(GTK_LABEL(gui->lbl_actual_sha), "----------------------------------------------------------------");
-    gtk_button_set_label(GTK_BUTTON(gui->btn_pause), "PAUSE");
+    gtk_button_set_label(GTK_BUTTON(gui->btn_pause), "⏸ TẠM DỪNG");
     update_target_source_ui(gui);
 
     app_log(ctx, "UI_ACTION", "RESET", "Workspace reset to initial clean state");
@@ -1360,12 +1521,12 @@ void on_switch_sync_toggled(GtkSwitch *widget, gboolean state, gpointer user_dat
     GtkStyleContext *sc = gtk_widget_get_style_context(gui->lbl_sync_mode);
 
     if (state) {
-        gtk_label_set_text(GTK_LABEL(gui->lbl_sync_mode), "MODE: SYNCHRONIZED (MUTEX/SEM)");
+        gtk_label_set_text(GTK_LABEL(gui->lbl_sync_mode), "● ĐÃ BẬT MUTEX & SEMAPHORE (AN TOÀN)");
         gtk_style_context_remove_class(sc, "mode-unsynced");
         gtk_style_context_add_class(sc, "mode-synced");
         app_log(ctx, "UI_ACTION", "CONFIG", "Concurrency mode changed to SYNCHRONIZED (Guarded with Mutex & Semaphores)");
     } else {
-        gtk_label_set_text(GTK_LABEL(gui->lbl_sync_mode), "MODE: UNSYNCHRONIZED (RACE CONDITION)");
+        gtk_label_set_text(GTK_LABEL(gui->lbl_sync_mode), "▲ TẮT ĐỒNG BỘ (XẢY RA RACE CONDITION!)");
         gtk_style_context_remove_class(sc, "mode-synced");
         gtk_style_context_add_class(sc, "mode-unsynced");
         app_log(ctx, "UI_ACTION", "CONFIG", "Concurrency mode changed to UNSYNCHRONIZED (Race conditions active!)");
@@ -1526,13 +1687,14 @@ void gui_add_history_record(GuiDashboard *gui, const DownloadHistoryRecord *rec)
 
 /* =========================================================================
  * NAVIGATION SIDEBAR CONSTRUCTOR (PAGE SWITCHER)
+ * Modern White & Royal Blue SaaS Styling
  * ========================================================================= */
 static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     GtkWidget *sidebar = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_widget_set_size_request(sidebar, 240, -1);
+    gtk_widget_set_size_request(sidebar, 230, -1);
     gtk_style_context_add_class(gtk_widget_get_style_context(sidebar), "nav-sidebar");
 
-    /* App Header / Brand (Jira style brand badge + titles) */
+    /* App Header / Brand */
     GtkWidget *brand_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(sidebar), brand_box, FALSE, FALSE, 4);
 
@@ -1549,7 +1711,7 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_brand), "nav-brand-title");
     gtk_box_pack_start(GTK_BOX(title_box), lbl_brand, FALSE, FALSE, 0);
 
-    GtkWidget *lbl_sub = gtk_label_new("POSIX THREADS v2.0");
+    GtkWidget *lbl_sub = gtk_label_new("POSIX THREAD ENGINE");
     gtk_widget_set_halign(lbl_sub, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sub), "nav-brand-subtitle");
     gtk_box_pack_start(GTK_BOX(title_box), lbl_sub, FALSE, FALSE, 0);
@@ -1559,7 +1721,7 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     gtk_box_pack_start(GTK_BOX(sidebar), sep_top, FALSE, FALSE, 10);
 
     /* Section label */
-    GtkWidget *lbl_sec = gtk_label_new("WORKSPACES");
+    GtkWidget *lbl_sec = gtk_label_new("DANH MỤC LÀM VIỆC");
     gtk_widget_set_halign(lbl_sec, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sec), "nav-section-label");
     gtk_box_pack_start(GTK_BOX(sidebar), lbl_sec, FALSE, FALSE, 4);
@@ -1570,7 +1732,9 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_nav_workspace), "nav-item-active");
 
     GtkWidget *box_item1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
-    GtkWidget *lbl_item1 = gtk_label_new("Transfer Engine");
+    GtkWidget *lbl_icon1 = gtk_label_new("⚡");
+    gtk_box_pack_start(GTK_BOX(box_item1), lbl_icon1, FALSE, FALSE, 0);
+    GtkWidget *lbl_item1 = gtk_label_new("Trình Tải Đa Luồng");
     gtk_widget_set_halign(lbl_item1, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box_item1), lbl_item1, TRUE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(gui->btn_nav_workspace), box_item1);
@@ -1582,7 +1746,9 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_nav_history), "nav-item");
 
     GtkWidget *box_item2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
-    GtkWidget *lbl_item2 = gtk_label_new("Download History");
+    GtkWidget *lbl_icon2 = gtk_label_new("🕒");
+    gtk_box_pack_start(GTK_BOX(box_item2), lbl_icon2, FALSE, FALSE, 0);
+    GtkWidget *lbl_item2 = gtk_label_new("Lịch Sử Tải Xuống");
     gtk_widget_set_halign(lbl_item2, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box_item2), lbl_item2, TRUE, TRUE, 0);
 
@@ -1599,7 +1765,7 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
 
     /* Bottom Quick Action: Open test_data/ Storage Folder */
     GtkWidget *btn_open_storage = gtk_button_new_with_label("📁 Mở thư mục tải về");
-    gtk_style_context_add_class(gtk_widget_get_style_context(btn_open_storage), "btn-secondary");
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn_open_storage), "nav-btn-action");
     g_signal_connect(btn_open_storage, "clicked", G_CALLBACK(on_btn_open_storage_clicked), gui);
     gtk_box_pack_start(GTK_BOX(sidebar), btn_open_storage, FALSE, FALSE, 6);
 
@@ -1608,12 +1774,12 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     gtk_style_context_add_class(gtk_widget_get_style_context(footer_box), "nav-footer-box");
     gtk_box_pack_start(GTK_BOX(sidebar), footer_box, FALSE, FALSE, 0);
 
-    GtkWidget *lbl_f1 = gtk_label_new("TARGET: test_data/");
+    GtkWidget *lbl_f1 = gtk_label_new("LƯU TẠI: test_data/");
     gtk_widget_set_halign(lbl_f1, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_f1), "nav-footer-text");
     gtk_box_pack_start(GTK_BOX(footer_box), lbl_f1, FALSE, FALSE, 0);
 
-    GtkWidget *lbl_f2 = gtk_label_new("POSIX ARCH: Linux 64-bit");
+    GtkWidget *lbl_f2 = gtk_label_new("HỆ THỐNG: Linux 64-bit");
     gtk_widget_set_halign(lbl_f2, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_f2), "nav-footer-text");
     gtk_box_pack_start(GTK_BOX(footer_box), lbl_f2, FALSE, FALSE, 0);
@@ -1632,12 +1798,12 @@ static GtkWidget* create_history_page(GuiDashboard *gui) {
     GtkWidget *header_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
     gtk_box_pack_start(GTK_BOX(hist_box), header_box, FALSE, FALSE, 0);
 
-    GtkWidget *lbl_title = gtk_label_new("DOWNLOAD SESSION HISTORY & INTEGRITY AUDIT");
+    GtkWidget *lbl_title = gtk_label_new("LỊCH SỬ TẢI XUỐNG & KIỂM ĐỊNH TOÀN VẸN DỮ LIỆU");
     gtk_widget_set_halign(lbl_title, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_title), "history-header-title");
     gtk_box_pack_start(GTK_BOX(header_box), lbl_title, FALSE, FALSE, 0);
 
-    GtkWidget *lbl_desc = gtk_label_new("Log of multi-threaded transfers, SHA-256 cryptographic verification, and Race Condition audit records.");
+    GtkWidget *lbl_desc = gtk_label_new("Nhật ký chi tiết các phiên tải đa luồng, đối soát toàn vẹn SHA-256 và giám sát lỗi Race Condition.");
     gtk_widget_set_halign(lbl_desc, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_desc), "history-header-desc");
     gtk_box_pack_start(GTK_BOX(header_box), lbl_desc, FALSE, FALSE, 0);
@@ -1660,16 +1826,16 @@ static GtkWidget* create_history_page(GuiDashboard *gui) {
     } while(0)
 
     gui->lbl_hist_total = gtk_label_new("0");
-    MAKE_HIST_CARD(metrics_box, "TOTAL SESSIONS", gui->lbl_hist_total, "history-metric-val");
+    MAKE_HIST_CARD(metrics_box, "TỔNG SỐ PHIÊN TẢI", gui->lbl_hist_total, "history-metric-val");
 
     gui->lbl_hist_verified = gtk_label_new("0");
-    MAKE_HIST_CARD(metrics_box, "VERIFIED SAFE (SHA-256)", gui->lbl_hist_verified, "history-metric-val-ok");
+    MAKE_HIST_CARD(metrics_box, "TẢI THÀNH CÔNG (SHA-256 AN TOÀN)", gui->lbl_hist_verified, "history-metric-val-ok");
 
     gui->lbl_hist_corrupted = gtk_label_new("0");
-    MAKE_HIST_CARD(metrics_box, "RACE CORRUPTED / FAILED", gui->lbl_hist_corrupted, "history-metric-val-err");
+    MAKE_HIST_CARD(metrics_box, "LỖI DO RACE CONDITION / MẠNG", gui->lbl_hist_corrupted, "history-metric-val-err");
 
     gui->lbl_hist_volume = gtk_label_new("0.00 MB");
-    MAKE_HIST_CARD(metrics_box, "TOTAL VOLUME DOWNLOADED", gui->lbl_hist_volume, "history-metric-val");
+    MAKE_HIST_CARD(metrics_box, "TỔNG DUNG LƯỢNG ĐÃ TẢI", gui->lbl_hist_volume, "history-metric-val");
 
     /* Action Toolbar for History */
     GtkWidget *act_bar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
@@ -1763,14 +1929,14 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     gui->max_speed_recorded = 0.0;
     memset(gui->speed_history, 0, sizeof(gui->speed_history));
 
-    /* Load Industrial Matte Carbon & Oxide CSS */
+    /* Load Industrial White & Royal Jira Blue CSS */
     GtkCssProvider *css_provider = gtk_css_provider_new();
     gtk_css_provider_load_from_data(css_provider, WORKSTATION_CSS, -1, NULL);
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
                                               GTK_STYLE_PROVIDER(css_provider),
-                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                                              GTK_STYLE_PROVIDER_PRIORITY_USER);
 
-    /* Main Window: 1240 x 760 */
+    /* Main Window: 1140 x 740 */
     gui->main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(gui->main_window),
                          "SYSTEM PROGRAMMING WORKSTATION // MULTI-THREADED DOWNLOAD MANAGER & CONCURRENCY LAB");
@@ -1783,8 +1949,8 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     if (primary) {
         gdk_monitor_get_workarea(primary, &workarea);
     }
-    int win_w = 1240;
-    int win_h = 760;
+    int win_w = 1140;
+    int win_h = 740;
     if (win_w > workarea.width - 40) win_w = workarea.width - 40;
     if (win_h > workarea.height - 40) win_h = workarea.height - 40;
     int win_x = workarea.x + (workarea.width - win_w) / 2;
@@ -1817,88 +1983,98 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     gtk_stack_add_named(GTK_STACK(gui->main_stack), gui->page_workspace, "workspace");
 
     /* =====================================================================
-     * 1. TOP TOOLBAR (FLAT HIGH-DENSITY WORKSTATION HEADER)
+     * 1. TOP TOOLBAR (COMPACT 2-ROW HIGH-PERFORMANCE WORKSTATION HEADER)
      * ===================================================================== */
-    GtkWidget *toolbar_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    GtkWidget *toolbar_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
     gtk_style_context_add_class(gtk_widget_get_style_context(toolbar_box), "top-toolbar");
     gtk_box_pack_start(GTK_BOX(gui->page_workspace), toolbar_box, FALSE, FALSE, 0);
 
-    /* URL Entry */
+    /* ROW 1: Target URL Entry, Benchmark Generators, and Primary Action Buttons */
+    GtkWidget *row1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), row1, FALSE, FALSE, 0);
+
     GtkWidget *lbl_url = gtk_label_new("TARGET URL:");
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_url), "section-header");
-    gtk_box_pack_start(GTK_BOX(toolbar_box), lbl_url, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row1), lbl_url, FALSE, FALSE, 0);
 
     gui->entry_url = gtk_entry_new();
-    gtk_widget_set_size_request(gui->entry_url, 360, 28);
-    gtk_entry_set_placeholder_text(GTK_ENTRY(gui->entry_url), "Paste URL (e.g. https://... or click [TEST OFFLINE])");
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->entry_url, TRUE, TRUE, 0);
-
-    gui->lbl_source_badge = gtk_label_new("[ TARGET: EMPTY ]");
-    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_source_badge), "badge-idle");
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->lbl_source_badge, FALSE, FALSE, 0);
-
+    gtk_widget_set_size_request(gui->entry_url, 260, 28);
+    gtk_entry_set_placeholder_text(GTK_ENTRY(gui->entry_url), "Dán URL tải về (HTTP/HTTPS) hoặc nhấn [TỰ SINH FILE TEST]");
+    gtk_box_pack_start(GTK_BOX(row1), gui->entry_url, TRUE, TRUE, 0);
     g_signal_connect(gui->entry_url, "changed", G_CALLBACK(on_entry_url_changed), gui);
 
-    /* Single Consolidated Offline Benchmark Button */
-    gui->btn_test_offline = gtk_button_new_with_label("[TEST OFFLINE]");
+    gui->btn_test_offline = gtk_button_new_with_label("🧪 TỰ SINH FILE TEST");
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_test_offline), "btn-steel");
     g_signal_connect(gui->btn_test_offline, "clicked", G_CALLBACK(on_btn_test_offline_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_test_offline, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row1), gui->btn_test_offline, FALSE, FALSE, 0);
 
-    /* Separator */
-    GtkWidget *sep1 = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), sep1, FALSE, FALSE, 4);
-
-    /* Auto-Tune Adaptive Concurrency Button */
-    gui->btn_auto_tune = gtk_toggle_button_new_with_label("[AUTO-TUNE: ON]");
+    gui->btn_auto_tune = gtk_toggle_button_new_with_label("⚡ AUTO-TUNE [BẬT]");
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gui->btn_auto_tune), TRUE);
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_auto_tune), "btn-auto-on");
     g_signal_connect(gui->btn_auto_tune, "toggled", G_CALLBACK(on_btn_auto_tune_toggled), gui);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_auto_tune, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row1), gui->btn_auto_tune, FALSE, FALSE, 0);
 
-    /* Producers SpinButton */
+    GtkWidget *sep_act = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+    gtk_box_pack_start(GTK_BOX(row1), sep_act, FALSE, FALSE, 4);
+
+    gui->btn_start = gtk_button_new_with_label("▶ BẮT ĐẦU TẢI");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_start), "btn-primary");
+    g_signal_connect(gui->btn_start, "clicked", G_CALLBACK(on_btn_start_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(row1), gui->btn_start, FALSE, FALSE, 0);
+
+    gui->btn_pause = gtk_button_new_with_label("⏸ TẠM DỪNG");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_pause), "btn-pause");
+    g_signal_connect(gui->btn_pause, "clicked", G_CALLBACK(on_btn_pause_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(row1), gui->btn_pause, FALSE, FALSE, 0);
+
+    gui->btn_reset = gtk_button_new_with_label("🔄 ĐẶT LẠI");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_reset), "btn-reset");
+    g_signal_connect(gui->btn_reset, "clicked", G_CALLBACK(on_btn_reset_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(row1), gui->btn_reset, FALSE, FALSE, 0);
+
+    /* ROW 2: Concurrency Controls (Producers/Consumers) & Synchronization Mode Guard */
+    GtkWidget *row2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    gtk_box_pack_start(GTK_BOX(toolbar_box), row2, FALSE, FALSE, 0);
+
     GtkWidget *lbl_p = gtk_label_new("PRODUCERS:");
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_p), "section-header");
-    gtk_box_pack_start(GTK_BOX(toolbar_box), lbl_p, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row2), lbl_p, FALSE, FALSE, 0);
 
     gui->spin_producers = gtk_spin_button_new_with_range(1, 8, 1);
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spin_producers), 4);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->spin_producers, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row2), gui->spin_producers, FALSE, FALSE, 0);
 
-    /* Consumers SpinButton */
     GtkWidget *lbl_c = gtk_label_new("CONSUMERS:");
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_c), "section-header");
-    gtk_box_pack_start(GTK_BOX(toolbar_box), lbl_c, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row2), lbl_c, FALSE, FALSE, 0);
 
     gui->spin_consumers = gtk_spin_button_new_with_range(1, 8, 1);
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(gui->spin_consumers), 2);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->spin_consumers, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row2), gui->spin_consumers, FALSE, FALSE, 0);
 
-    /* Mode Switch */
+    GtkWidget *sep_sync = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+    gtk_box_pack_start(GTK_BOX(row2), sep_sync, FALSE, FALSE, 4);
+
+    GtkWidget *lbl_sync_title = gtk_label_new("CHẾ ĐỘ ĐỒNG BỘ:");
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sync_title), "section-header");
+    gtk_box_pack_start(GTK_BOX(row2), lbl_sync_title, FALSE, FALSE, 0);
+
     gui->switch_sync_mode = gtk_switch_new();
     gtk_switch_set_active(GTK_SWITCH(gui->switch_sync_mode), TRUE);
     g_signal_connect(gui->switch_sync_mode, "state-set", G_CALLBACK(on_switch_sync_toggled), gui);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->switch_sync_mode, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row2), gui->switch_sync_mode, FALSE, FALSE, 0);
 
-    gui->lbl_sync_mode = gtk_label_new("MODE: SYNCHRONIZED (MUTEX/SEM)");
+    gui->lbl_sync_mode = gtk_label_new("● ĐÃ BẬT MUTEX & SEMAPHORE (AN TOÀN)");
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_sync_mode), "mode-synced");
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->lbl_sync_mode, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(row2), gui->lbl_sync_mode, FALSE, FALSE, 0);
 
-    /* Control Buttons */
-    gui->btn_start = gtk_button_new_with_label("START TRANSFER");
-    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_start), "btn-primary");
-    g_signal_connect(gui->btn_start, "clicked", G_CALLBACK(on_btn_start_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_start, FALSE, FALSE, 0);
+    /* Spacer between sync mode and target badge */
+    GtkWidget *row2_spacer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_pack_start(GTK_BOX(row2), row2_spacer, TRUE, TRUE, 0);
 
-    gui->btn_pause = gtk_button_new_with_label("PAUSE");
-    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_pause), "btn-secondary");
-    g_signal_connect(gui->btn_pause, "clicked", G_CALLBACK(on_btn_pause_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_pause, FALSE, FALSE, 0);
-
-    gui->btn_reset = gtk_button_new_with_label("RESET");
-    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_reset), "btn-secondary");
-    g_signal_connect(gui->btn_reset, "clicked", G_CALLBACK(on_btn_reset_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->btn_reset, FALSE, FALSE, 0);
+    gui->lbl_source_badge = gtk_label_new("[ CHƯA CHỌN TỆP ]");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_source_badge), "badge-idle");
+    gtk_box_pack_end(GTK_BOX(row2), gui->lbl_source_badge, FALSE, FALSE, 0);
 
     /* =====================================================================
      * 2. MAIN HORIZONTAL SPLIT: SIDEBAR (LEFT) + WORKSPACE (RIGHT)
