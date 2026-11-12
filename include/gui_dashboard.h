@@ -13,6 +13,7 @@ typedef struct {
 
     /* Top Toolbar Controls */
     GtkWidget *entry_url;
+    GtkWidget *lbl_source_badge;
     GtkWidget *btn_gen_32mb;
     GtkWidget *btn_gen_16mb;
     GtkWidget *spin_producers;
@@ -24,6 +25,7 @@ typedef struct {
     GtkWidget *btn_reset;
 
     /* Left Sidebar Telemetry Labels & Cards */
+    GtkWidget *lbl_target_source;
     GtkWidget *lbl_engine_state;
     GtkWidget *lbl_rate;
     GtkWidget *lbl_sem_empty;
@@ -84,5 +86,6 @@ void on_btn_pause_clicked(GtkButton *button, gpointer user_data);
 void on_btn_reset_clicked(GtkButton *button, gpointer user_data);
 void on_btn_gen_file_clicked(GtkButton *button, gpointer user_data);
 void on_switch_sync_toggled(GtkSwitch *widget, gboolean state, gpointer user_data);
+void on_entry_url_changed(GtkEditable *editable, gpointer user_data);
 
 #endif /* GUI_DASHBOARD_H */

@@ -62,21 +62,21 @@ static const char *WORKSTATION_CSS =
     "    font-size: 13px;\n"
     "    font-weight: 600;\n"
     "    color: #E5E5E0;\n"
-    "    font-feature-settings: 'tnum' 1;\n"
+    "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-large {\n"
     "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
     "    font-size: 17px;\n"
     "    font-weight: 700;\n"
     "    color: #E5E5E0;\n"
-    "    font-feature-settings: 'tnum' 1;\n"
+    "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-alert {\n"
     "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
     "    font-size: 14px;\n"
     "    font-weight: 700;\n"
     "    color: #C94A4A;\n"
-    "    font-feature-settings: 'tnum' 1;\n"
+    "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-success {\n"
     "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
@@ -117,6 +117,32 @@ static const char *WORKSTATION_CSS =
     "}\n"
     "button.btn-steel:hover {\n"
     "    background-color: #2F5375;\n"
+    "}\n"
+    "button.btn-active {\n"
+    "    background-color: #2B5B84;\n"
+    "    color: #FFFFFF;\n"
+    "    border: 1px solid #4A88C7;\n"
+    "    font-weight: 700;\n"
+    "}\n"
+    ".badge-dataset {\n"
+    "    background-color: #121E2B;\n"
+    "    color: #4A88C7;\n"
+    "    border: 1px solid #294D70;\n"
+    "    border-radius: 2px;\n"
+    "    padding: 3px 8px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-dataset-net {\n"
+    "    background-color: #281F12;\n"
+    "    color: #D4973B;\n"
+    "    border: 1px solid #6E4E20;\n"
+    "    border-radius: 2px;\n"
+    "    padding: 3px 8px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
     "}\n"
     "entry {\n"
     "    background-color: #0E0E0D;\n"
@@ -844,8 +870,53 @@ gboolean on_gui_telemetry_tick(gpointer user_data) {
 }
 
 /* =========================================================================
- * SIGNAL HANDLERS
+ * SIGNAL HANDLERS & TARGET SOURCE TELEMETRY
  * ========================================================================= */
+static void update_target_source_ui(GuiDashboard *gui) {
+    if (!gui || !gui->entry_url || !gui->lbl_source_badge) return;
+
+    const char *text = gtk_entry_get_text(GTK_ENTRY(gui->entry_url));
+    GtkStyleContext *b16_sc = gtk_widget_get_style_context(gui->btn_gen_16mb);
+    GtkStyleContext *b32_sc = gtk_widget_get_style_context(gui->btn_gen_32mb);
+    GtkStyleContext *badge_sc = gtk_widget_get_style_context(gui->lbl_source_badge);
+
+    gtk_style_context_remove_class(b16_sc, "btn-active");
+    gtk_style_context_remove_class(b32_sc, "btn-active");
+    gtk_style_context_remove_class(badge_sc, "badge-dataset");
+    gtk_style_context_remove_class(badge_sc, "badge-dataset-net");
+    gtk_style_context_remove_class(badge_sc, "badge-idle");
+
+    if (strlen(text) == 0) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: EMPTY ]");
+        gtk_style_context_add_class(badge_sc, "badge-idle");
+        if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "NOT SELECTED");
+    } else if (strstr(text, "benchmark_16mb.bin")) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: 16 MB LOCAL ]");
+        gtk_style_context_add_class(badge_sc, "badge-dataset");
+        gtk_style_context_add_class(b16_sc, "btn-active");
+        if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "LOCAL 16 MB");
+    } else if (strstr(text, "benchmark_32mb.bin")) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: 32 MB LOCAL ]");
+        gtk_style_context_add_class(badge_sc, "badge-dataset");
+        gtk_style_context_add_class(b32_sc, "btn-active");
+        if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "LOCAL 32 MB");
+    } else {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_source_badge), "[ TARGET: INTERNET URL ]");
+        gtk_style_context_add_class(badge_sc, "badge-dataset-net");
+        if (gui->lbl_target_source) gtk_label_set_text(GTK_LABEL(gui->lbl_target_source), "INTERNET URL");
+        if (gui->ctx->expected_sha256[0] != '\0') {
+            gui->ctx->expected_sha256[0] = '\0';
+            gtk_label_set_text(GTK_LABEL(gui->lbl_expected_sha), "NONE (EXTERNAL INTERNET URL)");
+        }
+    }
+}
+
+void on_entry_url_changed(GtkEditable *editable, gpointer user_data) {
+    (void)editable;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    update_target_source_ui(gui);
+}
+
 void on_btn_start_clicked(GtkButton *button, gpointer user_data) {
     (void)button;
     GuiDashboard *gui = (GuiDashboard *)user_data;
@@ -855,13 +926,22 @@ void on_btn_start_clicked(GtkButton *button, gpointer user_data) {
 
     const char *url = gtk_entry_get_text(GTK_ENTRY(gui->entry_url));
     if (strlen(url) == 0) {
-        on_btn_gen_file_clicked(NULL, user_data);
+        app_log(ctx, "UI_ACTION", "WARN", "Target URL is empty. Please select [GEN 16MB], [GEN 32MB] or paste an external URL.");
+        return;
     } else {
         strncpy(ctx->target_url, url, sizeof(ctx->target_url) - 1);
         if (strncmp(url, "http://127.0.0.1", 16) != 0) {
             ctx->expected_sha256[0] = '\0';
             gtk_label_set_text(GTK_LABEL(gui->lbl_expected_sha), "NONE (EXTERNAL INTERNET URL)");
         }
+    }
+
+    if (strstr(ctx->target_url, "benchmark_16mb.bin")) {
+        app_log(ctx, "UI_ACTION", "START", "Target: LOCAL 16 MB SYNTHETIC DATASET (256 chunks)");
+    } else if (strstr(ctx->target_url, "benchmark_32mb.bin")) {
+        app_log(ctx, "UI_ACTION", "START", "Target: LOCAL 32 MB SYNTHETIC DATASET (512 chunks)");
+    } else {
+        app_log(ctx, "UI_ACTION", "START", "Target: EXTERNAL INTERNET URL (%s)", ctx->target_url);
     }
 
     ctx->num_producers = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(gui->spin_producers));
@@ -915,6 +995,7 @@ void on_btn_reset_clicked(GtkButton *button, gpointer user_data) {
     gtk_text_buffer_set_text(gui->text_buffer_logs, "", -1);
     gtk_label_set_text(GTK_LABEL(gui->lbl_actual_sha), "----------------------------------------------------------------");
     gtk_button_set_label(GTK_BUTTON(gui->btn_pause), "PAUSE");
+    update_target_source_ui(gui);
 
     app_log(ctx, "UI_ACTION", "RESET", "Workspace reset to initial clean state");
 }
@@ -940,6 +1021,7 @@ void on_btn_gen_file_clicked(GtkButton *button, gpointer user_data) {
 
     gtk_entry_set_text(GTK_ENTRY(gui->entry_url), ctx->target_url);
     gtk_label_set_text(GTK_LABEL(gui->lbl_expected_sha), ctx->expected_sha256);
+    update_target_source_ui(gui);
 }
 
 void on_switch_sync_toggled(GtkSwitch *widget, gboolean state, gpointer user_data) {
@@ -1011,6 +1093,12 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     gtk_widget_set_size_request(gui->entry_url, 310, 28);
     gtk_entry_set_placeholder_text(GTK_ENTRY(gui->entry_url), "http://127.0.0.1:<port>/benchmark.bin");
     gtk_box_pack_start(GTK_BOX(toolbar_box), gui->entry_url, TRUE, TRUE, 0);
+
+    gui->lbl_source_badge = gtk_label_new("[ TARGET: EMPTY ]");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_source_badge), "badge-idle");
+    gtk_box_pack_start(GTK_BOX(toolbar_box), gui->lbl_source_badge, FALSE, FALSE, 0);
+
+    g_signal_connect(gui->entry_url, "changed", G_CALLBACK(on_entry_url_changed), gui);
 
     /* Benchmark File Buttons */
     gui->btn_gen_16mb = gtk_button_new_with_label("[GEN 16MB]");
@@ -1175,6 +1263,17 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
         gtk_box_pack_end(GTK_BOX(row), v, FALSE, FALSE, 0); \
         gtk_box_pack_start(GTK_BOX(card_topo), row, FALSE, FALSE, 0); \
     } while(0)
+
+    GtkWidget *row_src = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    GtkWidget *k_src = gtk_label_new("ACTIVE TARGET");
+    gtk_widget_set_halign(k_src, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(k_src), "telemetry-key");
+    gtk_box_pack_start(GTK_BOX(row_src), k_src, FALSE, FALSE, 0);
+    gui->lbl_target_source = gtk_label_new("NOT SELECTED");
+    gtk_widget_set_halign(gui->lbl_target_source, GTK_ALIGN_END);
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_target_source), "telemetry-val");
+    gtk_box_pack_end(GTK_BOX(row_src), gui->lbl_target_source, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(card_topo), row_src, FALSE, FALSE, 0);
 
     MAKE_TOPO_ROW("CHUNK SIZE", "64 KB (65,536 B)");
     MAKE_TOPO_ROW("BUFFER FOOTPRINT", "32 SLOTS (2.0 MB)");
