@@ -4,379 +4,397 @@
 #include <math.h>
 
 /* =========================================================================
- * HIGH-DENSITY INDUSTRIAL WORKSTATION THEME (MATTE CARBON & OXIDE)
- * Strictly adheres to Anti-AI design guidelines:
- * - No neon glows, no gradients, no emojis.
- * - Hairline 1px borders, 2-3px radius, crisp typography.
+ * MODERN ATLASSIAN / JIRA ENTERPRISE PALETTE (HARMONIOUS SLATE & BLUE)
+ * Matching ai-jira-agent styling:
+ * - Canvas: #F8FAFC (Slate 50), Containers: #FFFFFF (Pure White)
+ * - Borders: #E2E8F0 (Slate 200), Accent: #0C66E4 (Modern Jira Blue)
+ * - Text: #0F172A (Slate 900), Muted: #64748B (Slate 500)
  * ========================================================================= */
 static const char *WORKSTATION_CSS = 
     "* {\n"
-    "    font-family: 'Ubuntu Sans', 'Inter', 'Cantarell', sans-serif;\n"
+    "    font-family: 'Inter', 'Ubuntu Sans', 'Segoe UI', sans-serif;\n"
     "    font-size: 12px;\n"
-    "    color: #E5E5E0;\n"
+    "    color: #0F172A;\n"
     "}\n"
     "window, .main-window {\n"
-    "    background-color: #121211;\n"
+    "    background-color: #F8FAFC;\n"
     "}\n"
-    ".top-toolbar {\n"
-    "    background-color: #181816;\n"
-    "    border-bottom: 1px solid #282824;\n"
-    "    padding: 6px 12px;\n"
-    "}\n"
-    ".sidebar-panel {\n"
-    "    background-color: #161614;\n"
-    "    border-right: 1px solid #262622;\n"
-    "    padding: 10px 12px;\n"
-    "}\n"
-    ".workspace-panel {\n"
-    "    background-color: #121211;\n"
-    "    padding: 10px 14px;\n"
-    "}\n"
-    ".bottom-panel {\n"
-    "    background-color: #161614;\n"
-    "    border-top: 1px solid #262622;\n"
-    "    padding: 8px 14px;\n"
-    "}\n"
-    ".telemetry-card {\n"
-    "    background-color: #1A1A18;\n"
-    "    border: 1px solid #2A2A25;\n"
-    "    border-radius: 3px;\n"
-    "    padding: 6px 10px;\n"
-    "    margin-bottom: 5px;\n"
-    "}\n"
-    ".section-header {\n"
-    "    font-size: 10.5px;\n"
-    "    font-weight: 700;\n"
-    "    letter-spacing: 0.9px;\n"
-    "    color: #7E7E78;\n"
-    "    margin-bottom: 4px;\n"
-    "}\n"
-    ".telemetry-key {\n"
-    "    font-size: 10.5px;\n"
-    "    font-weight: 600;\n"
-    "    color: #85857F;\n"
-    "    letter-spacing: 0.4px;\n"
-    "}\n"
-    ".telemetry-val {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 13px;\n"
-    "    font-weight: 600;\n"
-    "    color: #E5E5E0;\n"
-    "    font-feature-settings: 'tnum';\n"
-    "}\n"
-    ".telemetry-val-large {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 17px;\n"
-    "    font-weight: 700;\n"
-    "    color: #E5E5E0;\n"
-    "    font-feature-settings: 'tnum';\n"
-    "}\n"
-    ".telemetry-val-alert {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 14px;\n"
-    "    font-weight: 700;\n"
-    "    color: #C94A4A;\n"
-    "    font-feature-settings: 'tnum';\n"
-    "}\n"
-    ".telemetry-val-success {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 13px;\n"
-    "    font-weight: 600;\n"
-    "    color: #4E9A67;\n"
-    "}\n"
-    "button.btn-primary {\n"
-    "    background-color: #E5E5E0;\n"
-    "    color: #121211;\n"
-    "    font-weight: 700;\n"
-    "    letter-spacing: 0.5px;\n"
-    "    border: 1px solid #E5E5E0;\n"
-    "    border-radius: 3px;\n"
-    "    padding: 5px 16px;\n"
-    "}\n"
-    "button.btn-primary:hover {\n"
-    "    background-color: #FFFFFF;\n"
-    "}\n"
-    "button.btn-secondary {\n"
-    "    background-color: #1F1F1D;\n"
-    "    color: #E5E5E0;\n"
-    "    font-weight: 600;\n"
-    "    border: 1px solid #30302B;\n"
-    "    border-radius: 3px;\n"
-    "    padding: 5px 12px;\n"
-    "}\n"
-    "button.btn-secondary:hover {\n"
-    "    background-color: #282824;\n"
-    "}\n"
-    "button.btn-steel {\n"
-    "    background-color: #24415C;\n"
-    "    color: #E5E5E0;\n"
-    "    font-weight: 600;\n"
-    "    border: 1px solid #355E85;\n"
-    "    border-radius: 3px;\n"
-    "    padding: 5px 12px;\n"
-    "}\n"
-    "button.btn-steel:hover {\n"
-    "    background-color: #2F5375;\n"
-    "}\n"
-    "button.btn-active {\n"
-    "    background-color: #2B5B84;\n"
-    "    color: #FFFFFF;\n"
-    "    border: 1px solid #4A88C7;\n"
-    "    font-weight: 700;\n"
-    "}\n"
-    "button.btn-auto-on {\n"
-    "    background-color: #162E44;\n"
-    "    color: #5AA9E6;\n"
-    "    border: 1px solid #2B5B84;\n"
-    "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    border-radius: 3px;\n"
-    "    padding: 4px 10px;\n"
-    "}\n"
-    "button.btn-auto-off {\n"
-    "    background-color: #1F1F1D;\n"
-    "    color: #85857F;\n"
-    "    border: 1px solid #30302B;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    border-radius: 3px;\n"
-    "    padding: 4px 10px;\n"
-    "}\n"
-    ".badge-dataset {\n"
-    "    background-color: #121E2B;\n"
-    "    color: #4A88C7;\n"
-    "    border: 1px solid #294D70;\n"
-    "    border-radius: 2px;\n"
-    "    padding: 3px 8px;\n"
-    "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "}\n"
-    ".badge-dataset-net {\n"
-    "    background-color: #281F12;\n"
-    "    color: #D4973B;\n"
-    "    border: 1px solid #6E4E20;\n"
-    "    border-radius: 2px;\n"
-    "    padding: 3px 8px;\n"
-    "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "}\n"
-    "entry {\n"
-    "    background-color: #0E0E0D;\n"
-    "    color: #E5E5E0;\n"
-    "    border: 1px solid #282824;\n"
-    "    border-radius: 3px;\n"
-    "    padding: 4px 8px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "}\n"
-    "textview text {\n"
-    "    background-color: #0E0E0D;\n"
-    "    color: #E5E5E0;\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 11px;\n"
-    "}\n"
-    "progressbar trough {\n"
-    "    background-color: #0E0E0D;\n"
-    "    border: 1px solid #282824;\n"
-    "    border-radius: 2px;\n"
-    "    min-height: 8px;\n"
-    "}\n"
-    "progressbar progress {\n"
-    "    background-color: #4E9A67;\n"
-    "    border-radius: 0px;\n"
-    "}\n"
-    ".badge-idle {\n"
-    "    background-color: #1A1A18;\n"
-    "    color: #85857F;\n"
-    "    border: 1px solid #2D2D28;\n"
-    "    border-radius: 2px;\n"
-    "    padding: 3px 10px;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "}\n"
-    ".badge-running {\n"
-    "    background-color: #162432;\n"
-    "    color: #4A88C7;\n"
-    "    border: 1px solid #294D70;\n"
-    "    border-radius: 2px;\n"
-    "    padding: 3px 10px;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "}\n"
-    ".badge-verified {\n"
-    "    background-color: #15251A;\n"
-    "    color: #4E9A67;\n"
-    "    border: 1px solid #264A30;\n"
-    "    border-radius: 2px;\n"
-    "    padding: 3px 10px;\n"
-    "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "}\n"
-    ".badge-corrupted {\n"
-    "    background-color: #2D1414;\n"
-    "    color: #C94A4A;\n"
-    "    border: 1px solid #5A2424;\n"
-    "    border-radius: 2px;\n"
-    "    padding: 3px 10px;\n"
-    "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "}\n"
-    ".mode-synced {\n"
-    "    color: #4E9A67;\n"
-    "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "}\n"
-    ".mode-unsynced {\n"
-    "    color: #C94A4A;\n"
-    "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "}\n"
-    "separator {\n"
-    "    background-color: #262622;\n"
-    "    min-width: 1px;\n"
-    "    min-height: 1px;\n"
-    "}\n"
-    "/* Left Navigation Sidebar (Industrial White/Slate) */\n"
+    "/* Left Navigation Sidebar (Atlassian / Jira Light) */\n"
     ".nav-sidebar {\n"
-    "    background-color: #0E0F12;\n"
-    "    border-right: 1px solid #22252E;\n"
-    "    padding: 12px 10px;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border-right: 1px solid #E2E8F0;\n"
+    "    padding: 16px 12px;\n"
     "}\n"
-    ".nav-brand-title {\n"
+    ".brand-badge {\n"
+    "    background-color: #0C66E4;\n"
+    "    color: #FFFFFF;\n"
     "    font-size: 13px;\n"
     "    font-weight: 800;\n"
-    "    letter-spacing: 0.8px;\n"
-    "    color: #FFFFFF;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 6px 9px;\n"
+    "}\n"
+    ".nav-brand-title {\n"
+    "    font-size: 14px;\n"
+    "    font-weight: 700;\n"
+    "    color: #0F172A;\n"
+    "    letter-spacing: -0.01em;\n"
     "}\n"
     ".nav-brand-subtitle {\n"
-    "    font-size: 10px;\n"
+    "    font-size: 9.5px;\n"
     "    font-weight: 600;\n"
-    "    color: #717A8C;\n"
-    "    letter-spacing: 0.5px;\n"
-    "    margin-bottom: 8px;\n"
+    "    color: #0C66E4;\n"
+    "    letter-spacing: 0.05em;\n"
     "}\n"
     ".nav-section-label {\n"
     "    font-size: 9.5px;\n"
     "    font-weight: 700;\n"
     "    color: #64748B;\n"
-    "    letter-spacing: 0.8px;\n"
-    "    margin-top: 8px;\n"
+    "    letter-spacing: 0.05em;\n"
+    "    margin-top: 14px;\n"
     "    margin-bottom: 6px;\n"
-    "    padding-left: 4px;\n"
+    "    padding-left: 6px;\n"
     "}\n"
     "button.nav-item {\n"
     "    background-color: transparent;\n"
-    "    color: #94A3B8;\n"
+    "    color: #334155;\n"
     "    border: 1px solid transparent;\n"
-    "    border-radius: 4px;\n"
-    "    padding: 8px 10px;\n"
-    "    font-size: 12px;\n"
-    "    font-weight: 600;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 8px 12px;\n"
+    "    font-size: 12.5px;\n"
+    "    font-weight: 500;\n"
     "}\n"
     "button.nav-item:hover {\n"
-    "    background-color: #1A1D24;\n"
-    "    color: #FFFFFF;\n"
-    "    border: 1px solid #282C37;\n"
+    "    background-color: #F1F5F9;\n"
+    "    color: #0F172A;\n"
+    "    border: 1px solid #E2E8F0;\n"
     "}\n"
     "button.nav-item-active {\n"
-    "    background-color: #1F2430;\n"
-    "    color: #FFFFFF;\n"
-    "    border: 1px solid #363E52;\n"
-    "    border-left: 3px solid #FFFFFF;\n"
-    "    font-weight: 700;\n"
+    "    background-color: #EFF6FF;\n"
+    "    color: #0C66E4;\n"
+    "    border: 1px solid #B3D4FF;\n"
+    "    font-weight: 600;\n"
     "}\n"
     ".nav-badge-count {\n"
-    "    background-color: #1E232F;\n"
-    "    color: #93C5FD;\n"
-    "    border: 1px solid #2B3448;\n"
-    "    border-radius: 10px;\n"
-    "    padding: 1px 7px;\n"
-    "    font-size: 10px;\n"
+    "    background-color: #EFF6FF;\n"
+    "    color: #0C66E4;\n"
+    "    border: 1px solid #B3D4FF;\n"
+    "    border-radius: 9999px;\n"
+    "    padding: 1px 8px;\n"
+    "    font-size: 10.5px;\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
     "    font-weight: 700;\n"
     "}\n"
     ".nav-footer-box {\n"
-    "    background-color: #13151A;\n"
-    "    border: 1px solid #20242D;\n"
-    "    border-radius: 3px;\n"
-    "    padding: 8px;\n"
-    "    margin-top: 6px;\n"
+    "    background-color: #F8FAFC;\n"
+    "    border: 1px solid #E2E8F0;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 8px 10px;\n"
+    "    margin-top: 8px;\n"
     "}\n"
     ".nav-footer-text {\n"
     "    font-size: 10px;\n"
     "    color: #64748B;\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
     "}\n"
-    "/* Page 2: Download History Panel */\n"
-    ".history-page {\n"
-    "    background-color: #121316;\n"
-    "    padding: 16px 20px;\n"
+    "/* Panels */\n"
+    ".top-toolbar {\n"
+    "    background-color: #FFFFFF;\n"
+    "    border-bottom: 1px solid #E2E8F0;\n"
+    "    padding: 7px 12px;\n"
     "}\n"
-    ".history-header-title {\n"
-    "    font-size: 16px;\n"
-    "    font-weight: 800;\n"
-    "    letter-spacing: 0.5px;\n"
-    "    color: #FFFFFF;\n"
+    ".sidebar-panel {\n"
+    "    background-color: #FFFFFF;\n"
+    "    border-right: 1px solid #E2E8F0;\n"
+    "    padding: 10px 12px;\n"
     "}\n"
-    ".history-header-desc {\n"
-    "    font-size: 11.5px;\n"
-    "    color: #858997;\n"
-    "    margin-bottom: 12px;\n"
-    "}\n"
-    ".history-card-metric {\n"
-    "    background-color: #171920;\n"
-    "    border: 1px solid #262A36;\n"
-    "    border-radius: 4px;\n"
+    ".workspace-panel {\n"
+    "    background-color: #F8FAFC;\n"
     "    padding: 10px 14px;\n"
     "}\n"
-    ".history-metric-title {\n"
-    "    font-size: 10px;\n"
+    ".bottom-panel {\n"
+    "    background-color: #FFFFFF;\n"
+    "    border-top: 1px solid #E2E8F0;\n"
+    "    padding: 8px 14px;\n"
+    "}\n"
+    "/* Telemetry Cards */\n"
+    ".telemetry-card {\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #E2E8F0;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 6px 10px;\n"
+    "    margin-bottom: 5px;\n"
+    "}\n"
+    ".section-header {\n"
+    "    font-size: 11px;\n"
     "    font-weight: 700;\n"
-    "    color: #7E8597;\n"
-    "    letter-spacing: 0.6px;\n"
+    "    letter-spacing: 0.04em;\n"
+    "    color: #475569;\n"
+    "    margin-bottom: 4px;\n"
+    "}\n"
+    ".telemetry-key {\n"
+    "    font-size: 10.5px;\n"
+    "    font-weight: 600;\n"
+    "    color: #64748B;\n"
+    "    letter-spacing: 0.02em;\n"
+    "}\n"
+    ".telemetry-val {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 13px;\n"
+    "    font-weight: 600;\n"
+    "    color: #0F172A;\n"
+    "    font-feature-settings: 'tnum';\n"
+    "}\n"
+    ".telemetry-val-large {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 17px;\n"
+    "    font-weight: 700;\n"
+    "    color: #0C66E4;\n"
+    "    font-feature-settings: 'tnum';\n"
+    "}\n"
+    ".telemetry-val-alert {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 13.5px;\n"
+    "    font-weight: 700;\n"
+    "    color: #DC2626;\n"
+    "    font-feature-settings: 'tnum';\n"
+    "}\n"
+    ".telemetry-val-success {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 13px;\n"
+    "    font-weight: 600;\n"
+    "    color: #16A34A;\n"
+    "}\n"
+    "/* Buttons (Jira / Atlassian ADS) */\n"
+    "button.btn-primary {\n"
+    "    background-color: #0C66E4;\n"
+    "    color: #FFFFFF;\n"
+    "    font-weight: 600;\n"
+    "    letter-spacing: 0.2px;\n"
+    "    border: 1px solid #0C66E4;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 16px;\n"
+    "}\n"
+    "button.btn-primary:hover {\n"
+    "    background-color: #0055CC;\n"
+    "    border-color: #0055CC;\n"
+    "}\n"
+    "button.btn-secondary {\n"
+    "    background-color: #FFFFFF;\n"
+    "    color: #334155;\n"
+    "    font-weight: 500;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-secondary:hover {\n"
+    "    background-color: #F8FAFC;\n"
+    "    color: #0F172A;\n"
+    "    border-color: #94A3B8;\n"
+    "}\n"
+    "button.btn-steel {\n"
+    "    background-color: #EFF6FF;\n"
+    "    color: #0C66E4;\n"
+    "    font-weight: 600;\n"
+    "    border: 1px solid #B3D4FF;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-steel:hover {\n"
+    "    background-color: #DBEAFE;\n"
+    "    color: #0055CC;\n"
+    "}\n"
+    "button.btn-active {\n"
+    "    background-color: #0C66E4;\n"
+    "    color: #FFFFFF;\n"
+    "    border: 1px solid #0055CC;\n"
+    "    font-weight: 700;\n"
+    "}\n"
+    "button.btn-auto-on {\n"
+    "    background-color: #EFF6FF;\n"
+    "    color: #0C66E4;\n"
+    "    border: 1px solid #B3D4FF;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 4px 10px;\n"
+    "}\n"
+    "button.btn-auto-off {\n"
+    "    background-color: #F1F5F9;\n"
+    "    color: #64748B;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 4px 10px;\n"
+    "}\n"
+    ".badge-dataset {\n"
+    "    background-color: #EFF6FF;\n"
+    "    color: #0C66E4;\n"
+    "    border: 1px solid #B3D4FF;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 8px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-dataset-net {\n"
+    "    background-color: #FFFBEB;\n"
+    "    color: #D97706;\n"
+    "    border: 1px solid #FDE68A;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 8px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    "entry {\n"
+    "    background-color: #FFFFFF;\n"
+    "    color: #0F172A;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 4px 8px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    "entry:focus {\n"
+    "    border: 1px solid #0C66E4;\n"
+    "}\n"
+    "textview text {\n"
+    "    background-color: #F8FAFC;\n"
+    "    color: #0F172A;\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    "progressbar trough {\n"
+    "    background-color: #E2E8F0;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 4px;\n"
+    "    min-height: 8px;\n"
+    "}\n"
+    "progressbar progress {\n"
+    "    background-color: #0C66E4;\n"
+    "    border-radius: 4px;\n"
+    "}\n"
+    ".badge-idle {\n"
+    "    background-color: #F1F5F9;\n"
+    "    color: #64748B;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-running {\n"
+    "    background-color: #EFF6FF;\n"
+    "    color: #0C66E4;\n"
+    "    border: 1px solid #B3D4FF;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-verified {\n"
+    "    background-color: #F0FDF4;\n"
+    "    color: #16A34A;\n"
+    "    border: 1px solid #BBF7D0;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-corrupted {\n"
+    "    background-color: #FEF2F2;\n"
+    "    color: #DC2626;\n"
+    "    border: 1px solid #FECACA;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".mode-synced {\n"
+    "    color: #16A34A;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    ".mode-unsynced {\n"
+    "    color: #DC2626;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    "separator {\n"
+    "    background-color: #E2E8F0;\n"
+    "    min-width: 1px;\n"
+    "    min-height: 1px;\n"
+    "}\n"
+    "/* Page 2: Download History Panel */\n"
+    ".history-page {\n"
+    "    background-color: #F8FAFC;\n"
+    "    padding: 20px 24px;\n"
+    "}\n"
+    ".history-header-title {\n"
+    "    font-size: 17px;\n"
+    "    font-weight: 700;\n"
+    "    letter-spacing: -0.01em;\n"
+    "    color: #0F172A;\n"
+    "}\n"
+    ".history-header-desc {\n"
+    "    font-size: 12px;\n"
+    "    color: #64748B;\n"
+    "    margin-bottom: 14px;\n"
+    "}\n"
+    ".history-card-metric {\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #E2E8F0;\n"
+    "    border-radius: 8px;\n"
+    "    padding: 12px 16px;\n"
+    "}\n"
+    ".history-metric-title {\n"
+    "    font-size: 10.5px;\n"
+    "    font-weight: 600;\n"
+    "    color: #64748B;\n"
+    "    letter-spacing: 0.03em;\n"
     "}\n"
     ".history-metric-val {\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
+    "    font-size: 22px;\n"
     "    font-weight: 700;\n"
-    "    color: #FFFFFF;\n"
+    "    color: #0F172A;\n"
     "}\n"
     ".history-metric-val-ok {\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
+    "    font-size: 22px;\n"
     "    font-weight: 700;\n"
-    "    color: #4E9A67;\n"
+    "    color: #16A34A;\n"
     "}\n"
     ".history-metric-val-err {\n"
     "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
+    "    font-size: 22px;\n"
     "    font-weight: 700;\n"
-    "    color: #C94A4A;\n"
+    "    color: #DC2626;\n"
     "}\n"
     "treeview.history-tree {\n"
-    "    background-color: #0E0F12;\n"
-    "    color: #D1D5DB;\n"
-    "    border: 1px solid #22252E;\n"
+    "    background-color: #FFFFFF;\n"
+    "    color: #0F172A;\n"
+    "    border: 1px solid #E2E8F0;\n"
+    "    border-radius: 6px;\n"
     "    font-size: 11.5px;\n"
     "}\n"
     "treeview.history-tree:selected {\n"
-    "    background-color: #242936;\n"
-    "    color: #FFFFFF;\n"
+    "    background-color: #EFF6FF;\n"
+    "    color: #0C66E4;\n"
     "}\n"
     "treeview.history-tree header button {\n"
-    "    background-color: #171920;\n"
-    "    color: #9CA3AF;\n"
-    "    font-weight: 700;\n"
-    "    font-size: 10.5px;\n"
-    "    border: 1px solid #22252E;\n"
-    "    padding: 6px;\n"
+    "    background-color: #F1F5F9;\n"
+    "    color: #334155;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    border: 1px solid #E2E8F0;\n"
+    "    padding: 7px;\n"
     "}\n";
 
 /* =========================================================================
@@ -527,13 +545,13 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
     int width = gtk_widget_get_allocated_width(widget);
     int height = gtk_widget_get_allocated_height(widget);
 
-    /* Dark Deep Inset Background */
-    cairo_set_source_rgb(cr, 0.055, 0.055, 0.051); /* #0E0E0D */
+    /* Clean Pure White Container Surface */
+    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
 
-    /* Technical Border */
-    cairo_set_source_rgb(cr, 0.150, 0.150, 0.138); /* #262623 */
+    /* Subtle Slate Border */
+    cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
     cairo_set_line_width(cr, 1.0);
     cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
     cairo_stroke(cr);
@@ -559,7 +577,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
         bool is_occupied = ctx->buffer.slots[i].is_occupied;
 
         /* Micro memory address label above (0x00, 0x01 ... 0x1F) */
-        cairo_set_source_rgb(cr, 0.40, 0.40, 0.38);
+        cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
         cairo_set_font_size(cr, 7.5);
         char hex_addr[8];
         snprintf(hex_addr, sizeof(hex_addr), "%02X", i);
@@ -570,13 +588,13 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
 
         /* Slot Body */
         if (is_occupied) {
-            /* Warm Ochre: Queued in RAM */
-            cairo_set_source_rgb(cr, 0.831, 0.592, 0.231); /* #D4973B */
+            /* Jira Blue: Queued in RAM */
+            cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
             cairo_rectangle(cr, x, slot_top_y, slot_w, slot_height);
             cairo_fill(cr);
 
-            /* Chunk ID inside slot */
-            cairo_set_source_rgb(cr, 0.078, 0.078, 0.075); /* #141413 */
+            /* Chunk ID inside slot (Crisp White) */
+            cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
             cairo_set_font_size(cr, 9.0);
             char cid_str[16];
             snprintf(cid_str, sizeof(cid_str), "%d", ctx->buffer.slots[i].chunk_id);
@@ -589,7 +607,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
             /* Producer ID badge (P1..P4) */
             int pid = ctx->buffer.slots[i].producer_id;
             if (pid > 0) {
-                cairo_set_source_rgb(cr, 0.20, 0.20, 0.18);
+                cairo_set_source_rgb(cr, 0.937, 0.965, 1.00); /* #EFF6FF */
                 cairo_set_font_size(cr, 7.5);
                 char pid_str[16];
                 snprintf(pid_str, sizeof(pid_str), "P%d", pid);
@@ -600,20 +618,20 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
                 cairo_show_text(cr, pid_str);
             }
         } else {
-            /* Empty slot */
-            cairo_set_source_rgb(cr, 0.090, 0.090, 0.086); /* Inset dark */
+            /* Empty slot (Soft Slate Well) */
+            cairo_set_source_rgb(cr, 0.945, 0.961, 0.976); /* #F1F5F9 */
             cairo_rectangle(cr, x, slot_top_y, slot_w, slot_height);
             cairo_fill(cr);
         }
 
         /* Slot Hairline Border */
-        cairo_set_source_rgb(cr, 0.160, 0.160, 0.145);
+        cairo_set_source_rgb(cr, 0.796, 0.835, 0.882); /* #CBD5E1 */
         cairo_set_line_width(cr, 1.0);
         cairo_rectangle(cr, x + 0.5, slot_top_y + 0.5, slot_w - 1, slot_height - 1);
         cairo_stroke(cr);
 
         /* Decimal slot index below */
-        cairo_set_source_rgb(cr, 0.50, 0.50, 0.48);
+        cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
         cairo_set_font_size(cr, 8.0);
         char idx_str[8];
         snprintf(idx_str, sizeof(idx_str), "%02d", i);
@@ -623,11 +641,11 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
         cairo_show_text(cr, idx_str);
 
         /* =============================================================
-         * HEAD (IN) POINTER: STEEL BLUE ARROW ABOVE
+         * HEAD (IN) POINTER: JIRA BLUE ARROW ABOVE
          * ============================================================= */
         if (i == head_idx) {
             double center_x = x + slot_w / 2.0;
-            cairo_set_source_rgb(cr, 0.290, 0.533, 0.780); /* #4A88C7 */
+            cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
 
             cairo_move_to(cr, center_x, slot_top_y - 2.0);
             cairo_line_to(cr, center_x - 4.5, slot_top_y - 7.5);
@@ -644,12 +662,12 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
         }
 
         /* =============================================================
-         * TAIL (OUT) POINTER: SAGE GREEN ARROW BELOW
+         * TAIL (OUT) POINTER: ATLASSIAN GREEN ARROW BELOW
          * ============================================================= */
         if (i == tail_idx) {
             double center_x = x + slot_w / 2.0;
             double arrow_base_y = slot_top_y + slot_height + 14.0;
-            cairo_set_source_rgb(cr, 0.306, 0.604, 0.404); /* #4E9A67 */
+            cairo_set_source_rgb(cr, 0.086, 0.639, 0.290); /* #16A34A */
 
             cairo_move_to(cr, center_x, arrow_base_y);
             cairo_line_to(cr, center_x - 4.5, arrow_base_y + 5.5);
@@ -667,7 +685,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
     }
 
     /* Top Left Status Text */
-    cairo_set_source_rgb(cr, 0.70, 0.70, 0.68);
+    cairo_set_source_rgb(cr, 0.059, 0.090, 0.165); /* #0F172A */
     cairo_set_font_size(cr, 9.5);
     cairo_move_to(cr, margin_x, 14.0);
     cairo_show_text(cr, "CIRCULAR BUFFER MAP // 32 SLOTS (64KB EACH)");
@@ -678,7 +696,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
     snprintf(occ_str, sizeof(occ_str), "OCCUPANCY: %02d/32 (%.1f%%)", count, pct);
     cairo_text_extents_t oext;
     cairo_text_extents(cr, occ_str, &oext);
-    cairo_set_source_rgb(cr, 0.831, 0.592, 0.231);
+    cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
     cairo_move_to(cr, width - margin_x - oext.width, 14.0);
     cairo_show_text(cr, occ_str);
 
@@ -695,13 +713,13 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
     int width = gtk_widget_get_allocated_width(widget);
     int height = gtk_widget_get_allocated_height(widget);
 
-    /* Background */
-    cairo_set_source_rgb(cr, 0.055, 0.055, 0.051); /* #0E0E0D */
+    /* Background: Pure White Surface */
+    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
 
-    /* Border */
-    cairo_set_source_rgb(cr, 0.150, 0.150, 0.138); /* #262623 */
+    /* Border: Subtle Slate */
+    cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
     cairo_set_line_width(cr, 1.0);
     cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
     cairo_stroke(cr);
@@ -738,23 +756,23 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
         switch (st) {
             case BLOCK_UNASSIGNED:
-                cairo_set_source_rgb(cr, 0.137, 0.137, 0.129); /* #232321 */
+                cairo_set_source_rgb(cr, 0.945, 0.961, 0.976); /* #F1F5F9 */
                 count_unassigned++;
                 break;
             case BLOCK_DOWNLOADING:
-                cairo_set_source_rgb(cr, 0.290, 0.533, 0.780); /* #4A88C7 Steel Blue */
+                cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 Jira Blue */
                 count_downloading++;
                 break;
             case BLOCK_QUEUED:
-                cairo_set_source_rgb(cr, 0.831, 0.592, 0.231); /* #D4973B Warm Ochre */
+                cairo_set_source_rgb(cr, 0.851, 0.467, 0.024); /* #D97706 Amber */
                 count_queued++;
                 break;
             case BLOCK_WRITTEN:
-                cairo_set_source_rgb(cr, 0.306, 0.604, 0.404); /* #4E9A67 Sage Green */
+                cairo_set_source_rgb(cr, 0.086, 0.639, 0.290); /* #16A34A Green */
                 count_written++;
                 break;
             case BLOCK_CORRUPTED:
-                cairo_set_source_rgb(cr, 0.788, 0.290, 0.290); /* #C94A4A Brick Crimson */
+                cairo_set_source_rgb(cr, 0.863, 0.149, 0.149); /* #DC2626 Red */
                 count_corrupted++;
                 break;
         }
@@ -774,7 +792,7 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
         }
 
         /* 1px Cell Border */
-        cairo_set_source_rgb(cr, 0.090, 0.090, 0.085);
+        cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
         cairo_set_line_width(cr, 1.0);
         cairo_rectangle(cr, x + 0.5, y + 0.5, cell_w - 1, cell_h - 1);
         cairo_stroke(cr);
@@ -793,11 +811,11 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
     } LegendEntry;
 
     LegendEntry legend_entries[] = {
-        {"UNASSIGNED", count_unassigned, 0.137, 0.137, 0.129},
-        {"PRODUCER ACTIVE", count_downloading, 0.290, 0.533, 0.780},
-        {"QUEUED (RAM)", count_queued, 0.831, 0.592, 0.231},
-        {"COMMITTED (SAFE)", count_written, 0.306, 0.604, 0.404},
-        {"RACE CORRUPTED", count_corrupted, 0.788, 0.290, 0.290}
+        {"UNASSIGNED", count_unassigned, 0.945, 0.961, 0.976},
+        {"PRODUCER ACTIVE", count_downloading, 0.047, 0.400, 0.894},
+        {"QUEUED (RAM)", count_queued, 0.851, 0.467, 0.024},
+        {"COMMITTED (SAFE)", count_written, 0.086, 0.639, 0.290},
+        {"RACE CORRUPTED", count_corrupted, 0.863, 0.149, 0.149}
     };
 
     cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
@@ -807,9 +825,12 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
         /* 8x8px square badge */
         cairo_set_source_rgb(cr, legend_entries[k].r, legend_entries[k].g, legend_entries[k].b);
         cairo_rectangle(cr, leg_x, leg_y - 7.5, 8, 8);
-        cairo_fill(cr);
+        cairo_fill_preserve(cr);
+        cairo_set_source_rgb(cr, 0.796, 0.835, 0.882);
+        cairo_set_line_width(cr, 0.8);
+        cairo_stroke(cr);
 
-        cairo_set_source_rgb(cr, 0.55, 0.55, 0.52);
+        cairo_set_source_rgb(cr, 0.278, 0.333, 0.412); /* #475569 */
         char str_item[64];
         snprintf(str_item, sizeof(str_item), "%s: %d", legend_entries[k].label, legend_entries[k].count);
         cairo_move_to(cr, leg_x + 12, leg_y);
@@ -832,19 +853,19 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
     int width = gtk_widget_get_allocated_width(widget);
     int height = gtk_widget_get_allocated_height(widget);
 
-    /* Dark Background */
-    cairo_set_source_rgb(cr, 0.055, 0.055, 0.051); /* #0E0E0D */
+    /* Background: Slate 50 Well */
+    cairo_set_source_rgb(cr, 0.973, 0.980, 0.988); /* #F8FAFC */
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
 
     /* Border */
-    cairo_set_source_rgb(cr, 0.150, 0.150, 0.138);
+    cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
     cairo_set_line_width(cr, 1.0);
     cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
     cairo_stroke(cr);
 
     /* Reference Grid Lines (0, 150, 300 MB/s) */
-    cairo_set_source_rgb(cr, 0.110, 0.110, 0.100);
+    cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
     cairo_set_line_width(cr, 0.8);
     for (int g = 1; g <= 2; g++) {
         double gy = height - (g * (height / 3.0));
@@ -855,9 +876,9 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
 
     double max_scale = (gui->max_speed_recorded > 10.0) ? (gui->max_speed_recorded * 1.15) : 100.0;
 
-    /* Plot Curve */
-    cairo_set_line_width(cr, 1.5);
-    cairo_set_source_rgb(cr, 0.290, 0.533, 0.780); /* Steel Blue */
+    /* Plot Curve: Jira Blue */
+    cairo_set_line_width(cr, 1.8);
+    cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
 
     double step_x = (double)(width - 8) / (double)(SPARKLINE_POINTS - 1);
 
@@ -872,17 +893,17 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
     }
     cairo_stroke_preserve(cr);
 
-    /* Gradient Shading Underneath Curve */
+    /* Gradient Shading Underneath Curve (Jira Blue Tint) */
     cairo_line_to(cr, width - 4.0, height - 2.0);
     cairo_line_to(cr, 4.0, height - 2.0);
     cairo_close_path(cr);
-    cairo_set_source_rgba(cr, 0.290, 0.533, 0.780, 0.15);
+    cairo_set_source_rgba(cr, 0.047, 0.400, 0.894, 0.12);
     cairo_fill(cr);
 
     /* Max watermark text */
     cairo_select_font_face(cr, "monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size(cr, 8.5);
-    cairo_set_source_rgb(cr, 0.45, 0.45, 0.43);
+    cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
     char max_lbl[32];
     snprintf(max_lbl, sizeof(max_lbl), "PEAK: %.1f MB/s", gui->max_speed_recorded);
     cairo_move_to(cr, 8, 12);
@@ -1508,32 +1529,40 @@ void gui_add_history_record(GuiDashboard *gui, const DownloadHistoryRecord *rec)
  * ========================================================================= */
 static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     GtkWidget *sidebar = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_widget_set_size_request(sidebar, 215, -1);
+    gtk_widget_set_size_request(sidebar, 240, -1);
     gtk_style_context_add_class(gtk_widget_get_style_context(sidebar), "nav-sidebar");
 
-    /* App Header / Brand */
-    GtkWidget *brand_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    /* App Header / Brand (Jira style brand badge + titles) */
+    GtkWidget *brand_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
     gtk_box_pack_start(GTK_BOX(sidebar), brand_box, FALSE, FALSE, 4);
 
-    GtkWidget *lbl_brand = gtk_label_new("CONCURRENCY LAB");
+    GtkWidget *brand_badge = gtk_label_new("CL");
+    gtk_widget_set_size_request(brand_badge, 34, 34);
+    gtk_style_context_add_class(gtk_widget_get_style_context(brand_badge), "brand-badge");
+    gtk_box_pack_start(GTK_BOX(brand_box), brand_badge, FALSE, FALSE, 0);
+
+    GtkWidget *title_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    gtk_box_pack_start(GTK_BOX(brand_box), title_box, TRUE, TRUE, 0);
+
+    GtkWidget *lbl_brand = gtk_label_new("Concurrency Lab");
     gtk_widget_set_halign(lbl_brand, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_brand), "nav-brand-title");
-    gtk_box_pack_start(GTK_BOX(brand_box), lbl_brand, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(title_box), lbl_brand, FALSE, FALSE, 0);
 
     GtkWidget *lbl_sub = gtk_label_new("POSIX THREADS v2.0");
     gtk_widget_set_halign(lbl_sub, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sub), "nav-brand-subtitle");
-    gtk_box_pack_start(GTK_BOX(brand_box), lbl_sub, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(title_box), lbl_sub, FALSE, FALSE, 0);
 
     /* Separator */
     GtkWidget *sep_top = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-    gtk_box_pack_start(GTK_BOX(sidebar), sep_top, FALSE, FALSE, 6);
+    gtk_box_pack_start(GTK_BOX(sidebar), sep_top, FALSE, FALSE, 10);
 
     /* Section label */
     GtkWidget *lbl_sec = gtk_label_new("WORKSPACES");
     gtk_widget_set_halign(lbl_sec, GTK_ALIGN_START);
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sec), "nav-section-label");
-    gtk_box_pack_start(GTK_BOX(sidebar), lbl_sec, FALSE, FALSE, 2);
+    gtk_box_pack_start(GTK_BOX(sidebar), lbl_sec, FALSE, FALSE, 4);
 
     /* Menu Item 1: TRANSFER ENGINE (Active by default) */
     gui->btn_nav_workspace = gtk_button_new();
@@ -1541,22 +1570,20 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_nav_workspace), "nav-item-active");
 
     GtkWidget *box_item1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
-    GtkWidget *icon1 = gtk_label_new("⚡");
     GtkWidget *lbl_item1 = gtk_label_new("Transfer Engine");
-    gtk_box_pack_start(GTK_BOX(box_item1), icon1, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(box_item1), lbl_item1, FALSE, FALSE, 0);
+    gtk_widget_set_halign(lbl_item1, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(box_item1), lbl_item1, TRUE, TRUE, 0);
     gtk_container_add(GTK_CONTAINER(gui->btn_nav_workspace), box_item1);
     g_signal_connect(gui->btn_nav_workspace, "clicked", G_CALLBACK(on_nav_workspace_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_nav_workspace, FALSE, FALSE, 3);
+    gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_nav_workspace, FALSE, FALSE, 4);
 
     /* Menu Item 2: DOWNLOAD HISTORY */
     gui->btn_nav_history = gtk_button_new();
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_nav_history), "nav-item");
 
     GtkWidget *box_item2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
-    GtkWidget *icon2 = gtk_label_new("📋");
     GtkWidget *lbl_item2 = gtk_label_new("Download History");
-    gtk_box_pack_start(GTK_BOX(box_item2), icon2, FALSE, FALSE, 0);
+    gtk_widget_set_halign(lbl_item2, GTK_ALIGN_START);
     gtk_box_pack_start(GTK_BOX(box_item2), lbl_item2, TRUE, TRUE, 0);
 
     gui->lbl_nav_hist_badge = gtk_label_new("0");
@@ -1564,7 +1591,7 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     gtk_box_pack_end(GTK_BOX(box_item2), gui->lbl_nav_hist_badge, FALSE, FALSE, 0);
     gtk_container_add(GTK_CONTAINER(gui->btn_nav_history), box_item2);
     g_signal_connect(gui->btn_nav_history, "clicked", G_CALLBACK(on_nav_history_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_nav_history, FALSE, FALSE, 3);
+    gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_nav_history, FALSE, FALSE, 4);
 
     /* Vertical Spacer to push quick actions to bottom */
     GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -1574,7 +1601,7 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     GtkWidget *btn_open_storage = gtk_button_new_with_label("📁 Mở thư mục tải về");
     gtk_style_context_add_class(gtk_widget_get_style_context(btn_open_storage), "btn-secondary");
     g_signal_connect(btn_open_storage, "clicked", G_CALLBACK(on_btn_open_storage_clicked), gui);
-    gtk_box_pack_start(GTK_BOX(sidebar), btn_open_storage, FALSE, FALSE, 4);
+    gtk_box_pack_start(GTK_BOX(sidebar), btn_open_storage, FALSE, FALSE, 6);
 
     /* Footer info */
     GtkWidget *footer_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
@@ -1743,12 +1770,30 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
                                               GTK_STYLE_PROVIDER(css_provider),
                                               GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-    /* Main Window: 1300 x 820 */
+    /* Main Window: 1240 x 760 */
     gui->main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(gui->main_window),
                          "SYSTEM PROGRAMMING WORKSTATION // MULTI-THREADED DOWNLOAD MANAGER & CONCURRENCY LAB");
-    gtk_window_set_default_size(GTK_WINDOW(gui->main_window), 1300, 820);
-    gtk_window_set_position(GTK_WINDOW(gui->main_window), GTK_WIN_POS_CENTER);
+
+    /* Calculate monitor workarea to center cleanly without dock clipping */
+    GdkDisplay *display = gdk_display_get_default();
+    GdkMonitor *primary = display ? gdk_display_get_primary_monitor(display) : NULL;
+    if (!primary && display) primary = gdk_display_get_monitor_at_point(display, 100, 100);
+    GdkRectangle workarea = {0, 0, 1920, 1080};
+    if (primary) {
+        gdk_monitor_get_workarea(primary, &workarea);
+    }
+    int win_w = 1240;
+    int win_h = 760;
+    if (win_w > workarea.width - 40) win_w = workarea.width - 40;
+    if (win_h > workarea.height - 40) win_h = workarea.height - 40;
+    int win_x = workarea.x + (workarea.width - win_w) / 2;
+    int win_y = workarea.y + (workarea.height - win_h) / 2;
+    if (win_x < workarea.x + 24) win_x = workarea.x + 24;
+    if (win_y < workarea.y + 24) win_y = workarea.y + 24;
+
+    gtk_window_set_default_size(GTK_WINDOW(gui->main_window), win_w, win_h);
+    gtk_window_move(GTK_WINDOW(gui->main_window), win_x, win_y);
     g_signal_connect(gui->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     /* Root Horizontal Box: Sidebar on left, Stack on right */
@@ -2050,21 +2095,21 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     gui->text_buffer_logs = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gui->text_view_logs));
     gtk_container_add(GTK_CONTAINER(scrolled_log), gui->text_view_logs);
 
-    /* Setup Text Tags for Syntax Highlighting */
+    /* Setup Text Tags for Syntax Highlighting (Jira / Atlassian Tokens) */
     gui->tag_timestamp = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_timestamp",
-        "foreground", "#7E7E78", NULL);
+        "foreground", "#64748B", NULL);
     gui->tag_producer = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_producer",
-        "foreground", "#4A88C7", "weight", PANGO_WEIGHT_BOLD, NULL);
+        "foreground", "#0C66E4", "weight", PANGO_WEIGHT_BOLD, NULL);
     gui->tag_consumer = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_consumer",
-        "foreground", "#4E9A67", "weight", PANGO_WEIGHT_BOLD, NULL);
+        "foreground", "#16A34A", "weight", PANGO_WEIGHT_BOLD, NULL);
     gui->tag_action_enqueue = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_enqueue",
-        "foreground", "#D4973B", NULL);
+        "foreground", "#D97706", NULL);
     gui->tag_action_commit = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_commit",
-        "foreground", "#5CB87A", "weight", PANGO_WEIGHT_BOLD, NULL);
+        "foreground", "#16A34A", "weight", PANGO_WEIGHT_BOLD, NULL);
     gui->tag_action_race = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_race",
-        "foreground", "#E05353", "weight", PANGO_WEIGHT_BOLD, NULL);
+        "foreground", "#DC2626", "weight", PANGO_WEIGHT_BOLD, NULL);
     gui->tag_action_sys = gtk_text_buffer_create_tag(gui->text_buffer_logs, "tag_action_sys",
-        "foreground", "#A0A09A", NULL);
+        "foreground", "#475569", NULL);
 
     /* =====================================================================
      * PAGE 2: DOWNLOAD HISTORY & AUDIT VIEW
