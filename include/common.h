@@ -141,6 +141,7 @@ typedef struct {
     /* Block Matrix Map for Cairo Visualization */
     BlockStatus block_statuses[MAX_CHUNKS];
     int block_producer_id[MAX_CHUNKS];
+    int block_consumer_id[MAX_CHUNKS];
 
     /* Integrity Verification (OpenSSL SHA-256) */
     char expected_sha256[65];         /* Computed or expected digest */

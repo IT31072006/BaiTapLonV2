@@ -34,6 +34,7 @@ void app_context_init(AppContext *ctx) {
   for (int i = 0; i < MAX_CHUNKS; i++) {
     ctx->block_statuses[i] = BLOCK_UNASSIGNED;
     ctx->block_producer_id[i] = -1;
+    ctx->block_consumer_id[i] = -1;
   }
 }
 
@@ -94,6 +95,7 @@ void app_context_reset(AppContext *ctx) {
   for (int i = 0; i < MAX_CHUNKS; i++) {
     ctx->block_statuses[i] = BLOCK_UNASSIGNED;
     ctx->block_producer_id[i] = -1;
+    ctx->block_consumer_id[i] = -1;
   }
 
   if (ctx->output_fd >= 0) {

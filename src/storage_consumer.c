@@ -112,6 +112,7 @@ void *consumer_worker(void *arg) {
 
       if (bytes_written == (ssize_t)chunk.size) {
         ctx->block_statuses[chunk.chunk_id] = BLOCK_WRITTEN;
+        ctx->block_consumer_id[chunk.chunk_id] = cid;
         int written_total = __sync_add_and_fetch(&ctx->chunks_written, 1);
         __sync_fetch_and_add(&ctx->bytes_written, bytes_written);
         app_log(ctx, thread_tag, "COMMIT",
@@ -163,6 +164,7 @@ void *consumer_worker(void *arg) {
         /* Collision confirmed! Another consumer hijacked the file offset */
         __sync_fetch_and_add(&ctx->race_corrupted_blocks, 1);
         ctx->block_statuses[chunk.chunk_id] = BLOCK_CORRUPTED;
+        ctx->block_consumer_id[chunk.chunk_id] = cid;
 
         app_log(ctx, thread_tag, "RACE_ERR",
                 "lseek collision detected at offset=0x%08lX (expected 0x%08lX, "
@@ -171,6 +173,7 @@ void *consumer_worker(void *arg) {
                 (unsigned long)chunk.byte_offset, (unsigned long)actual_offset);
       } else {
         ctx->block_statuses[chunk.chunk_id] = BLOCK_WRITTEN;
+        ctx->block_consumer_id[chunk.chunk_id] = cid;
         app_log(ctx, thread_tag, "COMMIT_UNS",
                 "chunk_id=%04d offset=0x%08lX bytes=%zu", chunk.chunk_id,
                 (unsigned long)chunk.byte_offset, chunk.size);

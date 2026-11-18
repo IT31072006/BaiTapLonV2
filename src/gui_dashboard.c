@@ -4,14 +4,9 @@
 #include <math.h>
 
 /* =========================================================================
- * MODERN ATLASSIAN / JIRA ENTERPRISE PALETTE (TRẮNG - XANH SAAS THEME)
- * Matching ai-jira-agent styling:
- * - Canvas: #F8FAFC (Slate 50), Containers: #FFFFFF (Pure White)
- * - Sidebar: #F0F4FA (Ice-tinted Slate-Blue), Borders: #D0DFEF / #E2E8F0
- * - Primary Accent: #0C66E4 (Royal Jira Blue), Hover: #0055CC
- * - Dark Slate Text: #0F172A (900), Muted: #64748B (500)
+ * 1. LIGHT THEME CSS: MODERN ATLASSIAN / JIRA SAAS (TRẮNG - XANH HOÀNG GIA)
  * ========================================================================= */
-static const char *WORKSTATION_CSS = 
+static const char *WORKSTATION_CSS_LIGHT = 
     "* {\n"
     "    font-family: 'Inter', 'Ubuntu Sans', 'Segoe UI', sans-serif;\n"
     "    font-size: 12px;\n"
@@ -20,7 +15,6 @@ static const char *WORKSTATION_CSS =
     "window, .main-window {\n"
     "    background-color: #F8FAFC;\n"
     "}\n"
-    "/* Universal Button Reset: eliminates system dark gradients */\n"
     "button, button:hover, button:active, button:checked, button:focus, button:backdrop {\n"
     "    background-image: none;\n"
     "    box-shadow: none;\n"
@@ -72,7 +66,7 @@ static const char *WORKSTATION_CSS =
     "}\n"
     "button.nav-item label {\n"
     "    color: #334155;\n"
-    "    font-size: 12.5px;\n"
+    "    font-size: 12px;\n"
     "    font-weight: 600;\n"
     "}\n"
     "button.nav-item:hover {\n"
@@ -127,6 +121,26 @@ static const char *WORKSTATION_CSS =
     "}\n"
     "button.nav-btn-action:hover label {\n"
     "    color: #FFFFFF;\n"
+    "}\n"
+    "button.btn-theme-toggle {\n"
+    "    background-image: none;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #CBD5E1;\n"
+    "    border-radius: 7px;\n"
+    "    padding: 6px 12px;\n"
+    "}\n"
+    "button.btn-theme-toggle label {\n"
+    "    color: #475569;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    "button.btn-theme-toggle:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #F1F5F9;\n"
+    "    border-color: #94A3B8;\n"
+    "}\n"
+    "button.btn-theme-toggle:hover label {\n"
+    "    color: #0F172A;\n"
     "}\n"
     ".nav-footer-box {\n"
     "    background-color: #FFFFFF;\n"
@@ -487,27 +501,33 @@ static const char *WORKSTATION_CSS =
     "    min-width: 1px;\n"
     "    min-height: 1px;\n"
     "}\n"
-    "/* Page 2: Download History */\n"
-    ".history-page {\n"
+    "/* Pages */\n"
+    ".history-page, .benchmark-page {\n"
     "    background-color: #F8FAFC;\n"
     "    padding: 16px 20px;\n"
     "}\n"
-    ".history-header-title {\n"
+    ".history-header-title, .bm-header-title {\n"
     "    font-size: 16px;\n"
     "    font-weight: 700;\n"
     "    letter-spacing: -0.01em;\n"
     "    color: #0F172A;\n"
     "}\n"
-    ".history-header-desc {\n"
+    ".history-header-desc, .bm-header-desc {\n"
     "    font-size: 11.5px;\n"
     "    color: #64748B;\n"
     "    margin-bottom: 12px;\n"
     "}\n"
-    ".history-card-metric {\n"
+    ".history-card-metric, .bm-card {\n"
     "    background-color: #FFFFFF;\n"
     "    border: 1px solid #E2E8F0;\n"
     "    border-radius: 8px;\n"
     "    padding: 10px 14px;\n"
+    "}\n"
+    ".bm-summary-box {\n"
+    "    background-color: #FFFFFF;\n"
+    "    border: 1px solid #E2E8F0;\n"
+    "    border-radius: 8px;\n"
+    "    padding: 12px 16px;\n"
     "}\n"
     ".history-metric-title {\n"
     "    font-size: 10px;\n"
@@ -555,6 +575,567 @@ static const char *WORKSTATION_CSS =
     "}\n"
     "treeview.history-tree header button label {\n"
     "    color: #334155;\n"
+    "    font-weight: 700;\n"
+    "}\n";
+
+/* =========================================================================
+ * 2. DARK THEME CSS: INDUSTRIAL MATTE CARBON & COBALT (CYBERPUNK / PRO DARK)
+ * ========================================================================= */
+static const char *WORKSTATION_CSS_DARK = 
+    "* {\n"
+    "    font-family: 'Inter', 'Ubuntu Sans', 'Segoe UI', sans-serif;\n"
+    "    font-size: 12px;\n"
+    "    color: #E5E5E0;\n"
+    "}\n"
+    "window, .main-window {\n"
+    "    background-color: #141413;\n"
+    "}\n"
+    "button, button:hover, button:active, button:checked, button:focus, button:backdrop {\n"
+    "    background-image: none;\n"
+    "    box-shadow: none;\n"
+    "    text-shadow: none;\n"
+    "    outline: none;\n"
+    "    border-style: solid;\n"
+    "}\n"
+    "button label {\n"
+    "    color: inherit;\n"
+    "}\n"
+    ".nav-sidebar {\n"
+    "    background-color: #1C1C1A;\n"
+    "    border-right: 1px solid #2C2C29;\n"
+    "    padding: 16px 12px;\n"
+    "}\n"
+    ".brand-badge {\n"
+    "    background-color: #1F6FEB;\n"
+    "    color: #FFFFFF;\n"
+    "    font-size: 13px;\n"
+    "    font-weight: 800;\n"
+    "    border-radius: 7px;\n"
+    "    padding: 6px 9px;\n"
+    "}\n"
+    ".nav-brand-title {\n"
+    "    font-size: 14px;\n"
+    "    font-weight: 700;\n"
+    "    color: #F0F6FC;\n"
+    "}\n"
+    ".nav-brand-subtitle {\n"
+    "    font-size: 9px;\n"
+    "    font-weight: 700;\n"
+    "    color: #58A6FF;\n"
+    "}\n"
+    ".nav-section-label {\n"
+    "    font-size: 9.5px;\n"
+    "    font-weight: 700;\n"
+    "    color: #8B949E;\n"
+    "    margin-top: 14px;\n"
+    "    margin-bottom: 6px;\n"
+    "    padding-left: 6px;\n"
+    "}\n"
+    "button.nav-item {\n"
+    "    background-image: none;\n"
+    "    background-color: transparent;\n"
+    "    border: 1px solid transparent;\n"
+    "    border-radius: 7px;\n"
+    "    padding: 8px 12px;\n"
+    "}\n"
+    "button.nav-item label {\n"
+    "    color: #8B949E;\n"
+    "    font-size: 12px;\n"
+    "    font-weight: 600;\n"
+    "}\n"
+    "button.nav-item:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #262624;\n"
+    "    border: 1px solid #30363D;\n"
+    "}\n"
+    "button.nav-item:hover label {\n"
+    "    color: #58A6FF;\n"
+    "}\n"
+    "button.nav-item-active {\n"
+    "    background-image: none;\n"
+    "    background-color: #1F6FEB;\n"
+    "    border: 1px solid #388BFD;\n"
+    "    border-radius: 7px;\n"
+    "}\n"
+    "button.nav-item-active label {\n"
+    "    color: #FFFFFF;\n"
+    "    font-weight: 700;\n"
+    "}\n"
+    ".nav-badge-count {\n"
+    "    background-color: #21262D;\n"
+    "    color: #58A6FF;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 9999px;\n"
+    "    padding: 1px 7px;\n"
+    "    font-size: 10px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-weight: 700;\n"
+    "}\n"
+    "button.nav-item-active .nav-badge-count {\n"
+    "    background-color: rgba(255, 255, 255, 0.25);\n"
+    "    color: #FFFFFF;\n"
+    "    border: 1px solid rgba(255, 255, 255, 0.35);\n"
+    "}\n"
+    "button.nav-btn-action {\n"
+    "    background-image: none;\n"
+    "    background-color: #21262D;\n"
+    "    border: 1px solid #388BFD;\n"
+    "    border-radius: 7px;\n"
+    "    padding: 7px 12px;\n"
+    "}\n"
+    "button.nav-btn-action label {\n"
+    "    color: #58A6FF;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "button.nav-btn-action:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #1F6FEB;\n"
+    "    border-color: #388BFD;\n"
+    "}\n"
+    "button.nav-btn-action:hover label {\n"
+    "    color: #FFFFFF;\n"
+    "}\n"
+    "button.btn-theme-toggle {\n"
+    "    background-image: none;\n"
+    "    background-color: #21262D;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 7px;\n"
+    "    padding: 6px 12px;\n"
+    "}\n"
+    "button.btn-theme-toggle label {\n"
+    "    color: #C9D1D9;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    "button.btn-theme-toggle:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #30363D;\n"
+    "    border-color: #8B949E;\n"
+    "}\n"
+    "button.btn-theme-toggle:hover label {\n"
+    "    color: #FFFFFF;\n"
+    "}\n"
+    ".nav-footer-box {\n"
+    "    background-color: #181816;\n"
+    "    border: 1px solid #2C2C29;\n"
+    "    border-radius: 7px;\n"
+    "    padding: 8px 10px;\n"
+    "    margin-top: 8px;\n"
+    "}\n"
+    ".nav-footer-text {\n"
+    "    font-size: 10px;\n"
+    "    color: #8B949E;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".top-toolbar {\n"
+    "    background-color: #1C1C1A;\n"
+    "    border-bottom: 1px solid #2C2C29;\n"
+    "    padding: 8px 14px;\n"
+    "}\n"
+    ".sidebar-panel {\n"
+    "    background-color: #1C1C1A;\n"
+    "    border-right: 1px solid #2C2C29;\n"
+    "    padding: 10px 12px;\n"
+    "}\n"
+    ".workspace-panel {\n"
+    "    background-color: #141413;\n"
+    "    padding: 10px 14px;\n"
+    "}\n"
+    ".bottom-panel {\n"
+    "    background-color: #1C1C1A;\n"
+    "    border-top: 1px solid #2C2C29;\n"
+    "    padding: 8px 14px;\n"
+    "}\n"
+    ".telemetry-card {\n"
+    "    background-color: #181816;\n"
+    "    border: 1px solid #2C2C29;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 6px 10px;\n"
+    "    margin-bottom: 5px;\n"
+    "}\n"
+    ".section-header {\n"
+    "    font-size: 11px;\n"
+    "    font-weight: 700;\n"
+    "    color: #8B949E;\n"
+    "}\n"
+    ".telemetry-key {\n"
+    "    font-size: 10.5px;\n"
+    "    font-weight: 600;\n"
+    "    color: #8B949E;\n"
+    "}\n"
+    ".telemetry-val {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 13px;\n"
+    "    font-weight: 600;\n"
+    "    color: #F0F6FC;\n"
+    "    font-feature-settings: 'tnum';\n"
+    "}\n"
+    ".telemetry-val-large {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 17px;\n"
+    "    font-weight: 700;\n"
+    "    color: #58A6FF;\n"
+    "    font-feature-settings: 'tnum';\n"
+    "}\n"
+    ".telemetry-val-alert {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 13.5px;\n"
+    "    font-weight: 700;\n"
+    "    color: #F85149;\n"
+    "    font-feature-settings: 'tnum';\n"
+    "}\n"
+    ".telemetry-val-success {\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 13px;\n"
+    "    font-weight: 600;\n"
+    "    color: #3FB950;\n"
+    "}\n"
+    "button.btn-primary {\n"
+    "    background-image: none;\n"
+    "    background-color: #1F6FEB;\n"
+    "    border: 1px solid #388BFD;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 14px;\n"
+    "}\n"
+    "button.btn-primary label {\n"
+    "    color: #FFFFFF;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "button.btn-primary:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #388BFD;\n"
+    "    border-color: #58A6FF;\n"
+    "}\n"
+    "button.btn-secondary {\n"
+    "    background-image: none;\n"
+    "    background-color: #21262D;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-secondary label {\n"
+    "    color: #C9D1D9;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "button.btn-secondary:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #30363D;\n"
+    "    border-color: #8B949E;\n"
+    "}\n"
+    "button.btn-secondary:hover label {\n"
+    "    color: #FFFFFF;\n"
+    "}\n"
+    "button.btn-pause {\n"
+    "    background-image: none;\n"
+    "    background-color: #21262D;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-pause label {\n"
+    "    color: #D29922;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "button.btn-pause:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #382800;\n"
+    "    border-color: #BB8009;\n"
+    "}\n"
+    "button.btn-reset {\n"
+    "    background-image: none;\n"
+    "    background-color: #21262D;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-reset label {\n"
+    "    color: #F85149;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "button.btn-reset:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #381515;\n"
+    "    border-color: #DA3633;\n"
+    "}\n"
+    "button.btn-steel {\n"
+    "    background-image: none;\n"
+    "    background-color: #1C2D42;\n"
+    "    border: 1px solid #2E5A88;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 12px;\n"
+    "}\n"
+    "button.btn-steel label {\n"
+    "    color: #58A6FF;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    "button.btn-steel:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #233D5B;\n"
+    "    border-color: #388BFD;\n"
+    "}\n"
+    "button.btn-active {\n"
+    "    background-image: none;\n"
+    "    background-color: #1F6FEB;\n"
+    "    border: 1px solid #388BFD;\n"
+    "}\n"
+    "button.btn-active label {\n"
+    "    color: #FFFFFF;\n"
+    "    font-weight: 700;\n"
+    "}\n"
+    "button.btn-auto-on {\n"
+    "    background-image: none;\n"
+    "    background-color: #1C2D42;\n"
+    "    border: 1px solid #388BFD;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 10px;\n"
+    "}\n"
+    "button.btn-auto-on label {\n"
+    "    color: #58A6FF;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    "button.btn-auto-off {\n"
+    "    background-image: none;\n"
+    "    background-color: #21262D;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 5px 10px;\n"
+    "}\n"
+    "button.btn-auto-off label {\n"
+    "    color: #8B949E;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-dataset {\n"
+    "    background-color: #1C2D42;\n"
+    "    color: #58A6FF;\n"
+    "    border: 1px solid #2E5A88;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 8px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-dataset-net {\n"
+    "    background-color: #382800;\n"
+    "    color: #E3B341;\n"
+    "    border: 1px solid #7D4E00;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 8px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    "entry {\n"
+    "    background-image: none;\n"
+    "    background-color: #10100F;\n"
+    "    color: #F0F6FC;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 4px 10px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "entry:focus {\n"
+    "    border-color: #58A6FF;\n"
+    "}\n"
+    "spinbutton {\n"
+    "    background-image: none;\n"
+    "    background-color: #10100F;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 6px;\n"
+    "    padding: 2px 4px;\n"
+    "}\n"
+    "spinbutton entry {\n"
+    "    border: none;\n"
+    "    background-color: transparent;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 12px;\n"
+    "    color: #58A6FF;\n"
+    "}\n"
+    "spinbutton button {\n"
+    "    background-image: none;\n"
+    "    background-color: #21262D;\n"
+    "    border: none;\n"
+    "    color: #8B949E;\n"
+    "}\n"
+    "spinbutton button:hover {\n"
+    "    background-image: none;\n"
+    "    background-color: #30363D;\n"
+    "    color: #F0F6FC;\n"
+    "}\n"
+    "switch {\n"
+    "    background-image: none;\n"
+    "    background-color: #30363D;\n"
+    "    border-radius: 12px;\n"
+    "}\n"
+    "switch:checked {\n"
+    "    background-image: none;\n"
+    "    background-color: #238636;\n"
+    "}\n"
+    "switch slider {\n"
+    "    background-image: none;\n"
+    "    background-color: #FFFFFF;\n"
+    "    border-radius: 10px;\n"
+    "    min-width: 18px;\n"
+    "    min-height: 18px;\n"
+    "    margin: 1px;\n"
+    "}\n"
+    "textview text {\n"
+    "    background-color: #10100F;\n"
+    "    color: #E5E5E0;\n"
+    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    "progressbar trough {\n"
+    "    background-color: #21262D;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 4px;\n"
+    "    min-height: 8px;\n"
+    "}\n"
+    "progressbar progress {\n"
+    "    background-image: none;\n"
+    "    background-color: #1F6FEB;\n"
+    "    border-radius: 4px;\n"
+    "}\n"
+    ".badge-idle {\n"
+    "    background-color: #21262D;\n"
+    "    color: #8B949E;\n"
+    "    border: 1px solid #30363D;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-running {\n"
+    "    background-color: #1C2D42;\n"
+    "    color: #58A6FF;\n"
+    "    border: 1px solid #2E5A88;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-verified {\n"
+    "    background-color: #0F2D1F;\n"
+    "    color: #3FB950;\n"
+    "    border: 1px solid #238636;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".badge-corrupted {\n"
+    "    background-color: #381515;\n"
+    "    color: #F85149;\n"
+    "    border: 1px solid #DA3633;\n"
+    "    border-radius: 4px;\n"
+    "    padding: 3px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "}\n"
+    ".mode-synced {\n"
+    "    color: #3FB950;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    ".mode-unsynced {\n"
+    "    color: #F85149;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11px;\n"
+    "}\n"
+    "separator {\n"
+    "    background-color: #2C2C29;\n"
+    "    min-width: 1px;\n"
+    "    min-height: 1px;\n"
+    "}\n"
+    ".history-page, .benchmark-page {\n"
+    "    background-color: #141413;\n"
+    "    padding: 16px 20px;\n"
+    "}\n"
+    ".history-header-title, .bm-header-title {\n"
+    "    font-size: 16px;\n"
+    "    font-weight: 700;\n"
+    "    letter-spacing: -0.01em;\n"
+    "    color: #F0F6FC;\n"
+    "}\n"
+    ".history-header-desc, .bm-header-desc {\n"
+    "    font-size: 11.5px;\n"
+    "    color: #8B949E;\n"
+    "    margin-bottom: 12px;\n"
+    "}\n"
+    ".history-card-metric, .bm-card {\n"
+    "    background-color: #1C1C1A;\n"
+    "    border: 1px solid #2C2C29;\n"
+    "    border-radius: 8px;\n"
+    "    padding: 10px 14px;\n"
+    "}\n"
+    ".bm-summary-box {\n"
+    "    background-color: #181816;\n"
+    "    border: 1px solid #2C2C29;\n"
+    "    border-radius: 8px;\n"
+    "    padding: 12px 16px;\n"
+    "}\n"
+    ".history-metric-title {\n"
+    "    font-size: 10px;\n"
+    "    font-weight: 600;\n"
+    "    color: #8B949E;\n"
+    "    letter-spacing: 0.03em;\n"
+    "}\n"
+    ".history-metric-val {\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 20px;\n"
+    "    font-weight: 700;\n"
+    "    color: #F0F6FC;\n"
+    "}\n"
+    ".history-metric-val-ok {\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 20px;\n"
+    "    font-weight: 700;\n"
+    "    color: #3FB950;\n"
+    "}\n"
+    ".history-metric-val-err {\n"
+    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 20px;\n"
+    "    font-weight: 700;\n"
+    "    color: #F85149;\n"
+    "}\n"
+    "treeview.history-tree {\n"
+    "    background-color: #1C1C1A;\n"
+    "    color: #F0F6FC;\n"
+    "    border: 1px solid #2C2C29;\n"
+    "    border-radius: 6px;\n"
+    "    font-size: 11.5px;\n"
+    "}\n"
+    "treeview.history-tree:selected {\n"
+    "    background-color: #1C2D42;\n"
+    "    color: #58A6FF;\n"
+    "}\n"
+    "treeview.history-tree header button {\n"
+    "    background-image: none;\n"
+    "    background-color: #21262D;\n"
+    "    color: #C9D1D9;\n"
+    "    font-weight: 600;\n"
+    "    font-size: 11px;\n"
+    "    border: 1px solid #30363D;\n"
+    "    padding: 6px 8px;\n"
+    "}\n"
+    "treeview.history-tree header button label {\n"
+    "    color: #C9D1D9;\n"
     "    font-weight: 700;\n"
     "}\n";
 
@@ -697,6 +1278,164 @@ static void* engine_coordinator_thread(void *arg) {
 }
 
 /* =========================================================================
+ * INTERACTIVE MEMORY TOOLTIPS (INSPECTOR POPOVER)
+ * ========================================================================= */
+gboolean on_query_tooltip_ram_buffer(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer user_data) {
+    (void)keyboard_mode;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+    int width = gtk_widget_get_allocated_width(widget);
+
+    double margin_x = 20.0;
+    double slot_top_y = 32.0;
+    double slot_height = 42.0;
+    double available_w = width - (2 * margin_x);
+    double gap = 3.0;
+    double slot_w = (available_w - ((BUFFER_CAPACITY - 1) * gap)) / (double)BUFFER_CAPACITY;
+
+    if (y < slot_top_y || y > slot_top_y + slot_height) return FALSE;
+    if (x < margin_x || x > width - margin_x) return FALSE;
+
+    int idx = (int)((x - margin_x) / (slot_w + gap));
+    if (idx < 0 || idx >= BUFFER_CAPACITY) return FALSE;
+
+    double slot_x = margin_x + idx * (slot_w + gap);
+    if (x > slot_x + slot_w) return FALSE;
+
+    pthread_mutex_lock(&ctx->buffer_mutex);
+    bool is_occupied = ctx->buffer.slots[idx].is_occupied;
+    int chunk_id = ctx->buffer.slots[idx].chunk_id;
+    int producer_id = ctx->buffer.slots[idx].producer_id;
+    size_t chunk_sz = ctx->buffer.slots[idx].size;
+    off_t byte_off = ctx->buffer.slots[idx].byte_offset;
+    int head = ctx->buffer.head;
+    int tail = ctx->buffer.tail;
+    pthread_mutex_unlock(&ctx->buffer_mutex);
+
+    char markup[512];
+    if (is_occupied) {
+        snprintf(markup, sizeof(markup),
+                 "<b>📦 RAM Bounded Buffer Slot #%02d</b> (Địa chỉ: 0x%02X)\n"
+                 "• Trạng thái: <span foreground='#0C66E4' weight='bold'>ĐANG CHỨA CHUNK #%03d</span>\n"
+                 "• Luồng nạp (Producer): <b>Producer #%d</b>\n"
+                 "• Vị trí byte tệp: <b>0x%08lX (Bytes: %'lu - %'lu)</b>\n"
+                 "• Dung lượng khối: <b>%zu KB (%'zu Bytes)</b>\n"
+                 "• Con trỏ buffer: %s",
+                 idx, idx, chunk_id, producer_id,
+                 (unsigned long)byte_off, (unsigned long)byte_off, (unsigned long)(byte_off + chunk_sz - 1),
+                 chunk_sz / 1024, chunk_sz,
+                 (idx == head && idx == tail) ? "<span foreground='#D97706' weight='bold'>[HEAD &amp; TAIL TRÙNG NHAU]</span>" :
+                 (idx == head) ? "<span foreground='#0C66E4' weight='bold'>[HEAD: Vị trí Producer nạp kế tiếp]</span>" :
+                 (idx == tail) ? "<span foreground='#16A34A' weight='bold'>[TAIL: Vị trí Consumer rút ghi đĩa]</span>" :
+                 "<span>[ĐANG CHỜ TIÊU THỤ]</span>");
+    } else {
+        snprintf(markup, sizeof(markup),
+                 "<b>🔲 RAM Bounded Buffer Slot #%02d</b> (Địa chỉ: 0x%02X)\n"
+                 "• Trạng thái: <span foreground='#64748B'>TRỐNG // SẴN SÀNG NHẬN DỮ LIỆU</span>\n"
+                 "• Sức chứa tối đa: <b>64 KB (65,536 Bytes)</b>\n"
+                 "• Con trỏ buffer: %s",
+                 idx, idx,
+                 (idx == head && idx == tail) ? "<span foreground='#D97706' weight='bold'>[HEAD &amp; TAIL (Buffer Rỗng)]</span>" :
+                 (idx == head) ? "<span foreground='#0C66E4' weight='bold'>[HEAD: Vị trí Producer nạp kế tiếp]</span>" :
+                 (idx == tail) ? "<span foreground='#16A34A' weight='bold'>[TAIL: Vị trí Consumer chờ lấy]</span>" :
+                 "<span>[SLOT TRỐNG]</span>");
+    }
+
+    gtk_tooltip_set_markup(tooltip, markup);
+    return TRUE;
+}
+
+gboolean on_query_tooltip_block_matrix(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer user_data) {
+    (void)keyboard_mode;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    AppContext *ctx = gui->ctx;
+    int width = gtk_widget_get_allocated_width(widget);
+    int height = gtk_widget_get_allocated_height(widget);
+
+    int cols = 32;
+    int rows = 8;
+    double margin_x = 16.0;
+    double margin_y = 12.0;
+    double gap = 2.0;
+
+    double avail_w = width - (2 * margin_x);
+    double cell_w = (avail_w - (cols - 1) * gap) / cols;
+    double avail_h = height - (2 * margin_y) - 24.0;
+    double cell_h = (avail_h - (rows - 1) * gap) / rows;
+
+    if (x < margin_x || y < margin_y) return FALSE;
+    if (x > width - margin_x || y > margin_y + rows * (cell_h + gap)) return FALSE;
+
+    int c = (int)((x - margin_x) / (cell_w + gap));
+    int r = (int)((y - margin_y) / (cell_h + gap));
+    if (c < 0 || c >= cols || r < 0 || r >= rows) return FALSE;
+
+    double cell_x = margin_x + c * (cell_w + gap);
+    double cell_y = margin_y + r * (cell_h + gap);
+    if (x > cell_x + cell_w || y > cell_y + cell_h) return FALSE;
+
+    int chunk_id = r * cols + c;
+    int total = (ctx->total_chunks > 0 && ctx->total_chunks <= MAX_CHUNKS) ? ctx->total_chunks : 256;
+    if (chunk_id >= total) return FALSE;
+
+    BlockStatus st = ctx->block_statuses[chunk_id];
+    int pid = ctx->block_producer_id[chunk_id];
+    int cid = ctx->block_consumer_id[chunk_id];
+    uint64_t start_byte = (uint64_t)chunk_id * CHUNK_SIZE;
+    uint64_t end_byte = start_byte + CHUNK_SIZE - 1;
+    if (ctx->total_file_size > 0 && end_byte >= ctx->total_file_size) {
+        end_byte = ctx->total_file_size - 1;
+    }
+    size_t chunk_bytes = (end_byte >= start_byte) ? (end_byte - start_byte + 1) : CHUNK_SIZE;
+
+    char status_str[256];
+    char p_info[128];
+    char c_info[128];
+
+    if (pid > 0) snprintf(p_info, sizeof(p_info), "Producer #%d (Tải HTTP Range)", pid);
+    else snprintf(p_info, sizeof(p_info), "Chưa chỉ định");
+
+    if (cid > 0) snprintf(c_info, sizeof(c_info), "Consumer #%d (Ghi I/O đĩa)", cid);
+    else snprintf(c_info, sizeof(c_info), "Chưa xử lý");
+
+    switch (st) {
+        case BLOCK_UNASSIGNED:
+            snprintf(status_str, sizeof(status_str), "<span foreground='#64748B'>Chưa gán // Chờ điều phối</span>");
+            break;
+        case BLOCK_DOWNLOADING:
+            snprintf(status_str, sizeof(status_str), "<span foreground='#0C66E4' weight='bold'>⚡ Đang tải qua mạng (Network Ingress)</span>");
+            break;
+        case BLOCK_QUEUED:
+            snprintf(status_str, sizeof(status_str), "<span foreground='#D97706' weight='bold'>⏳ Đã nạp vào RAM Bounded Buffer</span>");
+            break;
+        case BLOCK_WRITTEN:
+            snprintf(status_str, sizeof(status_str), "<span foreground='#16A34A' weight='bold'>✔ ĐÃ GHI ĐĨA AN TOÀN // COMMITTED</span>");
+            break;
+        case BLOCK_CORRUPTED:
+            snprintf(status_str, sizeof(status_str), "<span foreground='#DC2626' weight='bold'>⚠ HỎNG DỮ LIỆU DO RACE CONDITION! (Xung đột lseek)</span>");
+            break;
+    }
+
+    char markup[640];
+    snprintf(markup, sizeof(markup),
+             "<b>💽 Ma Trận Khối Đĩa: Block #%03d</b> (Index %d)\n"
+             "• Trạng thái: %s\n"
+             "• Offset đĩa: <b>0x%08lX</b>\n"
+             "• Dải bytes: <b>%'lu - %'lu (%zu KB)</b>\n"
+             "• Luồng tải (Producer): <b>%s</b>\n"
+             "• Luồng ghi (Consumer): <b>%s</b>%s",
+             chunk_id, chunk_id,
+             status_str,
+             (unsigned long)start_byte,
+             (unsigned long)start_byte, (unsigned long)end_byte, chunk_bytes / 1024,
+             p_info, c_info,
+             (st == BLOCK_CORRUPTED) ? "\n<span foreground='#DC2626' weight='bold'>→ XUNG ĐỘT GHI ĐÈ BỞI CÁC CONSUMERS DO THIẾU MUTEX! DỮ LIỆU BỊ HỎNG.</span>" : "");
+
+    gtk_tooltip_set_markup(tooltip, markup);
+    return TRUE;
+}
+
+/* =========================================================================
  * CAIRO 2D DRAWING: RAM BOUNDED BUFFER INSPECTOR (TOP CANVAS)
  * ========================================================================= */
 gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
@@ -706,13 +1445,21 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
     int width = gtk_widget_get_allocated_width(widget);
     int height = gtk_widget_get_allocated_height(widget);
 
-    /* Clean Pure White Container Surface */
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
+    /* Background: Surface Container */
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.086, 0.086, 0.078); /* #161614 */
+    } else {
+        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
+    }
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
 
-    /* Subtle Slate Border */
-    cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
+    /* Border */
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.173, 0.173, 0.161); /* #2C2C29 */
+    } else {
+        cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
+    }
     cairo_set_line_width(cr, 1.0);
     cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
     cairo_stroke(cr);
@@ -738,7 +1485,11 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
         bool is_occupied = ctx->buffer.slots[i].is_occupied;
 
         /* Micro memory address label above (0x00, 0x01 ... 0x1F) */
-        cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
+        if (gui->is_dark_mode) {
+            cairo_set_source_rgb(cr, 0.545, 0.580, 0.620); /* #8B949E */
+        } else {
+            cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
+        }
         cairo_set_font_size(cr, 7.5);
         char hex_addr[8];
         snprintf(hex_addr, sizeof(hex_addr), "%02X", i);
@@ -750,7 +1501,11 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
         /* Slot Body */
         if (is_occupied) {
             /* Jira Blue: Queued in RAM */
-            cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
+            if (gui->is_dark_mode) {
+                cairo_set_source_rgb(cr, 0.220, 0.545, 0.992); /* #388BFD */
+            } else {
+                cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
+            }
             cairo_rectangle(cr, x, slot_top_y, slot_w, slot_height);
             cairo_fill(cr);
 
@@ -779,20 +1534,32 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
                 cairo_show_text(cr, pid_str);
             }
         } else {
-            /* Empty slot (Soft Slate Well) */
-            cairo_set_source_rgb(cr, 0.945, 0.961, 0.976); /* #F1F5F9 */
+            /* Empty slot */
+            if (gui->is_dark_mode) {
+                cairo_set_source_rgb(cr, 0.129, 0.149, 0.176); /* #21262D */
+            } else {
+                cairo_set_source_rgb(cr, 0.945, 0.961, 0.976); /* #F1F5F9 */
+            }
             cairo_rectangle(cr, x, slot_top_y, slot_w, slot_height);
             cairo_fill(cr);
         }
 
         /* Slot Hairline Border */
-        cairo_set_source_rgb(cr, 0.796, 0.835, 0.882); /* #CBD5E1 */
+        if (gui->is_dark_mode) {
+            cairo_set_source_rgb(cr, 0.188, 0.212, 0.239); /* #30363D */
+        } else {
+            cairo_set_source_rgb(cr, 0.796, 0.835, 0.882); /* #CBD5E1 */
+        }
         cairo_set_line_width(cr, 1.0);
         cairo_rectangle(cr, x + 0.5, slot_top_y + 0.5, slot_w - 1, slot_height - 1);
         cairo_stroke(cr);
 
         /* Decimal slot index below */
-        cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
+        if (gui->is_dark_mode) {
+            cairo_set_source_rgb(cr, 0.545, 0.580, 0.620); /* #8B949E */
+        } else {
+            cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
+        }
         cairo_set_font_size(cr, 8.0);
         char idx_str[8];
         snprintf(idx_str, sizeof(idx_str), "%02d", i);
@@ -806,7 +1573,8 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
          * ============================================================= */
         if (i == head_idx) {
             double center_x = x + slot_w / 2.0;
-            cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
+            if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.220, 0.545, 0.992);
+            else cairo_set_source_rgb(cr, 0.047, 0.400, 0.894);
 
             cairo_move_to(cr, center_x, slot_top_y - 2.0);
             cairo_line_to(cr, center_x - 4.5, slot_top_y - 7.5);
@@ -828,7 +1596,8 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
         if (i == tail_idx) {
             double center_x = x + slot_w / 2.0;
             double arrow_base_y = slot_top_y + slot_height + 14.0;
-            cairo_set_source_rgb(cr, 0.086, 0.639, 0.290); /* #16A34A */
+            if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.247, 0.725, 0.314);
+            else cairo_set_source_rgb(cr, 0.086, 0.639, 0.290);
 
             cairo_move_to(cr, center_x, arrow_base_y);
             cairo_line_to(cr, center_x - 4.5, arrow_base_y + 5.5);
@@ -846,7 +1615,8 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
     }
 
     /* Top Left Status Text */
-    cairo_set_source_rgb(cr, 0.059, 0.090, 0.165); /* #0F172A */
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.941, 0.965, 0.988);
+    else cairo_set_source_rgb(cr, 0.059, 0.090, 0.165);
     cairo_set_font_size(cr, 9.5);
     cairo_move_to(cr, margin_x, 14.0);
     cairo_show_text(cr, "CIRCULAR BUFFER MAP // 32 SLOTS (64KB EACH)");
@@ -857,7 +1627,8 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
     snprintf(occ_str, sizeof(occ_str), "OCCUPANCY: %02d/32 (%.1f%%)", count, pct);
     cairo_text_extents_t oext;
     cairo_text_extents(cr, occ_str, &oext);
-    cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.220, 0.545, 0.992);
+    else cairo_set_source_rgb(cr, 0.047, 0.400, 0.894);
     cairo_move_to(cr, width - margin_x - oext.width, 14.0);
     cairo_show_text(cr, occ_str);
 
@@ -874,13 +1645,21 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
     int width = gtk_widget_get_allocated_width(widget);
     int height = gtk_widget_get_allocated_height(widget);
 
-    /* Background: Pure White Surface */
-    cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
+    /* Background Surface */
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.086, 0.086, 0.078); /* #161614 */
+    } else {
+        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
+    }
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
 
-    /* Border: Subtle Slate */
-    cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
+    /* Border */
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.173, 0.173, 0.161); /* #2C2C29 */
+    } else {
+        cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
+    }
     cairo_set_line_width(cr, 1.0);
     cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
     cairo_stroke(cr);
@@ -917,11 +1696,13 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
 
         switch (st) {
             case BLOCK_UNASSIGNED:
-                cairo_set_source_rgb(cr, 0.945, 0.961, 0.976); /* #F1F5F9 */
+                if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.129, 0.149, 0.176); /* #21262D */
+                else cairo_set_source_rgb(cr, 0.945, 0.961, 0.976); /* #F1F5F9 */
                 count_unassigned++;
                 break;
             case BLOCK_DOWNLOADING:
-                cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 Jira Blue */
+                if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.220, 0.545, 0.992);
+                else cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 Jira Blue */
                 count_downloading++;
                 break;
             case BLOCK_QUEUED:
@@ -929,7 +1710,8 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
                 count_queued++;
                 break;
             case BLOCK_WRITTEN:
-                cairo_set_source_rgb(cr, 0.086, 0.639, 0.290); /* #16A34A Green */
+                if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.247, 0.725, 0.314);
+                else cairo_set_source_rgb(cr, 0.086, 0.639, 0.290); /* #16A34A Green */
                 count_written++;
                 break;
             case BLOCK_CORRUPTED:
@@ -953,7 +1735,8 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
         }
 
         /* 1px Cell Border */
-        cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
+        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.188, 0.212, 0.239); /* #30363D */
+        else cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
         cairo_set_line_width(cr, 1.0);
         cairo_rectangle(cr, x + 0.5, y + 0.5, cell_w - 1, cell_h - 1);
         cairo_stroke(cr);
@@ -972,10 +1755,10 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
     } LegendEntry;
 
     LegendEntry legend_entries[] = {
-        {"UNASSIGNED", count_unassigned, 0.945, 0.961, 0.976},
-        {"PRODUCER ACTIVE", count_downloading, 0.047, 0.400, 0.894},
+        {"UNASSIGNED", count_unassigned, gui->is_dark_mode ? 0.129 : 0.945, gui->is_dark_mode ? 0.149 : 0.961, gui->is_dark_mode ? 0.176 : 0.976},
+        {"PRODUCER ACTIVE", count_downloading, gui->is_dark_mode ? 0.220 : 0.047, gui->is_dark_mode ? 0.545 : 0.400, gui->is_dark_mode ? 0.992 : 0.894},
         {"QUEUED (RAM)", count_queued, 0.851, 0.467, 0.024},
-        {"COMMITTED (SAFE)", count_written, 0.086, 0.639, 0.290},
+        {"COMMITTED (SAFE)", count_written, gui->is_dark_mode ? 0.247 : 0.086, gui->is_dark_mode ? 0.725 : 0.639, gui->is_dark_mode ? 0.314 : 0.290},
         {"RACE CORRUPTED", count_corrupted, 0.863, 0.149, 0.149}
     };
 
@@ -987,11 +1770,13 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
         cairo_set_source_rgb(cr, legend_entries[k].r, legend_entries[k].g, legend_entries[k].b);
         cairo_rectangle(cr, leg_x, leg_y - 7.5, 8, 8);
         cairo_fill_preserve(cr);
-        cairo_set_source_rgb(cr, 0.796, 0.835, 0.882);
+        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.25, 0.25, 0.25);
+        else cairo_set_source_rgb(cr, 0.796, 0.835, 0.882);
         cairo_set_line_width(cr, 0.8);
         cairo_stroke(cr);
 
-        cairo_set_source_rgb(cr, 0.278, 0.333, 0.412); /* #475569 */
+        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.545, 0.580, 0.620); /* #8B949E */
+        else cairo_set_source_rgb(cr, 0.278, 0.333, 0.412); /* #475569 */
         char str_item[64];
         snprintf(str_item, sizeof(str_item), "%s: %d", legend_entries[k].label, legend_entries[k].count);
         cairo_move_to(cr, leg_x + 12, leg_y);
@@ -1006,7 +1791,8 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
 }
 
 /* =========================================================================
- * CAIRO 2D DRAWING: REAL-TIME THROUGHPUT SPARKLINE GRAPH (SIDEBAR)
+ * CAIRO 2D DRAWING: MULTI-CHANNEL REAL-TIME THROUGHPUT GRAPH (SIDEBAR)
+ * Channels: Network Ingress (Producer - Blue) vs Disk Write Egress (Consumer - Green)
  * ========================================================================= */
 gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     GuiDashboard *gui = (GuiDashboard *)user_data;
@@ -1014,20 +1800,26 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
     int width = gtk_widget_get_allocated_width(widget);
     int height = gtk_widget_get_allocated_height(widget);
 
-    /* Background: Slate 50 Well */
-    cairo_set_source_rgb(cr, 0.973, 0.980, 0.988); /* #F8FAFC */
+    /* Background */
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.078, 0.078, 0.075); /* #141413 */
+    } else {
+        cairo_set_source_rgb(cr, 0.973, 0.980, 0.988); /* #F8FAFC */
+    }
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
 
     /* Border */
-    cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.173, 0.173, 0.161); /* #2C2C29 */
+    } else {
+        cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
+    }
     cairo_set_line_width(cr, 1.0);
     cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
     cairo_stroke(cr);
 
-    /* Reference Grid Lines (0, 150, 300 MB/s) */
-    cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
-    cairo_set_line_width(cr, 0.8);
+    /* Reference Grid Lines */
     for (int g = 1; g <= 2; g++) {
         double gy = height - (g * (height / 3.0));
         cairo_move_to(cr, 4, gy);
@@ -1036,17 +1828,20 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
     }
 
     double max_scale = (gui->max_speed_recorded > 10.0) ? (gui->max_speed_recorded * 1.15) : 100.0;
-
-    /* Plot Curve: Jira Blue */
-    cairo_set_line_width(cr, 1.8);
-    cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
-
     double step_x = (double)(width - 8) / (double)(SPARKLINE_POINTS - 1);
+
+    /* 1. Network Ingress Curve (Producer - Blue) */
+    cairo_set_line_width(cr, 1.8);
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.220, 0.545, 0.992); /* #388BFD */
+    } else {
+        cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
+    }
 
     for (int p = 0; p < SPARKLINE_POINTS; p++) {
         int idx = (gui->speed_history_idx + p) % SPARKLINE_POINTS;
-        double val = gui->speed_history[idx];
-        double py = height - 4.0 - ((val / max_scale) * (height - 12.0));
+        double val = gui->producer_speed_history[idx];
+        double py = height - 4.0 - ((val / max_scale) * (height - 18.0));
         double px = 4.0 + p * step_x;
 
         if (p == 0) cairo_move_to(cr, px, py);
@@ -1054,21 +1849,63 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
     }
     cairo_stroke_preserve(cr);
 
-    /* Gradient Shading Underneath Curve (Jira Blue Tint) */
+    /* Subtle Gradient Shading Underneath Producer Curve */
     cairo_line_to(cr, width - 4.0, height - 2.0);
     cairo_line_to(cr, 4.0, height - 2.0);
     cairo_close_path(cr);
-    cairo_set_source_rgba(cr, 0.047, 0.400, 0.894, 0.12);
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgba(cr, 0.220, 0.545, 0.992, 0.15);
+    } else {
+        cairo_set_source_rgba(cr, 0.047, 0.400, 0.894, 0.12);
+    }
     cairo_fill(cr);
 
-    /* Max watermark text */
+    /* 2. Disk Write Egress Curve (Consumer - Green) */
+    cairo_set_line_width(cr, 1.6);
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.247, 0.725, 0.314); /* #3FB950 */
+    } else {
+        cairo_set_source_rgb(cr, 0.086, 0.639, 0.290); /* #16A34A */
+    }
+
+    for (int p = 0; p < SPARKLINE_POINTS; p++) {
+        int idx = (gui->speed_history_idx + p) % SPARKLINE_POINTS;
+        double val = gui->consumer_speed_history[idx];
+        double py = height - 4.0 - ((val / max_scale) * (height - 18.0));
+        double px = 4.0 + p * step_x;
+
+        if (p == 0) cairo_move_to(cr, px, py);
+        else cairo_line_to(cr, px, py);
+    }
+    cairo_stroke(cr);
+
+    /* Top Left: Peak Watermark */
     cairo_select_font_face(cr, "monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 8.5);
-    cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
+    cairo_set_font_size(cr, 8.0);
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.545, 0.580, 0.620);
+    else cairo_set_source_rgb(cr, 0.392, 0.455, 0.545);
+
     char max_lbl[32];
     snprintf(max_lbl, sizeof(max_lbl), "PEAK: %.1f MB/s", gui->max_speed_recorded);
-    cairo_move_to(cr, 8, 12);
+    cairo_move_to(cr, 6, 11);
     cairo_show_text(cr, max_lbl);
+
+    /* Top Right: Multi-Channel Legend */
+    double leg_x = width - 110;
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.220, 0.545, 0.992);
+    else cairo_set_source_rgb(cr, 0.047, 0.400, 0.894);
+    cairo_rectangle(cr, leg_x, 5.0, 5, 5);
+    cairo_fill(cr);
+    cairo_move_to(cr, leg_x + 8, 10.5);
+    cairo_show_text(cr, "Net(P)");
+
+    leg_x += 52;
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.247, 0.725, 0.314);
+    else cairo_set_source_rgb(cr, 0.086, 0.639, 0.290);
+    cairo_rectangle(cr, leg_x, 5.0, 5, 5);
+    cairo_fill(cr);
+    cairo_move_to(cr, leg_x + 8, 10.5);
+    cairo_show_text(cr, "Disk(C)");
 
     return FALSE;
 }
@@ -1154,11 +1991,41 @@ gboolean on_gui_telemetry_tick(gpointer user_data) {
     double speed_mbps = (ctx->state == STATE_RUNNING) ? (mb_written / elapsed) : 0.0;
     if (ctx->state == STATE_COMPLETED) speed_mbps = mb_written / elapsed;
 
-    /* Push speed to history buffer for Sparkline */
-    gui->speed_history[gui->speed_history_idx] = speed_mbps;
-    gui->speed_history_idx = (gui->speed_history_idx + 1) % SPARKLINE_POINTS;
-    if (speed_mbps > gui->max_speed_recorded) {
-        gui->max_speed_recorded = speed_mbps;
+    /* Push speed to history buffer for Sparkline (Multi-Channel Realtime) */
+    struct timespec now_ts;
+    clock_gettime(CLOCK_MONOTONIC, &now_ts);
+    double dt = (now_ts.tv_sec - gui->last_speed_tick.tv_sec) + 
+                (now_ts.tv_nsec - gui->last_speed_tick.tv_nsec) / 1e9;
+    if (dt >= 0.08) {
+        uint64_t cur_dl = ctx->bytes_downloaded;
+        uint64_t cur_wr = ctx->bytes_written;
+        double p_speed = 0.0;
+        double c_speed = 0.0;
+
+        if (ctx->state == STATE_RUNNING) {
+            if (cur_dl >= gui->last_bytes_downloaded) {
+                p_speed = ((cur_dl - gui->last_bytes_downloaded) / (1024.0 * 1024.0)) / dt;
+            }
+            if (cur_wr >= gui->last_bytes_written) {
+                c_speed = ((cur_wr - gui->last_bytes_written) / (1024.0 * 1024.0)) / dt;
+            }
+        } else if (ctx->state == STATE_COMPLETED) {
+            p_speed = 0.0;
+            c_speed = 0.0;
+        }
+
+        gui->last_bytes_downloaded = cur_dl;
+        gui->last_bytes_written = cur_wr;
+        gui->last_speed_tick = now_ts;
+
+        gui->speed_history[gui->speed_history_idx] = speed_mbps;
+        gui->producer_speed_history[gui->speed_history_idx] = p_speed;
+        gui->consumer_speed_history[gui->speed_history_idx] = c_speed;
+        gui->speed_history_idx = (gui->speed_history_idx + 1) % SPARKLINE_POINTS;
+
+        if (p_speed > gui->max_speed_recorded) gui->max_speed_recorded = p_speed;
+        if (c_speed > gui->max_speed_recorded) gui->max_speed_recorded = c_speed;
+        if (speed_mbps > gui->max_speed_recorded) gui->max_speed_recorded = speed_mbps;
     }
 
     char str_buf[128];
@@ -1474,6 +2341,12 @@ void on_btn_reset_clicked(GtkButton *button, gpointer user_data) {
     gui->last_rendered_log_count = 0;
     gui->max_speed_recorded = 0.0;
     memset(gui->speed_history, 0, sizeof(gui->speed_history));
+    memset(gui->producer_speed_history, 0, sizeof(gui->producer_speed_history));
+    memset(gui->consumer_speed_history, 0, sizeof(gui->consumer_speed_history));
+    gui->speed_history_idx = 0;
+    gui->last_bytes_downloaded = 0;
+    gui->last_bytes_written = 0;
+    clock_gettime(CLOCK_MONOTONIC, &gui->last_speed_tick);
 
     gtk_text_buffer_set_text(gui->text_buffer_logs, "", -1);
     gtk_label_set_text(GTK_LABEL(gui->lbl_actual_sha), "----------------------------------------------------------------");
@@ -1543,8 +2416,10 @@ void on_nav_workspace_clicked(GtkButton *button, gpointer user_data) {
 
     GtkStyleContext *sc_w = gtk_widget_get_style_context(gui->btn_nav_workspace);
     GtkStyleContext *sc_h = gtk_widget_get_style_context(gui->btn_nav_history);
+    GtkStyleContext *sc_b = gtk_widget_get_style_context(gui->btn_nav_benchmark);
     gtk_style_context_add_class(sc_w, "nav-item-active");
     gtk_style_context_remove_class(sc_h, "nav-item-active");
+    if (sc_b) gtk_style_context_remove_class(sc_b, "nav-item-active");
 }
 
 void on_nav_history_clicked(GtkButton *button, gpointer user_data) {
@@ -1554,8 +2429,23 @@ void on_nav_history_clicked(GtkButton *button, gpointer user_data) {
 
     GtkStyleContext *sc_w = gtk_widget_get_style_context(gui->btn_nav_workspace);
     GtkStyleContext *sc_h = gtk_widget_get_style_context(gui->btn_nav_history);
+    GtkStyleContext *sc_b = gtk_widget_get_style_context(gui->btn_nav_benchmark);
     gtk_style_context_remove_class(sc_w, "nav-item-active");
     gtk_style_context_add_class(sc_h, "nav-item-active");
+    if (sc_b) gtk_style_context_remove_class(sc_b, "nav-item-active");
+}
+
+void on_nav_benchmark_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    gtk_stack_set_visible_child_name(GTK_STACK(gui->main_stack), "benchmark");
+
+    GtkStyleContext *sc_w = gtk_widget_get_style_context(gui->btn_nav_workspace);
+    GtkStyleContext *sc_h = gtk_widget_get_style_context(gui->btn_nav_history);
+    GtkStyleContext *sc_b = gtk_widget_get_style_context(gui->btn_nav_benchmark);
+    gtk_style_context_remove_class(sc_w, "nav-item-active");
+    gtk_style_context_remove_class(sc_h, "nav-item-active");
+    if (sc_b) gtk_style_context_add_class(sc_b, "nav-item-active");
 }
 
 void on_btn_open_storage_clicked(GtkButton *button, gpointer user_data) {
@@ -1759,9 +2649,29 @@ static GtkWidget* create_navigation_sidebar(GuiDashboard *gui) {
     g_signal_connect(gui->btn_nav_history, "clicked", G_CALLBACK(on_nav_history_clicked), gui);
     gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_nav_history, FALSE, FALSE, 4);
 
+    /* Menu Item 3: BENCHMARK ARENA */
+    gui->btn_nav_benchmark = gtk_button_new();
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_nav_benchmark), "nav-item");
+
+    GtkWidget *box_item3 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    GtkWidget *lbl_icon3 = gtk_label_new("⚔");
+    gtk_box_pack_start(GTK_BOX(box_item3), lbl_icon3, FALSE, FALSE, 0);
+    GtkWidget *lbl_item3 = gtk_label_new("Đấu Trường So Sánh");
+    gtk_widget_set_halign(lbl_item3, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(box_item3), lbl_item3, TRUE, TRUE, 0);
+    gtk_container_add(GTK_CONTAINER(gui->btn_nav_benchmark), box_item3);
+    g_signal_connect(gui->btn_nav_benchmark, "clicked", G_CALLBACK(on_nav_benchmark_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_nav_benchmark, FALSE, FALSE, 4);
+
     /* Vertical Spacer to push quick actions to bottom */
     GtkWidget *spacer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     gtk_box_pack_start(GTK_BOX(sidebar), spacer, TRUE, TRUE, 0);
+
+    /* Theme Toggle Button (Light SaaS / Dark Carbon) */
+    gui->btn_theme_toggle = gtk_button_new_with_label(gui->is_dark_mode ? "☀️ Giao diện: Sáng" : "🌙 Giao diện: Tối");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_theme_toggle), "btn-theme-toggle");
+    g_signal_connect(gui->btn_theme_toggle, "clicked", G_CALLBACK(on_btn_theme_toggle_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(sidebar), gui->btn_theme_toggle, FALSE, FALSE, 6);
 
     /* Bottom Quick Action: Open test_data/ Storage Folder */
     GtkWidget *btn_open_storage = gtk_button_new_with_label("📁 Mở thư mục tải về");
@@ -1917,6 +2827,553 @@ static GtkWidget* create_history_page(GuiDashboard *gui) {
 }
 
 /* =========================================================================
+ * THEME ENGINE: TOGGLE BETWEEN JIRA LIGHT AND INDUSTRIAL CARBON DARK
+ * ========================================================================= */
+void on_btn_theme_toggle_clicked(GtkButton *button, gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    gui->is_dark_mode = !gui->is_dark_mode;
+
+    if (gui->is_dark_mode) {
+        gtk_button_set_label(button, "☀️ Giao diện: Sáng");
+        gtk_css_provider_load_from_data(gui->css_provider, WORKSTATION_CSS_DARK, -1, NULL);
+        app_log(gui->ctx, "THEME", "SWITCH", "Chuyển sang Giao diện Tối (Matte Carbon & Cobalt)");
+    } else {
+        gtk_button_set_label(button, "🌙 Giao diện: Tối");
+        gtk_css_provider_load_from_data(gui->css_provider, WORKSTATION_CSS_LIGHT, -1, NULL);
+        app_log(gui->ctx, "THEME", "SWITCH", "Chuyển sang Giao diện Sáng (Jira SaaS White-Blue)");
+    }
+
+    /* Redraw all dynamic Cairo canvases */
+    if (gui->drawing_ram_buffer) gtk_widget_queue_draw(gui->drawing_ram_buffer);
+    if (gui->drawing_block_matrix) gtk_widget_queue_draw(gui->drawing_block_matrix);
+    if (gui->drawing_sidebar_sparkline) gtk_widget_queue_draw(gui->drawing_sidebar_sparkline);
+    if (gui->drawing_bm_chart) gtk_widget_queue_draw(gui->drawing_bm_chart);
+}
+
+/* =========================================================================
+ * PAGE 3: BENCHMARK ARENA IMPLEMENTATION & WORKER
+ * ========================================================================= */
+typedef struct {
+    GuiDashboard *gui;
+    int phase; /* 1 = sync done, 2 = unsync done, -1 = error */
+    double sync_time;
+    double sync_speed;
+    bool sync_verified;
+    int sync_errors;
+    char sync_sha[65];
+
+    double unsync_time;
+    double unsync_speed;
+    bool unsync_verified;
+    int unsync_errors;
+    char unsync_sha[65];
+
+    char status_msg[128];
+} BenchmarkProgressData;
+
+static gboolean on_bm_idle_progress_cb(gpointer user_data) {
+    BenchmarkProgressData *data = (BenchmarkProgressData *)user_data;
+    if (!data || !data->gui) {
+        free(data);
+        return G_SOURCE_REMOVE;
+    }
+    GuiDashboard *gui = data->gui;
+
+    gtk_label_set_text(GTK_LABEL(gui->lbl_bm_status), data->status_msg);
+
+    if (data->phase == 1) {
+        gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gui->progress_bm), 0.50);
+
+        char buf[64];
+        snprintf(buf, sizeof(buf), "%.3f s", data->sync_time);
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_sync_time), buf);
+
+        snprintf(buf, sizeof(buf), "%.2f MB/s", data->sync_speed);
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_sync_speed), buf);
+
+        snprintf(buf, sizeof(buf), "%d Blocks", data->sync_errors);
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_sync_errors), buf);
+
+        if (data->sync_verified && data->sync_errors == 0) {
+            gtk_label_set_text(GTK_LABEL(gui->lbl_bm_sync_integrity), "✔ KHỚP 100% (AN TOÀN)");
+            gtk_style_context_remove_class(gtk_widget_get_style_context(gui->lbl_bm_sync_integrity), "badge-corrupted");
+            gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_bm_sync_integrity), "badge-verified");
+        } else {
+            gtk_label_set_text(GTK_LABEL(gui->lbl_bm_sync_integrity), "✖ SAI LỆCH");
+            gtk_style_context_remove_class(gtk_widget_get_style_context(gui->lbl_bm_sync_integrity), "badge-verified");
+            gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_bm_sync_integrity), "badge-corrupted");
+        }
+
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_sync_sha), data->sync_sha);
+
+    } else if (data->phase == 2) {
+        gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gui->progress_bm), 1.0);
+
+        char buf[64];
+        snprintf(buf, sizeof(buf), "%.3f s", data->unsync_time);
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_unsync_time), buf);
+
+        snprintf(buf, sizeof(buf), "%.2f MB/s", data->unsync_speed);
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_unsync_speed), buf);
+
+        snprintf(buf, sizeof(buf), "%d Blocks", data->unsync_errors);
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_unsync_errors), buf);
+
+        if (data->unsync_verified && data->unsync_errors == 0) {
+            gtk_label_set_text(GTK_LABEL(gui->lbl_bm_unsync_integrity), "✔ KHỚP 100%");
+            gtk_style_context_remove_class(gtk_widget_get_style_context(gui->lbl_bm_unsync_integrity), "badge-corrupted");
+            gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_bm_unsync_integrity), "badge-verified");
+        } else {
+            gtk_label_set_text(GTK_LABEL(gui->lbl_bm_unsync_integrity), "✖ HỎNG DỮ LIỆU (DATA RACE DETECTED)");
+            gtk_style_context_remove_class(gtk_widget_get_style_context(gui->lbl_bm_unsync_integrity), "badge-verified");
+            gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_bm_unsync_integrity), "badge-corrupted");
+        }
+
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_unsync_sha), data->unsync_sha);
+
+        gui->bm_has_results = true;
+        gui->bm_running = false;
+        gtk_widget_set_sensitive(gui->btn_run_benchmark, TRUE);
+
+        if (gui->drawing_bm_chart) {
+            gtk_widget_queue_draw(gui->drawing_bm_chart);
+        }
+    } else if (data->phase == -1) {
+        gui->bm_running = false;
+        gtk_widget_set_sensitive(gui->btn_run_benchmark, TRUE);
+    }
+
+    free(data);
+    return G_SOURCE_REMOVE;
+}
+
+static void* benchmark_runner_worker(void *arg) {
+    GuiDashboard *gui = (GuiDashboard *)arg;
+    AppContext bm_ctx;
+    app_context_init(&bm_ctx);
+
+    const char *source_file = "test_data/benchmark_16mb.bin";
+    size_t file_size = 256 * CHUNK_SIZE; /* 16 MB */
+    char exp_sha[65] = {0};
+
+    mkdir("test_data", 0755);
+    if (access(source_file, F_OK) != 0) {
+        generate_benchmark_file(source_file, file_size, exp_sha);
+    } else {
+        compute_file_sha256(source_file, exp_sha);
+    }
+    strncpy(bm_ctx.expected_sha256, exp_sha, sizeof(bm_ctx.expected_sha256));
+
+    int port = 0;
+    start_local_http_server(&bm_ctx, source_file, &port);
+    probe_remote_target(&bm_ctx, bm_ctx.target_url);
+
+    app_log(gui->ctx, "BENCHMARK", "START", "Khởi chạy Đấu Trường So Sánh Hiệu Năng kép trên tập tin 16 MB...");
+
+    /* --- PASS 1: SYNCHRONIZED (MUTEX + SEMAPHORE) --- */
+    bm_ctx.sync_mode = SYNC_MODE_SYNCHRONIZED;
+    bm_ctx.num_producers = 4;
+    bm_ctx.num_consumers = 2;
+    const char *sync_dest = "test_data/bm_sync_out.bin";
+    prepare_output_file(&bm_ctx, sync_dest);
+
+    clock_gettime(CLOCK_MONOTONIC, &bm_ctx.start_time);
+    bm_ctx.state = STATE_RUNNING;
+    start_consumer_pool(&bm_ctx);
+    start_producer_pool(&bm_ctx);
+    wait_producer_pool(&bm_ctx);
+    wait_consumer_pool(&bm_ctx);
+    clock_gettime(CLOCK_MONOTONIC, &bm_ctx.end_time);
+    bm_ctx.state = STATE_COMPLETED;
+    verify_file_integrity(&bm_ctx);
+
+    double sync_elapsed = (bm_ctx.end_time.tv_sec - bm_ctx.start_time.tv_sec) +
+                          (bm_ctx.end_time.tv_nsec - bm_ctx.start_time.tv_nsec) / 1e9;
+    if (sync_elapsed <= 0.001) sync_elapsed = 0.001;
+    double sync_speed = (bm_ctx.bytes_written / (1024.0 * 1024.0)) / sync_elapsed;
+
+    gui->bm_sync_time_val = sync_elapsed;
+    gui->bm_sync_speed_val = sync_speed;
+
+    app_log(gui->ctx, "BENCHMARK", "PASS1", "Lượt 1 (Có Khóa): %.3fs, %.2f MB/s, Lỗi: %lu, SHA: %s",
+            sync_elapsed, sync_speed, (unsigned long)bm_ctx.race_corrupted_blocks,
+            bm_ctx.sha256_verified ? "KHỚP 100%" : "SAI LỆCH");
+
+    BenchmarkProgressData *p1 = (BenchmarkProgressData *)malloc(sizeof(BenchmarkProgressData));
+    if (p1) {
+        p1->gui = gui;
+        p1->phase = 1;
+        p1->sync_time = sync_elapsed;
+        p1->sync_speed = sync_speed;
+        p1->sync_verified = bm_ctx.sha256_verified;
+        p1->sync_errors = (int)bm_ctx.race_corrupted_blocks;
+        strncpy(p1->sync_sha, bm_ctx.actual_sha256, 64);
+        p1->sync_sha[64] = '\0';
+        snprintf(p1->status_msg, sizeof(p1->status_msg), "Hoàn thành Lượt 1 (Có Khóa). Đang chạy Lượt 2 (Không Khóa)...");
+        g_idle_add(on_bm_idle_progress_cb, p1);
+    }
+
+    usleep(150000); /* 150ms pause */
+
+    /* --- PASS 2: UNSYNCHRONIZED (RACE CONDITION) --- */
+    app_context_reset(&bm_ctx);
+    strncpy(bm_ctx.expected_sha256, exp_sha, sizeof(bm_ctx.expected_sha256));
+    snprintf(bm_ctx.target_url, sizeof(bm_ctx.target_url), "http://127.0.0.1:%d/benchmark.bin", port);
+    probe_remote_target(&bm_ctx, bm_ctx.target_url);
+
+    bm_ctx.sync_mode = SYNC_MODE_UNSYNCHRONIZED;
+    bm_ctx.num_producers = 4;
+    bm_ctx.num_consumers = 2;
+    const char *unsync_dest = "test_data/bm_unsync_out.bin";
+    prepare_output_file(&bm_ctx, unsync_dest);
+
+    clock_gettime(CLOCK_MONOTONIC, &bm_ctx.start_time);
+    bm_ctx.state = STATE_RUNNING;
+    start_consumer_pool(&bm_ctx);
+    start_producer_pool(&bm_ctx);
+    wait_producer_pool(&bm_ctx);
+    wait_consumer_pool(&bm_ctx);
+    clock_gettime(CLOCK_MONOTONIC, &bm_ctx.end_time);
+    bm_ctx.state = STATE_COMPLETED;
+    verify_file_integrity(&bm_ctx);
+
+    double unsync_elapsed = (bm_ctx.end_time.tv_sec - bm_ctx.start_time.tv_sec) +
+                            (bm_ctx.end_time.tv_nsec - bm_ctx.start_time.tv_nsec) / 1e9;
+    if (unsync_elapsed <= 0.001) unsync_elapsed = 0.001;
+    double unsync_speed = (bm_ctx.bytes_written / (1024.0 * 1024.0)) / unsync_elapsed;
+
+    gui->bm_unsync_time_val = unsync_elapsed;
+    gui->bm_unsync_speed_val = unsync_speed;
+
+    app_log(gui->ctx, "BENCHMARK", "PASS2", "Lượt 2 (Không Khóa): %.3fs, %.2f MB/s, Lỗi xung đột: %lu, SHA: %s",
+            unsync_elapsed, unsync_speed, (unsigned long)bm_ctx.race_corrupted_blocks,
+            bm_ctx.sha256_verified ? "KHỚP" : "HỎNG DO DATA RACE");
+
+    BenchmarkProgressData *p2 = (BenchmarkProgressData *)malloc(sizeof(BenchmarkProgressData));
+    if (p2) {
+        p2->gui = gui;
+        p2->phase = 2;
+        p2->unsync_time = unsync_elapsed;
+        p2->unsync_speed = unsync_speed;
+        p2->unsync_verified = bm_ctx.sha256_verified;
+        p2->unsync_errors = (int)bm_ctx.race_corrupted_blocks;
+        strncpy(p2->unsync_sha, bm_ctx.actual_sha256, 64);
+        p2->unsync_sha[64] = '\0';
+        snprintf(p2->status_msg, sizeof(p2->status_msg), "Hoàn tất đo kiểm kép! Xem kết quả đối chiếu bên dưới.");
+        g_idle_add(on_bm_idle_progress_cb, p2);
+    }
+
+    stop_local_http_server(&bm_ctx);
+    app_context_destroy(&bm_ctx);
+    return NULL;
+}
+
+void on_btn_run_benchmark_clicked(GtkButton *button, gpointer user_data) {
+    (void)button;
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    if (gui->bm_running) return;
+    if (gui->worker_running) {
+        gtk_label_set_text(GTK_LABEL(gui->lbl_bm_status), "⚠ Vui lòng chờ phiên tải ở Trình Tải Đa Luồng hoàn tất trước!");
+        return;
+    }
+
+    gui->bm_running = true;
+    gtk_widget_set_sensitive(gui->btn_run_benchmark, FALSE);
+    gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gui->progress_bm), 0.1);
+    gtk_label_set_text(GTK_LABEL(gui->lbl_bm_status), "Đang chuẩn bị dataset kiểm thử 16 MB...");
+
+    pthread_t tid;
+    pthread_create(&tid, NULL, benchmark_runner_worker, gui);
+    pthread_detach(tid);
+}
+
+gboolean on_draw_bm_chart(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
+    GuiDashboard *gui = (GuiDashboard *)user_data;
+    int width = gtk_widget_get_allocated_width(widget);
+    int height = gtk_widget_get_allocated_height(widget);
+
+    /* Background and border */
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.098, 0.098, 0.094); /* #181816 */
+    } else {
+        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
+    }
+    cairo_rectangle(cr, 0, 0, width, height);
+    cairo_fill(cr);
+
+    if (gui->is_dark_mode) {
+        cairo_set_source_rgb(cr, 0.173, 0.173, 0.161); /* #2C2C29 */
+    } else {
+        cairo_set_source_rgb(cr, 0.886, 0.910, 0.941); /* #E2E8F0 */
+    }
+    cairo_set_line_width(cr, 1.0);
+    cairo_rectangle(cr, 0.5, 0.5, width - 1, height - 1);
+    cairo_stroke(cr);
+
+    if (!gui->bm_has_results) {
+        cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+        cairo_set_font_size(cr, 11.5);
+        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.545, 0.580, 0.620);
+        else cairo_set_source_rgb(cr, 0.392, 0.455, 0.545);
+        const char *msg = "CHƯA CÓ DỮ LIỆU ĐO ĐẠC // NHẤN NÚT [BẮT ĐẦU CHẠY SO SÁNH TỰ ĐỘNG] ĐỂ XEM ĐỒ THỊ TRỰC QUAN";
+        cairo_text_extents_t ext;
+        cairo_text_extents(cr, msg, &ext);
+        cairo_move_to(cr, (width - ext.width) / 2.0, (height / 2.0) + 4.0);
+        cairo_show_text(cr, msg);
+        return FALSE;
+    }
+
+    double mid_x = width / 2.0;
+
+    /* Separator line between the two metrics */
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.173, 0.173, 0.161);
+    else cairo_set_source_rgb(cr, 0.886, 0.910, 0.941);
+    cairo_move_to(cr, mid_x, 8);
+    cairo_line_to(cr, mid_x, height - 8);
+    cairo_stroke(cr);
+
+    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 10.0);
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.85, 0.85, 0.85);
+    else cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
+
+    cairo_move_to(cr, 20, 22);
+    cairo_show_text(cr, "1. THỜI GIAN HOÀN THÀNH (GIÂY - CÀNG THẤP CÀNG NHANH)");
+
+    cairo_move_to(cr, mid_x + 20, 22);
+    cairo_show_text(cr, "2. TỐC ĐỘ GHI DỮ LIỆU (MB/s)");
+
+    double max_t = (gui->bm_sync_time_val > gui->bm_unsync_time_val) ? gui->bm_sync_time_val : gui->bm_unsync_time_val;
+    if (max_t <= 0.001) max_t = 1.0;
+    max_t *= 1.30;
+
+    double max_s = (gui->bm_sync_speed_val > gui->bm_unsync_speed_val) ? gui->bm_sync_speed_val : gui->bm_unsync_speed_val;
+    if (max_s <= 0.001) max_s = 100.0;
+    max_s *= 1.30;
+
+    double bar_max_w = (mid_x - 170.0);
+    if (bar_max_w < 60.0) bar_max_w = 60.0;
+
+    /* --- Left: Time Bars --- */
+    /* Sync Time Bar */
+    double sync_w = (gui->bm_sync_time_val / max_t) * bar_max_w;
+    cairo_set_source_rgb(cr, 0.086, 0.639, 0.290); /* #16A34A */
+    cairo_rectangle(cr, 100, 40, sync_w, 20);
+    cairo_fill(cr);
+
+    cairo_set_font_size(cr, 9.5);
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
+    else cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
+    cairo_move_to(cr, 20, 54);
+    cairo_show_text(cr, "Có khóa:");
+
+    char buf[64];
+    snprintf(buf, sizeof(buf), "%.3fs (Khớp SHA)", gui->bm_sync_time_val);
+    cairo_move_to(cr, 110 + sync_w, 54);
+    cairo_show_text(cr, buf);
+
+    /* Unsync Time Bar */
+    double unsync_w = (gui->bm_unsync_time_val / max_t) * bar_max_w;
+    cairo_set_source_rgb(cr, 0.863, 0.149, 0.149); /* #DC2626 */
+    cairo_rectangle(cr, 100, 72, unsync_w, 20);
+    cairo_fill(cr);
+
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
+    else cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
+    cairo_move_to(cr, 20, 86);
+    cairo_show_text(cr, "Không khóa:");
+
+    snprintf(buf, sizeof(buf), "%.3fs (HỎNG HASH)", gui->bm_unsync_time_val);
+    cairo_move_to(cr, 110 + unsync_w, 86);
+    cairo_show_text(cr, buf);
+
+    /* --- Right: Speed Bars --- */
+    /* Sync Speed Bar */
+    double sync_sw = (gui->bm_sync_speed_val / max_s) * bar_max_w;
+    cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
+    cairo_rectangle(cr, mid_x + 110, 40, sync_sw, 20);
+    cairo_fill(cr);
+
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
+    else cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
+    cairo_move_to(cr, mid_x + 20, 54);
+    cairo_show_text(cr, "Có khóa:");
+
+    snprintf(buf, sizeof(buf), "%.1f MB/s", gui->bm_sync_speed_val);
+    cairo_move_to(cr, mid_x + 120 + sync_sw, 54);
+    cairo_show_text(cr, buf);
+
+    /* Unsync Speed Bar */
+    double unsync_sw = (gui->bm_unsync_speed_val / max_s) * bar_max_w;
+    cairo_set_source_rgb(cr, 0.851, 0.467, 0.024); /* #D97706 */
+    cairo_rectangle(cr, mid_x + 110, 72, unsync_sw, 20);
+    cairo_fill(cr);
+
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
+    else cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
+    cairo_move_to(cr, mid_x + 20, 86);
+    cairo_show_text(cr, "Không khóa:");
+
+    snprintf(buf, sizeof(buf), "%.1f MB/s", gui->bm_unsync_speed_val);
+    cairo_move_to(cr, mid_x + 120 + unsync_sw, 86);
+    cairo_show_text(cr, buf);
+
+    return FALSE;
+}
+
+static GtkWidget* create_benchmark_page(GuiDashboard *gui) {
+    GtkWidget *bm_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_style_context_add_class(gtk_widget_get_style_context(bm_box), "benchmark-page");
+
+    /* Header */
+    GtkWidget *header_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    gtk_box_pack_start(GTK_BOX(bm_box), header_box, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_title = gtk_label_new("ĐẤU TRƯỜNG SO SÁNH HIỆU NĂNG // BENCHMARK ARENA");
+    gtk_widget_set_halign(lbl_title, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_title), "bm-header-title");
+    gtk_box_pack_start(GTK_BOX(header_box), lbl_title, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_desc = gtk_label_new("Kiểm thử kép tự động trên cùng tập tin 16 MB: Đo lường định lượng sự khác biệt giữa Chế độ Có Khóa (Mutex + Semaphore) và Không Khóa (Data Race).");
+    gtk_widget_set_halign(lbl_desc, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_desc), "bm-header-desc");
+    gtk_box_pack_start(GTK_BOX(header_box), lbl_desc, FALSE, FALSE, 0);
+
+    /* Control & Status Bar */
+    GtkWidget *ctrl_bar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
+    gtk_box_pack_start(GTK_BOX(bm_box), ctrl_bar, FALSE, FALSE, 0);
+
+    gui->btn_run_benchmark = gtk_button_new_with_label("⚡ BẮT ĐẦU CHẠY SO SÁNH TỰ ĐỘNG (DUAL-PASS)");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->btn_run_benchmark), "btn-primary");
+    g_signal_connect(gui->btn_run_benchmark, "clicked", G_CALLBACK(on_btn_run_benchmark_clicked), gui);
+    gtk_box_pack_start(GTK_BOX(ctrl_bar), gui->btn_run_benchmark, FALSE, FALSE, 0);
+
+    gui->lbl_bm_status = gtk_label_new("Sẵn sàng kiểm thử 2 chế độ...");
+    gtk_widget_set_halign(gui->lbl_bm_status, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_bm_status), "telemetry-key");
+    gtk_box_pack_start(GTK_BOX(ctrl_bar), gui->lbl_bm_status, TRUE, TRUE, 0);
+
+    gui->progress_bm = gtk_progress_bar_new();
+    gtk_widget_set_size_request(gui->progress_bm, 180, -1);
+    gtk_box_pack_end(GTK_BOX(ctrl_bar), gui->progress_bm, FALSE, FALSE, 0);
+
+    /* Side-by-side Cards Container */
+    GtkWidget *cards_hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
+    gtk_box_pack_start(GTK_BOX(bm_box), cards_hbox, FALSE, FALSE, 0);
+
+    /* Card 1: Synchronized Mode */
+    GtkWidget *card_sync = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+    gtk_style_context_add_class(gtk_widget_get_style_context(card_sync), "bm-card-sync");
+    gtk_box_pack_start(GTK_BOX(cards_hbox), card_sync, TRUE, TRUE, 0);
+
+    GtkWidget *lbl_sync_head = gtk_label_new("🟢 CHẾ ĐỘ CÓ KHÓA (MUTEX & SEMAPHORE)");
+    gtk_widget_set_halign(lbl_sync_head, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sync_head), "bm-section-title");
+    gtk_box_pack_start(GTK_BOX(card_sync), lbl_sync_head, FALSE, FALSE, 0);
+
+    #define BM_ROW(parent, k_str, val_lbl) do { \
+        GtkWidget *row = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8); \
+        GtkWidget *k = gtk_label_new(k_str); \
+        gtk_widget_set_halign(k, GTK_ALIGN_START); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(k), "telemetry-key"); \
+        gtk_box_pack_start(GTK_BOX(row), k, FALSE, FALSE, 0); \
+        gtk_widget_set_halign(val_lbl, GTK_ALIGN_END); \
+        gtk_style_context_add_class(gtk_widget_get_style_context(val_lbl), "telemetry-val"); \
+        gtk_box_pack_end(GTK_BOX(row), val_lbl, FALSE, FALSE, 0); \
+        gtk_box_pack_start(GTK_BOX(parent), row, FALSE, FALSE, 0); \
+    } while(0)
+
+    gui->lbl_bm_sync_time = gtk_label_new("-- s");
+    BM_ROW(card_sync, "Thời gian thực thi:", gui->lbl_bm_sync_time);
+
+    gui->lbl_bm_sync_speed = gtk_label_new("-- MB/s");
+    BM_ROW(card_sync, "Tốc độ trung bình:", gui->lbl_bm_sync_speed);
+
+    gui->lbl_bm_sync_errors = gtk_label_new("0 Blocks");
+    BM_ROW(card_sync, "Số khối bị hỏng (Data Race):", gui->lbl_bm_sync_errors);
+
+    gui->lbl_bm_sync_integrity = gtk_label_new("CHƯA CHẠY");
+    BM_ROW(card_sync, "Trạng thái toàn vẹn SHA-256:", gui->lbl_bm_sync_integrity);
+
+    GtkWidget *sync_sha_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    GtkWidget *lbl_sync_sha_k = gtk_label_new("Mã băm SHA-256:");
+    gtk_widget_set_halign(lbl_sync_sha_k, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_sync_sha_k), "telemetry-key");
+    gtk_box_pack_start(GTK_BOX(sync_sha_box), lbl_sync_sha_k, FALSE, FALSE, 0);
+
+    gui->lbl_bm_sync_sha = gtk_label_new("----------------------------------------------------------------");
+    gtk_widget_set_halign(gui->lbl_bm_sync_sha, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_bm_sync_sha), "telemetry-val");
+    gtk_box_pack_start(GTK_BOX(sync_sha_box), gui->lbl_bm_sync_sha, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(card_sync), sync_sha_box, FALSE, FALSE, 2);
+
+    /* Card 2: Unsynchronized Mode */
+    GtkWidget *card_unsync = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+    gtk_style_context_add_class(gtk_widget_get_style_context(card_unsync), "bm-card-unsync");
+    gtk_box_pack_start(GTK_BOX(cards_hbox), card_unsync, TRUE, TRUE, 0);
+
+    GtkWidget *lbl_unsync_head = gtk_label_new("🔴 CHẾ ĐỘ KHÔNG KHÓA (DATA RACE CONDITION)");
+    gtk_widget_set_halign(lbl_unsync_head, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_unsync_head), "bm-section-title");
+    gtk_box_pack_start(GTK_BOX(card_unsync), lbl_unsync_head, FALSE, FALSE, 0);
+
+    gui->lbl_bm_unsync_time = gtk_label_new("-- s");
+    BM_ROW(card_unsync, "Thời gian thực thi:", gui->lbl_bm_unsync_time);
+
+    gui->lbl_bm_unsync_speed = gtk_label_new("-- MB/s");
+    BM_ROW(card_unsync, "Tốc độ trung bình:", gui->lbl_bm_unsync_speed);
+
+    gui->lbl_bm_unsync_errors = gtk_label_new("0 Blocks");
+    BM_ROW(card_unsync, "Số khối bị hỏng (Data Race):", gui->lbl_bm_unsync_errors);
+
+    gui->lbl_bm_unsync_integrity = gtk_label_new("CHƯA CHẠY");
+    BM_ROW(card_unsync, "Trạng thái toàn vẹn SHA-256:", gui->lbl_bm_unsync_integrity);
+
+    GtkWidget *unsync_sha_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    GtkWidget *lbl_unsync_sha_k = gtk_label_new("Mã băm SHA-256:");
+    gtk_widget_set_halign(lbl_unsync_sha_k, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_unsync_sha_k), "telemetry-key");
+    gtk_box_pack_start(GTK_BOX(unsync_sha_box), lbl_unsync_sha_k, FALSE, FALSE, 0);
+
+    gui->lbl_bm_unsync_sha = gtk_label_new("----------------------------------------------------------------");
+    gtk_widget_set_halign(gui->lbl_bm_unsync_sha, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_bm_unsync_sha), "telemetry-val");
+    gtk_box_pack_start(GTK_BOX(unsync_sha_box), gui->lbl_bm_unsync_sha, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(card_unsync), unsync_sha_box, FALSE, FALSE, 2);
+
+    /* Comparative Chart Area */
+    GtkWidget *chart_lbl = gtk_label_new("BIỂU ĐỒ TRỰC QUAN SO SÁNH HIỆU NĂNG & TOÀN VẸN (CAIRO 2D ENGINE)");
+    gtk_widget_set_halign(chart_lbl, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(chart_lbl), "section-header");
+    gtk_box_pack_start(GTK_BOX(bm_box), chart_lbl, FALSE, FALSE, 2);
+
+    gui->drawing_bm_chart = gtk_drawing_area_new();
+    gtk_widget_set_size_request(gui->drawing_bm_chart, -1, 115);
+    g_signal_connect(gui->drawing_bm_chart, "draw", G_CALLBACK(on_draw_bm_chart), gui);
+    gtk_box_pack_start(GTK_BOX(bm_box), gui->drawing_bm_chart, FALSE, FALSE, 0);
+
+    /* Summary & Analysis Box */
+    GtkWidget *sum_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+    gtk_style_context_add_class(gtk_widget_get_style_context(sum_box), "bm-summary-box");
+    gtk_box_pack_start(GTK_BOX(bm_box), sum_box, TRUE, TRUE, 0);
+
+    GtkWidget *sum_head = gtk_label_new("💡 KẾT LUẬN & PHÂN TÍCH BẢN CHẤT HỆ THỐNG:");
+    gtk_widget_set_halign(sum_head, GTK_ALIGN_START);
+    gtk_style_context_add_class(gtk_widget_get_style_context(sum_head), "bm-section-title");
+    gtk_box_pack_start(GTK_BOX(sum_box), sum_head, FALSE, FALSE, 0);
+
+    GtkWidget *sum_t1 = gtk_label_new("1. [An Toàn Tuyệt Đối]: Chế độ Có Khóa bảo vệ con trỏ ghi tệp tin bằng Mutex và đồng bộ nạp/rút bằng Semaphore. Dù có chi phí khóa nhỏ, mã băm SHA-256 luôn khớp 100%.");
+    gtk_widget_set_halign(sum_t1, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(sum_box), sum_t1, FALSE, FALSE, 2);
+
+    GtkWidget *sum_t2 = gtk_label_new("2. [Thảm Họa Dữ Liệu]: Chế độ Không Khóa cho phép nhiều Consumer gọi lseek()/write() đồng thời mà không khóa. Tốc độ có thể tương đương hoặc nhanh hơn vài phần trăm nhưng gây xung đột ghi đè, làm hỏng hoàn toàn tệp.");
+    gtk_widget_set_halign(sum_t2, GTK_ALIGN_START);
+    gtk_box_pack_start(GTK_BOX(sum_box), sum_t2, FALSE, FALSE, 2);
+
+    return bm_box;
+}
+
+/* =========================================================================
  * DASHBOARD INITIALIZATION & WIDGET TREE CONSTRUCTION
  * ========================================================================= */
 int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **argv) {
@@ -1927,13 +3384,26 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     gui->auto_tune_enabled = true;
     gui->last_rendered_log_count = 0;
     gui->max_speed_recorded = 0.0;
+    gui->is_dark_mode = false;
+    gui->bm_running = false;
+    gui->bm_has_results = false;
+    gui->bm_sync_time_val = 0.0;
+    gui->bm_unsync_time_val = 0.0;
+    gui->bm_sync_speed_val = 0.0;
+    gui->bm_unsync_speed_val = 0.0;
     memset(gui->speed_history, 0, sizeof(gui->speed_history));
+    memset(gui->producer_speed_history, 0, sizeof(gui->producer_speed_history));
+    memset(gui->consumer_speed_history, 0, sizeof(gui->consumer_speed_history));
+    gui->speed_history_idx = 0;
+    gui->last_bytes_downloaded = 0;
+    gui->last_bytes_written = 0;
+    clock_gettime(CLOCK_MONOTONIC, &gui->last_speed_tick);
 
-    /* Load Industrial White & Royal Jira Blue CSS */
-    GtkCssProvider *css_provider = gtk_css_provider_new();
-    gtk_css_provider_load_from_data(css_provider, WORKSTATION_CSS, -1, NULL);
+    /* Load Modern Atlassian / Jira SAAS CSS */
+    gui->css_provider = gtk_css_provider_new();
+    gtk_css_provider_load_from_data(gui->css_provider, WORKSTATION_CSS_LIGHT, -1, NULL);
     gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
-                                              GTK_STYLE_PROVIDER(css_provider),
+                                              GTK_STYLE_PROVIDER(gui->css_provider),
                                               GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     /* Main Window: 1140 x 740 */
@@ -2213,6 +3683,9 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
 
     gui->drawing_ram_buffer = gtk_drawing_area_new();
     gtk_widget_set_size_request(gui->drawing_ram_buffer, -1, 115);
+    gtk_widget_set_has_tooltip(gui->drawing_ram_buffer, TRUE);
+    gtk_widget_add_events(gui->drawing_ram_buffer, GDK_POINTER_MOTION_MASK);
+    g_signal_connect(gui->drawing_ram_buffer, "query-tooltip", G_CALLBACK(on_query_tooltip_ram_buffer), gui);
     g_signal_connect(gui->drawing_ram_buffer, "draw", G_CALLBACK(on_draw_ram_buffer), gui);
     gtk_box_pack_start(GTK_BOX(workspace_box), gui->drawing_ram_buffer, FALSE, FALSE, 0);
 
@@ -2224,6 +3697,9 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
 
     gui->drawing_block_matrix = gtk_drawing_area_new();
     gtk_widget_set_size_request(gui->drawing_block_matrix, -1, 195);
+    gtk_widget_set_has_tooltip(gui->drawing_block_matrix, TRUE);
+    gtk_widget_add_events(gui->drawing_block_matrix, GDK_POINTER_MOTION_MASK);
+    g_signal_connect(gui->drawing_block_matrix, "query-tooltip", G_CALLBACK(on_query_tooltip_block_matrix), gui);
     g_signal_connect(gui->drawing_block_matrix, "draw", G_CALLBACK(on_draw_block_matrix), gui);
     gtk_box_pack_start(GTK_BOX(workspace_box), gui->drawing_block_matrix, TRUE, TRUE, 0);
 
@@ -2292,6 +3768,12 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
      * ===================================================================== */
     gui->page_history = create_history_page(gui);
     gtk_stack_add_named(GTK_STACK(gui->main_stack), gui->page_history, "history");
+
+    /* =====================================================================
+     * PAGE 3: BENCHMARK & COMPARISON ARENA
+     * ===================================================================== */
+    gui->page_benchmark = create_benchmark_page(gui);
+    gtk_stack_add_named(GTK_STACK(gui->main_stack), gui->page_benchmark, "benchmark");
 
     /* Default to Transfer Engine Workspace page */
     gtk_stack_set_visible_child_name(GTK_STACK(gui->main_stack), "workspace");

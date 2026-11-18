@@ -31,9 +31,11 @@ typedef struct {
     GtkWidget *main_stack;
     GtkWidget *btn_nav_workspace;
     GtkWidget *btn_nav_history;
+    GtkWidget *btn_nav_benchmark;
     GtkWidget *lbl_nav_hist_badge;
     GtkWidget *page_workspace;
     GtkWidget *page_history;
+    GtkWidget *page_benchmark;
 
     /* Top Toolbar Controls (Workspace Page) */
     GtkWidget *entry_url;
@@ -83,10 +85,42 @@ typedef struct {
     GtkListStore *history_store;
     GtkWidget *tree_history;
 
-    /* Speed History for Live Sparkline */
+    /* Speed History for Live Sparkline (Multi-Channel Realtime) */
     double speed_history[SPARKLINE_POINTS];
+    double producer_speed_history[SPARKLINE_POINTS];
+    double consumer_speed_history[SPARKLINE_POINTS];
     int speed_history_idx;
     double max_speed_recorded;
+    uint64_t last_bytes_downloaded;
+    uint64_t last_bytes_written;
+    struct timespec last_speed_tick;
+
+    /* Page 3: Benchmark & Comparison Arena */
+    GtkWidget *btn_run_benchmark;
+    GtkWidget *lbl_bm_status;
+    GtkWidget *progress_bm;
+    GtkWidget *lbl_bm_sync_time;
+    GtkWidget *lbl_bm_sync_speed;
+    GtkWidget *lbl_bm_sync_integrity;
+    GtkWidget *lbl_bm_sync_errors;
+    GtkWidget *lbl_bm_sync_sha;
+    GtkWidget *lbl_bm_unsync_time;
+    GtkWidget *lbl_bm_unsync_speed;
+    GtkWidget *lbl_bm_unsync_integrity;
+    GtkWidget *lbl_bm_unsync_errors;
+    GtkWidget *lbl_bm_unsync_sha;
+    GtkWidget *drawing_bm_chart;
+    bool bm_running;
+    bool bm_has_results;
+    double bm_sync_time_val;
+    double bm_unsync_time_val;
+    double bm_sync_speed_val;
+    double bm_unsync_speed_val;
+
+    /* Theme Engine (Light Mode / Dark Mode) */
+    GtkCssProvider *css_provider;
+    bool is_dark_mode;
+    GtkWidget *btn_theme_toggle;
 
     /* Text Tags for Syntax Colorized Console */
     GtkTextTag *tag_timestamp;
@@ -128,9 +162,19 @@ void auto_optimize_concurrency(GuiDashboard *gui);
 /* Page Navigation & History Callbacks */
 void on_nav_workspace_clicked(GtkButton *button, gpointer user_data);
 void on_nav_history_clicked(GtkButton *button, gpointer user_data);
+void on_nav_benchmark_clicked(GtkButton *button, gpointer user_data);
 void on_btn_open_storage_clicked(GtkButton *button, gpointer user_data);
 void on_btn_clear_history_clicked(GtkButton *button, gpointer user_data);
 void on_btn_copy_sha_clicked(GtkButton *button, gpointer user_data);
 void gui_add_history_record(GuiDashboard *gui, const DownloadHistoryRecord *rec);
+
+/* Theme & Benchmark Callbacks */
+void on_btn_theme_toggle_clicked(GtkButton *button, gpointer user_data);
+void on_btn_run_benchmark_clicked(GtkButton *button, gpointer user_data);
+gboolean on_draw_bm_chart(GtkWidget *widget, cairo_t *cr, gpointer user_data);
+
+/* Interactive Tooltips */
+gboolean on_query_tooltip_ram_buffer(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer user_data);
+gboolean on_query_tooltip_block_matrix(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, gpointer user_data);
 
 #endif /* GUI_DASHBOARD_H */
