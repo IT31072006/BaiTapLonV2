@@ -74,14 +74,13 @@ CLI_TEST_OBJ = $(BUILDDIR)/cli_benchmark.o
 GUI_TARGET = $(BINDIR)/sysp_downloader
 CLI_TARGET = $(BINDIR)/cli_benchmark
 
-.PHONY: all clean benchmark test help
+.PHONY: all clean benchmark test help gui
 
-all: directories $(CLI_TARGET)
+all: directories $(CLI_TARGET) $(GUI_TARGET)
 	@echo "======================================================================"
-	@echo "Part 1 Core Engine Build Successful: $(CLI_TARGET)"
-	@echo "Run './bin/cli_benchmark' to verify SYNCHRONIZED mode."
-	@echo "Run './bin/cli_benchmark --race' to verify UNSYNCHRONIZED race mode."
-	@echo "Part 2 will compile the Native GTK3 Workstation GUI: $(GUI_TARGET)"
+	@echo "Build Successful: All binaries ready in $(BINDIR)/"
+	@echo "1. GUI Workstation: ./bin/sysp_downloader"
+	@echo "2. CLI Benchmark:   ./bin/cli_benchmark (hoặc ./bin/cli_benchmark --race)"
 	@echo "======================================================================"
 
 directories:
@@ -92,8 +91,10 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	@echo "  CC      $<"
 	@$(CC) $(CORE_CFLAGS) -c $< -o $@
 
-# GUI Target (Compiled in Part 2)
-gui: directories $(CORE_OBJS) $(GUI_OBJS)
+# GUI Target
+gui: directories $(GUI_TARGET)
+
+$(GUI_TARGET): $(CORE_OBJS) $(GUI_OBJS)
 	@echo "  LD      $(GUI_TARGET)"
 	@$(CC) $(CORE_OBJS) $(GUI_OBJS) $(APP_LIBS) -o $(GUI_TARGET)
 	@echo "GUI Build Complete: $(GUI_TARGET)"
