@@ -3,13 +3,14 @@ import os
 import io
 import re
 import pptx
+from pptx.util import Pt
 from PIL import Image
 
 TEMPLATE_PATH = '/home/quan/.gemini/antigravity/brain/eb4ac895-87c7-4dd3-b0f1-a142ebeea400/.user_uploaded/media_1795066958979_1c3cd5d9.pptx'
 OUTPUT_PATH = 'Bao_Cao_Thuyet_Trinh_LTHT_BaiTapLonV2.pptx'
 ARTIFACT_OUTPUT = '/home/quan/.gemini/antigravity/brain/eb4ac895-87c7-4dd3-b0f1-a142ebeea400/Bao_Cao_Thuyet_Trinh_LTHT_BaiTapLonV2.pptx'
 
-def set_text_preserve_style(p, new_text):
+def set_text_preserve_style(p, new_text, font_override=None, size_override=None):
     if not p.runs:
         p.text = new_text
         return
@@ -22,6 +23,20 @@ def set_text_preserve_style(p, new_text):
     except Exception:
         font_color = None
     
+    # Fix python-pptx font lookup bug: Arial Bold is not a valid font family
+    if font_name and "Bold" in font_name:
+        font_name = font_name.replace("Bold", "").strip()
+        font_bold = True
+    
+    # Consolas and other non-unicode fonts lack Vietnamese glyphs (Đ, đ, ệ, ồ) -> fallback to Arial
+    if font_override:
+        font_name = font_override
+    elif not font_name or 'Consolas' in font_name or font_name in ['Arial', 'Arial Bold']:
+        font_name = 'Arial'
+    
+    if size_override:
+        font_size = Pt(size_override)
+    
     p.runs[0].text = new_text
     p.runs[0].font.name = font_name
     p.runs[0].font.size = font_size
@@ -33,11 +48,11 @@ def set_text_preserve_style(p, new_text):
     for run in p.runs[1:]:
         run.text = ''
 
-def update_subshape_text(shape, new_text):
+def update_subshape_text(shape, new_text, font_override=None, size_override=None):
     if shape.has_text_frame:
         for i, p in enumerate(shape.text_frame.paragraphs):
             if i == 0:
-                set_text_preserve_style(p, new_text)
+                set_text_preserve_style(p, new_text, font_override, size_override)
             else:
                 p.text = ''
 
@@ -251,9 +266,9 @@ def main():
     # Card 3
     update_subshape_text(s9.shapes[13].shapes[1], "Chuyển đổi Giao diện Sáng / Tối")
     update_subshape_text(s9.shapes[14].shapes[1], "Chuyển đổi linh hoạt giữa giao diện Trắng - Xanh Jira SaaS và Dark Cyberpunk khi chiếu slide.")
-    # Caption & Image
+    # Caption & Image (Crisp Cropped Workstation UI)
     update_subshape_text(s9.shapes[17].shapes[1], "Figure 3.1. Trạm làm việc GTK3 Workstation đang chạy tải đa luồng trên Ubuntu")
-    replace_shape_image(s9, s9.shapes[16], 'assets/presentation_images/media_1794470338449_2beaa0c4.jpg')
+    replace_shape_image(s9, s9.shapes[16], 'assets/presentation_images/crop_concurrency_lab.png')
 
     # -------------------------------------------------------------
     # SLIDE 10: LỊCH SỬ TẢI & KIỂM TOÁN SHA-256 (NGƯỜI 3)
@@ -261,15 +276,15 @@ def main():
     s10 = prs.slides[9]
     update_subshape_text(s10.shapes[1].shapes[1], "Lịch sử Tải xuống và Kiểm toán Toàn vẹn Tệp")
     update_subshape_text(s10.shapes[2].shapes[1], "Lưu trữ nhật ký phiên tải, thống kê lưu lượng và đối chiếu mã hash SHA-256 tự động.")
-    # Fig 3.2 (Top left)
+    # Fig 3.2 (Top left) - Cropped test links
     update_subshape_text(s10.shapes[5].shapes[1], "Figure 3.2. Nguồn dữ liệu kiểm thử tải trực tiếp (HTTP Range Support)")
-    replace_shape_image(s10, s10.shapes[4], 'assets/presentation_images/media_1794469091268_5ab5ccfb.jpg')
+    replace_shape_image(s10, s10.shapes[4], 'assets/presentation_images/crop_gemini_links.png')
     # Card
     update_subshape_text(s10.shapes[8].shapes[1], "Kiểm toán Mật mã SHA-256")
     update_subshape_text(s10.shapes[9].shapes[1], "Sử dụng OpenSSL EVP API tính toán chuỗi hash 64 ký tự hex của file thực tế và đối chiếu với mã gốc.")
-    # Fig 3.3 (Right)
+    # Fig 3.3 (Right) - Cropped session history table
     update_subshape_text(s10.shapes[12].shapes[1], "Figure 3.3. Bảng Kiểm toán Phiên tải và Xác thực Toàn vẹn Tệp (Dark Mode)")
-    replace_shape_image(s10, s10.shapes[11], 'assets/presentation_images/media_1794469653925_b03440fc.jpg')
+    replace_shape_image(s10, s10.shapes[11], 'assets/presentation_images/crop_session_history.png')
 
     # -------------------------------------------------------------
     # SLIDE 11: KẾT QUẢ THỬ NGHIỆM TRÊN UBUNTU (NGƯỜI 3)

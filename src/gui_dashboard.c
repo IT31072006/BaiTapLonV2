@@ -2,14 +2,15 @@
 #include "network_producer.h"
 #include "storage_consumer.h"
 #include <math.h>
+#include <pango/pangocairo.h>
 
 /* =========================================================================
  * 1. LIGHT THEME CSS: MODERN ATLASSIAN / JIRA SAAS (TRẮNG - XANH HOÀNG GIA)
  * ========================================================================= */
 static const char *WORKSTATION_CSS_LIGHT = 
     "* {\n"
-    "    font-family: 'Inter', 'Ubuntu Sans', 'Segoe UI', sans-serif;\n"
-    "    font-size: 12px;\n"
+    "    font-family: 'Liberation Sans', 'DejaVu Sans', 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Arial, sans-serif;\n"
+    "    font-size: 13px;\n"
     "    color: #0F172A;\n"
     "}\n"
     "window, .main-window {\n"
@@ -34,25 +35,25 @@ static const char *WORKSTATION_CSS_LIGHT =
     ".brand-badge {\n"
     "    background-color: #0C66E4;\n"
     "    color: #FFFFFF;\n"
-    "    font-size: 13px;\n"
+    "    font-size: 14px;\n"
     "    font-weight: 800;\n"
     "    border-radius: 7px;\n"
-    "    padding: 6px 9px;\n"
+    "    padding: 7px 11px;\n"
     "}\n"
     ".nav-brand-title {\n"
-    "    font-size: 14px;\n"
-    "    font-weight: 700;\n"
+    "    font-size: 15.5px;\n"
+    "    font-weight: 800;\n"
     "    color: #0F172A;\n"
     "}\n"
     ".nav-brand-subtitle {\n"
-    "    font-size: 9px;\n"
+    "    font-size: 11px;\n"
     "    font-weight: 700;\n"
     "    color: #0C66E4;\n"
     "}\n"
     ".nav-section-label {\n"
-    "    font-size: 9.5px;\n"
+    "    font-size: 11.5px;\n"
     "    font-weight: 700;\n"
-    "    color: #64748B;\n"
+    "    color: #334155;\n"
     "    margin-top: 14px;\n"
     "    margin-bottom: 6px;\n"
     "    padding-left: 6px;\n"
@@ -65,8 +66,8 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    padding: 8px 12px;\n"
     "}\n"
     "button.nav-item label {\n"
-    "    color: #334155;\n"
-    "    font-size: 12px;\n"
+    "    color: #1E293B;\n"
+    "    font-size: 13px;\n"
     "    font-weight: 600;\n"
     "}\n"
     "button.nav-item:hover {\n"
@@ -92,9 +93,9 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    color: #0C66E4;\n"
     "    border: 1px solid #B3D4FF;\n"
     "    border-radius: 9999px;\n"
-    "    padding: 1px 7px;\n"
-    "    font-size: 10px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    padding: 2px 8px;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "    font-weight: 700;\n"
     "}\n"
     "button.nav-item-active .nav-badge-count {\n"
@@ -112,7 +113,7 @@ static const char *WORKSTATION_CSS_LIGHT =
     "button.nav-btn-action label {\n"
     "    color: #0C66E4;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12px;\n"
     "}\n"
     "button.nav-btn-action:hover {\n"
     "    background-image: none;\n"
@@ -130,9 +131,9 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-theme-toggle label {\n"
-    "    color: #475569;\n"
+    "    color: #334155;\n"
     "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
+    "    font-size: 12px;\n"
     "}\n"
     "button.btn-theme-toggle:hover {\n"
     "    background-image: none;\n"
@@ -150,9 +151,10 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    margin-top: 8px;\n"
     "}\n"
     ".nav-footer-text {\n"
-    "    font-size: 10px;\n"
-    "    color: #64748B;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11px;\n"
+    "    color: #334155;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-weight: 600;\n"
     "}\n"
     "/* Panels */\n"
     ".top-toolbar {\n"
@@ -183,40 +185,40 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    margin-bottom: 5px;\n"
     "}\n"
     ".section-header {\n"
-    "    font-size: 11px;\n"
+    "    font-size: 12.5px;\n"
     "    font-weight: 700;\n"
-    "    color: #475569;\n"
+    "    color: #0F172A;\n"
     "}\n"
     ".telemetry-key {\n"
-    "    font-size: 10.5px;\n"
+    "    font-size: 12px;\n"
     "    font-weight: 600;\n"
-    "    color: #64748B;\n"
+    "    color: #334155;\n"
     "}\n"
     ".telemetry-val {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 13px;\n"
-    "    font-weight: 600;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 14px;\n"
+    "    font-weight: 700;\n"
     "    color: #0F172A;\n"
     "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-large {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 17px;\n"
-    "    font-weight: 700;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 20px;\n"
+    "    font-weight: 800;\n"
     "    color: #0C66E4;\n"
     "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-alert {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 13.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 14.5px;\n"
     "    font-weight: 700;\n"
     "    color: #DC2626;\n"
     "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-success {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 13px;\n"
-    "    font-weight: 600;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 14px;\n"
+    "    font-weight: 700;\n"
     "    color: #16A34A;\n"
     "}\n"
     "/* Action Buttons */\n"
@@ -225,12 +227,12 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    background-color: #0C66E4;\n"
     "    border: 1px solid #0055CC;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 14px;\n"
+    "    padding: 6px 14px;\n"
     "}\n"
     "button.btn-primary label {\n"
     "    color: #FFFFFF;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "button.btn-primary:hover {\n"
     "    background-image: none;\n"
@@ -242,12 +244,12 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    background-color: #FFFFFF;\n"
     "    border: 1px solid #CBD5E1;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 12px;\n"
+    "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-secondary label {\n"
-    "    color: #334155;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11.5px;\n"
+    "    color: #1E293B;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "button.btn-secondary:hover {\n"
     "    background-image: none;\n"
@@ -262,12 +264,12 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    background-color: #FFFFFF;\n"
     "    border: 1px solid #CBD5E1;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 12px;\n"
+    "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-pause label {\n"
     "    color: #334155;\n"
     "    font-weight: 600;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "button.btn-pause:hover {\n"
     "    background-image: none;\n"
@@ -282,12 +284,12 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    background-color: #FFFFFF;\n"
     "    border: 1px solid #CBD5E1;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 12px;\n"
+    "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-reset label {\n"
     "    color: #334155;\n"
     "    font-weight: 600;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "button.btn-reset:hover {\n"
     "    background-image: none;\n"
@@ -302,13 +304,13 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    background-color: #EFF6FF;\n"
     "    border: 1px solid #B3D4FF;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 12px;\n"
+    "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-steel label {\n"
     "    color: #0C66E4;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     "button.btn-steel:hover {\n"
     "    background-image: none;\n"
@@ -337,8 +339,8 @@ static const char *WORKSTATION_CSS_LIGHT =
     "button.btn-auto-on label {\n"
     "    color: #0C66E4;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     "button.btn-auto-off {\n"
     "    background-image: none;\n"
@@ -348,30 +350,30 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    padding: 5px 10px;\n"
     "}\n"
     "button.btn-auto-off label {\n"
-    "    color: #64748B;\n"
+    "    color: #475569;\n"
     "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-dataset {\n"
     "    background-color: #EFF6FF;\n"
     "    color: #0C66E4;\n"
     "    border: 1px solid #B3D4FF;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 8px;\n"
+    "    padding: 4px 9px;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-dataset-net {\n"
     "    background-color: #FFFBEB;\n"
     "    color: #D97706;\n"
     "    border: 1px solid #FDE68A;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 8px;\n"
+    "    padding: 4px 9px;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     "entry {\n"
     "    background-image: none;\n"
@@ -379,9 +381,9 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    color: #0F172A;\n"
     "    border: 1px solid #CBD5E1;\n"
     "    border-radius: 6px;\n"
-    "    padding: 4px 10px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 11.5px;\n"
+    "    padding: 6px 10px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "entry:focus {\n"
     "    border-color: #0C66E4;\n"
@@ -391,21 +393,21 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    background-color: #FFFFFF;\n"
     "    border: 1px solid #CBD5E1;\n"
     "    border-radius: 6px;\n"
-    "    padding: 2px 4px;\n"
+    "    padding: 3px 5px;\n"
     "}\n"
     "spinbutton entry {\n"
     "    border: none;\n"
     "    background-color: transparent;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "    font-weight: 700;\n"
-    "    font-size: 12px;\n"
+    "    font-size: 13px;\n"
     "    color: #0C66E4;\n"
     "}\n"
     "spinbutton button {\n"
     "    background-image: none;\n"
     "    background-color: #F1F5F9;\n"
     "    border: none;\n"
-    "    color: #475569;\n"
+    "    color: #334155;\n"
     "}\n"
     "spinbutton button:hover {\n"
     "    background-image: none;\n"
@@ -432,8 +434,8 @@ static const char *WORKSTATION_CSS_LIGHT =
     "textview text {\n"
     "    background-color: #F8FAFC;\n"
     "    color: #0F172A;\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 11px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 12px;\n"
     "}\n"
     "progressbar trough {\n"
     "    background-color: #E2E8F0;\n"
@@ -448,53 +450,53 @@ static const char *WORKSTATION_CSS_LIGHT =
     "}\n"
     ".badge-idle {\n"
     "    background-color: #F1F5F9;\n"
-    "    color: #64748B;\n"
+    "    color: #475569;\n"
     "    border: 1px solid #CBD5E1;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 10px;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    padding: 4px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-running {\n"
     "    background-color: #EFF6FF;\n"
     "    color: #0C66E4;\n"
     "    border: 1px solid #B3D4FF;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 10px;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    padding: 4px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-verified {\n"
     "    background-color: #F0FDF4;\n"
     "    color: #16A34A;\n"
     "    border: 1px solid #BBF7D0;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 10px;\n"
+    "    padding: 4px 10px;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-corrupted {\n"
     "    background-color: #FEF2F2;\n"
     "    color: #DC2626;\n"
     "    border: 1px solid #FECACA;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 10px;\n"
+    "    padding: 4px 10px;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".mode-synced {\n"
     "    color: #16A34A;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
+    "    font-size: 12px;\n"
     "}\n"
     ".mode-unsynced {\n"
     "    color: #DC2626;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
+    "    font-size: 12px;\n"
     "}\n"
     "separator {\n"
     "    background-color: #E2E8F0;\n"
@@ -507,21 +509,21 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    padding: 16px 20px;\n"
     "}\n"
     ".history-header-title, .bm-header-title {\n"
-    "    font-size: 16px;\n"
-    "    font-weight: 700;\n"
+    "    font-size: 17px;\n"
+    "    font-weight: 800;\n"
     "    letter-spacing: -0.01em;\n"
     "    color: #0F172A;\n"
     "}\n"
     ".history-header-desc, .bm-header-desc {\n"
-    "    font-size: 11.5px;\n"
-    "    color: #64748B;\n"
+    "    font-size: 12.5px;\n"
+    "    color: #334155;\n"
     "    margin-bottom: 12px;\n"
     "}\n"
     ".history-card-metric, .bm-card {\n"
     "    background-color: #FFFFFF;\n"
     "    border: 1px solid #E2E8F0;\n"
     "    border-radius: 8px;\n"
-    "    padding: 10px 14px;\n"
+    "    padding: 12px 16px;\n"
     "}\n"
     ".bm-summary-box {\n"
     "    background-color: #FFFFFF;\n"
@@ -530,27 +532,27 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    padding: 12px 16px;\n"
     "}\n"
     ".history-metric-title {\n"
-    "    font-size: 10px;\n"
-    "    font-weight: 600;\n"
-    "    color: #64748B;\n"
+    "    font-size: 11.5px;\n"
+    "    font-weight: 700;\n"
+    "    color: #475569;\n"
     "    letter-spacing: 0.03em;\n"
     "}\n"
     ".history-metric-val {\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
-    "    font-weight: 700;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 22px;\n"
+    "    font-weight: 800;\n"
     "    color: #0F172A;\n"
     "}\n"
     ".history-metric-val-ok {\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
-    "    font-weight: 700;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 22px;\n"
+    "    font-weight: 800;\n"
     "    color: #16A34A;\n"
     "}\n"
     ".history-metric-val-err {\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
-    "    font-weight: 700;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 22px;\n"
+    "    font-weight: 800;\n"
     "    color: #DC2626;\n"
     "}\n"
     "treeview.history-tree {\n"
@@ -558,7 +560,7 @@ static const char *WORKSTATION_CSS_LIGHT =
     "    color: #0F172A;\n"
     "    border: 1px solid #E2E8F0;\n"
     "    border-radius: 6px;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "treeview.history-tree:selected {\n"
     "    background-color: #EFF6FF;\n"
@@ -567,25 +569,22 @@ static const char *WORKSTATION_CSS_LIGHT =
     "treeview.history-tree header button {\n"
     "    background-image: none;\n"
     "    background-color: #F1F5F9;\n"
-    "    color: #334155;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
+    "    color: #0F172A;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 12px;\n"
     "    border: 1px solid #E2E8F0;\n"
-    "    padding: 6px 8px;\n"
+    "    padding: 7px 10px;\n"
     "}\n"
     "treeview.history-tree header button label {\n"
-    "    color: #334155;\n"
+    "    color: #0F172A;\n"
     "    font-weight: 700;\n"
     "}\n";
 
-/* =========================================================================
- * 2. DARK THEME CSS: INDUSTRIAL MATTE CARBON & COBALT (CYBERPUNK / PRO DARK)
- * ========================================================================= */
 static const char *WORKSTATION_CSS_DARK = 
     "* {\n"
-    "    font-family: 'Inter', 'Ubuntu Sans', 'Segoe UI', sans-serif;\n"
-    "    font-size: 12px;\n"
-    "    color: #E5E5E0;\n"
+    "    font-family: 'Liberation Sans', 'DejaVu Sans', 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Arial, sans-serif;\n"
+    "    font-size: 13px;\n"
+    "    color: #F8FAFC;\n"
     "}\n"
     "window, .main-window {\n"
     "    background-color: #141413;\n"
@@ -608,25 +607,25 @@ static const char *WORKSTATION_CSS_DARK =
     ".brand-badge {\n"
     "    background-color: #1F6FEB;\n"
     "    color: #FFFFFF;\n"
-    "    font-size: 13px;\n"
+    "    font-size: 14px;\n"
     "    font-weight: 800;\n"
     "    border-radius: 7px;\n"
-    "    padding: 6px 9px;\n"
+    "    padding: 7px 11px;\n"
     "}\n"
     ".nav-brand-title {\n"
-    "    font-size: 14px;\n"
-    "    font-weight: 700;\n"
-    "    color: #F0F6FC;\n"
+    "    font-size: 15.5px;\n"
+    "    font-weight: 800;\n"
+    "    color: #F8FAFC;\n"
     "}\n"
     ".nav-brand-subtitle {\n"
-    "    font-size: 9px;\n"
+    "    font-size: 11px;\n"
     "    font-weight: 700;\n"
     "    color: #58A6FF;\n"
     "}\n"
     ".nav-section-label {\n"
-    "    font-size: 9.5px;\n"
+    "    font-size: 11.5px;\n"
     "    font-weight: 700;\n"
-    "    color: #8B949E;\n"
+    "    color: #94A3B8;\n"
     "    margin-top: 14px;\n"
     "    margin-bottom: 6px;\n"
     "    padding-left: 6px;\n"
@@ -639,8 +638,8 @@ static const char *WORKSTATION_CSS_DARK =
     "    padding: 8px 12px;\n"
     "}\n"
     "button.nav-item label {\n"
-    "    color: #8B949E;\n"
-    "    font-size: 12px;\n"
+    "    color: #CBD5E1;\n"
+    "    font-size: 13px;\n"
     "    font-weight: 600;\n"
     "}\n"
     "button.nav-item:hover {\n"
@@ -666,9 +665,9 @@ static const char *WORKSTATION_CSS_DARK =
     "    color: #58A6FF;\n"
     "    border: 1px solid #30363D;\n"
     "    border-radius: 9999px;\n"
-    "    padding: 1px 7px;\n"
-    "    font-size: 10px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    padding: 2px 8px;\n"
+    "    font-size: 11px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "    font-weight: 700;\n"
     "}\n"
     "button.nav-item-active .nav-badge-count {\n"
@@ -686,7 +685,7 @@ static const char *WORKSTATION_CSS_DARK =
     "button.nav-btn-action label {\n"
     "    color: #58A6FF;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12px;\n"
     "}\n"
     "button.nav-btn-action:hover {\n"
     "    background-image: none;\n"
@@ -704,30 +703,32 @@ static const char *WORKSTATION_CSS_DARK =
     "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-theme-toggle label {\n"
-    "    color: #C9D1D9;\n"
+    "    color: #CBD5E1;\n"
     "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
+    "    font-size: 12px;\n"
     "}\n"
     "button.btn-theme-toggle:hover {\n"
     "    background-image: none;\n"
     "    background-color: #30363D;\n"
-    "    border-color: #8B949E;\n"
+    "    border-color: #58A6FF;\n"
     "}\n"
     "button.btn-theme-toggle:hover label {\n"
-    "    color: #FFFFFF;\n"
+    "    color: #F8FAFC;\n"
     "}\n"
     ".nav-footer-box {\n"
-    "    background-color: #181816;\n"
+    "    background-color: #1C1C1A;\n"
     "    border: 1px solid #2C2C29;\n"
     "    border-radius: 7px;\n"
     "    padding: 8px 10px;\n"
     "    margin-top: 8px;\n"
     "}\n"
     ".nav-footer-text {\n"
-    "    font-size: 10px;\n"
-    "    color: #8B949E;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11px;\n"
+    "    color: #94A3B8;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-weight: 600;\n"
     "}\n"
+    "/* Panels */\n"
     ".top-toolbar {\n"
     "    background-color: #1C1C1A;\n"
     "    border-bottom: 1px solid #2C2C29;\n"
@@ -747,61 +748,63 @@ static const char *WORKSTATION_CSS_DARK =
     "    border-top: 1px solid #2C2C29;\n"
     "    padding: 8px 14px;\n"
     "}\n"
+    "/* Telemetry Cards */\n"
     ".telemetry-card {\n"
-    "    background-color: #181816;\n"
+    "    background-color: #1C1C1A;\n"
     "    border: 1px solid #2C2C29;\n"
     "    border-radius: 6px;\n"
     "    padding: 6px 10px;\n"
     "    margin-bottom: 5px;\n"
     "}\n"
     ".section-header {\n"
-    "    font-size: 11px;\n"
+    "    font-size: 12.5px;\n"
     "    font-weight: 700;\n"
-    "    color: #8B949E;\n"
+    "    color: #F8FAFC;\n"
     "}\n"
     ".telemetry-key {\n"
-    "    font-size: 10.5px;\n"
+    "    font-size: 12px;\n"
     "    font-weight: 600;\n"
-    "    color: #8B949E;\n"
+    "    color: #94A3B8;\n"
     "}\n"
     ".telemetry-val {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 13px;\n"
-    "    font-weight: 600;\n"
-    "    color: #F0F6FC;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 14px;\n"
+    "    font-weight: 700;\n"
+    "    color: #F8FAFC;\n"
     "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-large {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 17px;\n"
-    "    font-weight: 700;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 20px;\n"
+    "    font-weight: 800;\n"
     "    color: #58A6FF;\n"
     "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-alert {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 13.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 14.5px;\n"
     "    font-weight: 700;\n"
     "    color: #F85149;\n"
     "    font-feature-settings: 'tnum';\n"
     "}\n"
     ".telemetry-val-success {\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 13px;\n"
-    "    font-weight: 600;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 14px;\n"
+    "    font-weight: 700;\n"
     "    color: #3FB950;\n"
     "}\n"
+    "/* Action Buttons */\n"
     "button.btn-primary {\n"
     "    background-image: none;\n"
     "    background-color: #1F6FEB;\n"
     "    border: 1px solid #388BFD;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 14px;\n"
+    "    padding: 6px 14px;\n"
     "}\n"
     "button.btn-primary label {\n"
     "    color: #FFFFFF;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "button.btn-primary:hover {\n"
     "    background-image: none;\n"
@@ -813,12 +816,12 @@ static const char *WORKSTATION_CSS_DARK =
     "    background-color: #21262D;\n"
     "    border: 1px solid #30363D;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 12px;\n"
+    "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-secondary label {\n"
     "    color: #C9D1D9;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11.5px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "button.btn-secondary:hover {\n"
     "    background-image: none;\n"
@@ -826,59 +829,68 @@ static const char *WORKSTATION_CSS_DARK =
     "    border-color: #8B949E;\n"
     "}\n"
     "button.btn-secondary:hover label {\n"
-    "    color: #FFFFFF;\n"
+    "    color: #F8FAFC;\n"
     "}\n"
     "button.btn-pause {\n"
     "    background-image: none;\n"
     "    background-color: #21262D;\n"
     "    border: 1px solid #30363D;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 12px;\n"
+    "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-pause label {\n"
-    "    color: #D29922;\n"
+    "    color: #C9D1D9;\n"
     "    font-weight: 600;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "button.btn-pause:hover {\n"
     "    background-image: none;\n"
-    "    background-color: #382800;\n"
-    "    border-color: #BB8009;\n"
+    "    background-color: #342508;\n"
+    "    border-color: #D29922;\n"
+    "}\n"
+    "button.btn-pause:hover label {\n"
+    "    color: #F0883E;\n"
     "}\n"
     "button.btn-reset {\n"
     "    background-image: none;\n"
     "    background-color: #21262D;\n"
     "    border: 1px solid #30363D;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 12px;\n"
+    "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-reset label {\n"
-    "    color: #F85149;\n"
+    "    color: #C9D1D9;\n"
     "    font-weight: 600;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "button.btn-reset:hover {\n"
     "    background-image: none;\n"
-    "    background-color: #381515;\n"
-    "    border-color: #DA3633;\n"
+    "    background-color: #3C1E1E;\n"
+    "    border-color: #F85149;\n"
+    "}\n"
+    "button.btn-reset:hover label {\n"
+    "    color: #FF7B72;\n"
     "}\n"
     "button.btn-steel {\n"
     "    background-image: none;\n"
-    "    background-color: #1C2D42;\n"
-    "    border: 1px solid #2E5A88;\n"
+    "    background-color: #161B22;\n"
+    "    border: 1px solid #30363D;\n"
     "    border-radius: 6px;\n"
-    "    padding: 5px 12px;\n"
+    "    padding: 6px 12px;\n"
     "}\n"
     "button.btn-steel label {\n"
     "    color: #58A6FF;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     "button.btn-steel:hover {\n"
     "    background-image: none;\n"
-    "    background-color: #233D5B;\n"
-    "    border-color: #388BFD;\n"
+    "    background-color: #21262D;\n"
+    "    border-color: #58A6FF;\n"
+    "}\n"
+    "button.btn-steel:hover label {\n"
+    "    color: #79C0FF;\n"
     "}\n"
     "button.btn-active {\n"
     "    background-image: none;\n"
@@ -899,8 +911,8 @@ static const char *WORKSTATION_CSS_DARK =
     "button.btn-auto-on label {\n"
     "    color: #58A6FF;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     "button.btn-auto-off {\n"
     "    background-image: none;\n"
@@ -912,67 +924,67 @@ static const char *WORKSTATION_CSS_DARK =
     "button.btn-auto-off label {\n"
     "    color: #8B949E;\n"
     "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-dataset {\n"
-    "    background-color: #1C2D42;\n"
+    "    background-color: #161B22;\n"
     "    color: #58A6FF;\n"
-    "    border: 1px solid #2E5A88;\n"
+    "    border: 1px solid #30363D;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 8px;\n"
+    "    padding: 4px 9px;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-dataset-net {\n"
-    "    background-color: #382800;\n"
-    "    color: #E3B341;\n"
-    "    border: 1px solid #7D4E00;\n"
+    "    background-color: #2D2200;\n"
+    "    color: #D29922;\n"
+    "    border: 1px solid #6E4E00;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 8px;\n"
+    "    padding: 4px 9px;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     "entry {\n"
     "    background-image: none;\n"
-    "    background-color: #10100F;\n"
-    "    color: #F0F6FC;\n"
+    "    background-color: #161B22;\n"
+    "    color: #F8FAFC;\n"
     "    border: 1px solid #30363D;\n"
     "    border-radius: 6px;\n"
-    "    padding: 4px 10px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 11.5px;\n"
+    "    padding: 6px 10px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "entry:focus {\n"
     "    border-color: #58A6FF;\n"
     "}\n"
     "spinbutton {\n"
     "    background-image: none;\n"
-    "    background-color: #10100F;\n"
+    "    background-color: #161B22;\n"
     "    border: 1px solid #30363D;\n"
     "    border-radius: 6px;\n"
-    "    padding: 2px 4px;\n"
+    "    padding: 3px 5px;\n"
     "}\n"
     "spinbutton entry {\n"
     "    border: none;\n"
     "    background-color: transparent;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "    font-weight: 700;\n"
-    "    font-size: 12px;\n"
+    "    font-size: 13px;\n"
     "    color: #58A6FF;\n"
     "}\n"
     "spinbutton button {\n"
     "    background-image: none;\n"
     "    background-color: #21262D;\n"
     "    border: none;\n"
-    "    color: #8B949E;\n"
+    "    color: #C9D1D9;\n"
     "}\n"
     "spinbutton button:hover {\n"
     "    background-image: none;\n"
     "    background-color: #30363D;\n"
-    "    color: #F0F6FC;\n"
+    "    color: #F8FAFC;\n"
     "}\n"
     "switch {\n"
     "    background-image: none;\n"
@@ -985,17 +997,17 @@ static const char *WORKSTATION_CSS_DARK =
     "}\n"
     "switch slider {\n"
     "    background-image: none;\n"
-    "    background-color: #FFFFFF;\n"
+    "    background-color: #F0F6FC;\n"
     "    border-radius: 10px;\n"
     "    min-width: 18px;\n"
     "    min-height: 18px;\n"
     "    margin: 1px;\n"
     "}\n"
     "textview text {\n"
-    "    background-color: #10100F;\n"
-    "    color: #E5E5E0;\n"
-    "    font-family: 'JetBrains Mono', 'Ubuntu Mono', monospace;\n"
-    "    font-size: 11px;\n"
+    "    background-color: #141413;\n"
+    "    color: #F8FAFC;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 12px;\n"
     "}\n"
     "progressbar trough {\n"
     "    background-color: #21262D;\n"
@@ -1013,129 +1025,130 @@ static const char *WORKSTATION_CSS_DARK =
     "    color: #8B949E;\n"
     "    border: 1px solid #30363D;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 10px;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    padding: 4px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-running {\n"
     "    background-color: #1C2D42;\n"
     "    color: #58A6FF;\n"
-    "    border: 1px solid #2E5A88;\n"
+    "    border: 1px solid #388BFD;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 10px;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    padding: 4px 10px;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-verified {\n"
-    "    background-color: #0F2D1F;\n"
+    "    background-color: #102C18;\n"
     "    color: #3FB950;\n"
     "    border: 1px solid #238636;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 10px;\n"
+    "    padding: 4px 10px;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".badge-corrupted {\n"
-    "    background-color: #381515;\n"
+    "    background-color: #3C1E1E;\n"
     "    color: #F85149;\n"
     "    border: 1px solid #DA3633;\n"
     "    border-radius: 4px;\n"
-    "    padding: 3px 10px;\n"
+    "    padding: 4px 10px;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
+    "    font-size: 11.5px;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
     "}\n"
     ".mode-synced {\n"
     "    color: #3FB950;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
+    "    font-size: 12px;\n"
     "}\n"
     ".mode-unsynced {\n"
     "    color: #F85149;\n"
     "    font-weight: 700;\n"
-    "    font-size: 11px;\n"
+    "    font-size: 12px;\n"
     "}\n"
     "separator {\n"
     "    background-color: #2C2C29;\n"
     "    min-width: 1px;\n"
     "    min-height: 1px;\n"
     "}\n"
+    "/* Pages */\n"
     ".history-page, .benchmark-page {\n"
     "    background-color: #141413;\n"
     "    padding: 16px 20px;\n"
     "}\n"
     ".history-header-title, .bm-header-title {\n"
-    "    font-size: 16px;\n"
-    "    font-weight: 700;\n"
+    "    font-size: 17px;\n"
+    "    font-weight: 800;\n"
     "    letter-spacing: -0.01em;\n"
-    "    color: #F0F6FC;\n"
+    "    color: #F8FAFC;\n"
     "}\n"
     ".history-header-desc, .bm-header-desc {\n"
-    "    font-size: 11.5px;\n"
-    "    color: #8B949E;\n"
+    "    font-size: 12.5px;\n"
+    "    color: #94A3B8;\n"
     "    margin-bottom: 12px;\n"
     "}\n"
     ".history-card-metric, .bm-card {\n"
     "    background-color: #1C1C1A;\n"
     "    border: 1px solid #2C2C29;\n"
     "    border-radius: 8px;\n"
-    "    padding: 10px 14px;\n"
+    "    padding: 12px 16px;\n"
     "}\n"
     ".bm-summary-box {\n"
-    "    background-color: #181816;\n"
+    "    background-color: #1C1C1A;\n"
     "    border: 1px solid #2C2C29;\n"
     "    border-radius: 8px;\n"
     "    padding: 12px 16px;\n"
     "}\n"
     ".history-metric-title {\n"
-    "    font-size: 10px;\n"
-    "    font-weight: 600;\n"
-    "    color: #8B949E;\n"
+    "    font-size: 11.5px;\n"
+    "    font-weight: 700;\n"
+    "    color: #94A3B8;\n"
     "    letter-spacing: 0.03em;\n"
     "}\n"
     ".history-metric-val {\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
-    "    font-weight: 700;\n"
-    "    color: #F0F6FC;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 22px;\n"
+    "    font-weight: 800;\n"
+    "    color: #F8FAFC;\n"
     "}\n"
     ".history-metric-val-ok {\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
-    "    font-weight: 700;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 22px;\n"
+    "    font-weight: 800;\n"
     "    color: #3FB950;\n"
     "}\n"
     ".history-metric-val-err {\n"
-    "    font-family: 'JetBrains Mono', monospace;\n"
-    "    font-size: 20px;\n"
-    "    font-weight: 700;\n"
+    "    font-family: 'Liberation Mono', 'DejaVu Sans Mono', 'Noto Mono', monospace;\n"
+    "    font-size: 22px;\n"
+    "    font-weight: 800;\n"
     "    color: #F85149;\n"
     "}\n"
     "treeview.history-tree {\n"
     "    background-color: #1C1C1A;\n"
-    "    color: #F0F6FC;\n"
+    "    color: #F8FAFC;\n"
     "    border: 1px solid #2C2C29;\n"
     "    border-radius: 6px;\n"
-    "    font-size: 11.5px;\n"
+    "    font-size: 12.5px;\n"
     "}\n"
     "treeview.history-tree:selected {\n"
-    "    background-color: #1C2D42;\n"
-    "    color: #58A6FF;\n"
+    "    background-color: #1F6FEB;\n"
+    "    color: #FFFFFF;\n"
     "}\n"
     "treeview.history-tree header button {\n"
     "    background-image: none;\n"
     "    background-color: #21262D;\n"
-    "    color: #C9D1D9;\n"
-    "    font-weight: 600;\n"
-    "    font-size: 11px;\n"
+    "    color: #F8FAFC;\n"
+    "    font-weight: 700;\n"
+    "    font-size: 12px;\n"
     "    border: 1px solid #30363D;\n"
-    "    padding: 6px 8px;\n"
+    "    padding: 7px 10px;\n"
     "}\n"
     "treeview.history-tree header button label {\n"
-    "    color: #C9D1D9;\n"
+    "    color: #F8FAFC;\n"
     "    font-weight: 700;\n"
     "}\n";
 
@@ -1438,6 +1451,37 @@ gboolean on_query_tooltip_block_matrix(GtkWidget *widget, gint x, gint y, gboole
 /* =========================================================================
  * CAIRO 2D DRAWING: RAM BOUNDED BUFFER INSPECTOR (TOP CANVAS)
  * ========================================================================= */
+/* =========================================================================
+ * PANGO CAIRO TYPOGRAPHY HELPERS (CRISP ANTI-ALIASED UNICODE / VIETNAMESE)
+ * ========================================================================= */
+static void pango_draw_text(cairo_t *cr, double x, double y, const char *font_desc_str, const char *text, double r, double g, double b) {
+    if (!text || !*text) return;
+    cairo_set_source_rgb(cr, r, g, b);
+    PangoLayout *layout = pango_cairo_create_layout(cr);
+    PangoFontDescription *desc = pango_font_description_from_string(font_desc_str);
+    pango_layout_set_font_description(layout, desc);
+    pango_layout_set_text(layout, text, -1);
+    cairo_move_to(cr, x, y);
+    pango_cairo_show_layout(cr, layout);
+    pango_font_description_free(desc);
+    g_object_unref(layout);
+}
+
+static void pango_draw_text_centered(cairo_t *cr, double cx, double cy, const char *font_desc_str, const char *text, double r, double g, double b) {
+    if (!text || !*text) return;
+    cairo_set_source_rgb(cr, r, g, b);
+    PangoLayout *layout = pango_cairo_create_layout(cr);
+    PangoFontDescription *desc = pango_font_description_from_string(font_desc_str);
+    pango_layout_set_font_description(layout, desc);
+    pango_layout_set_text(layout, text, -1);
+    int p_w, p_h;
+    pango_layout_get_pixel_size(layout, &p_w, &p_h);
+    cairo_move_to(cr, cx - (p_w / 2.0), cy - (p_h / 2.0));
+    pango_cairo_show_layout(cr, layout);
+    pango_font_description_free(desc);
+    g_object_unref(layout);
+}
+
 gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     GuiDashboard *gui = (GuiDashboard *)user_data;
     AppContext *ctx = gui->ctx;
@@ -1449,7 +1493,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
     if (gui->is_dark_mode) {
         cairo_set_source_rgb(cr, 0.086, 0.086, 0.078); /* #161614 */
     } else {
-        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
+        cairo_set_source_rgb(cr, 0.973, 0.980, 0.988); /* #F8FAFC */
     }
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
@@ -1486,11 +1530,11 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
 
         /* Micro memory address label above (0x00, 0x01 ... 0x1F) */
         if (gui->is_dark_mode) {
-            cairo_set_source_rgb(cr, 0.545, 0.580, 0.620); /* #8B949E */
+            cairo_set_source_rgb(cr, 0.80, 0.84, 0.89); /* #CBD5E1 */
         } else {
-            cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
+            cairo_set_source_rgb(cr, 0.12, 0.16, 0.23); /* #1E293B */
         }
-        cairo_set_font_size(cr, 7.5);
+        cairo_set_font_size(cr, 9.5);
         char hex_addr[8];
         snprintf(hex_addr, sizeof(hex_addr), "%02X", i);
         cairo_text_extents_t aext;
@@ -1511,7 +1555,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
 
             /* Chunk ID inside slot (Crisp White) */
             cairo_set_source_rgb(cr, 1.0, 1.0, 1.0);
-            cairo_set_font_size(cr, 9.0);
+            cairo_set_font_size(cr, 11.5);
             char cid_str[16];
             snprintf(cid_str, sizeof(cid_str), "%d", ctx->buffer.slots[i].chunk_id);
             cairo_text_extents_t ext;
@@ -1524,7 +1568,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
             int pid = ctx->buffer.slots[i].producer_id;
             if (pid > 0) {
                 cairo_set_source_rgb(cr, 0.937, 0.965, 1.00); /* #EFF6FF */
-                cairo_set_font_size(cr, 7.5);
+                cairo_set_font_size(cr, 9.0);
                 char pid_str[16];
                 snprintf(pid_str, sizeof(pid_str), "P%d", pid);
                 cairo_text_extents_t pext;
@@ -1538,7 +1582,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
             if (gui->is_dark_mode) {
                 cairo_set_source_rgb(cr, 0.129, 0.149, 0.176); /* #21262D */
             } else {
-                cairo_set_source_rgb(cr, 0.945, 0.961, 0.976); /* #F1F5F9 */
+                cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* Crisp #FFFFFF card */
             }
             cairo_rectangle(cr, x, slot_top_y, slot_w, slot_height);
             cairo_fill(cr);
@@ -1556,11 +1600,11 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
 
         /* Decimal slot index below */
         if (gui->is_dark_mode) {
-            cairo_set_source_rgb(cr, 0.545, 0.580, 0.620); /* #8B949E */
+            cairo_set_source_rgb(cr, 0.80, 0.84, 0.89); /* #CBD5E1 */
         } else {
-            cairo_set_source_rgb(cr, 0.392, 0.455, 0.545); /* #64748B */
+            cairo_set_source_rgb(cr, 0.12, 0.16, 0.23); /* #1E293B */
         }
-        cairo_set_font_size(cr, 8.0);
+        cairo_set_font_size(cr, 9.5);
         char idx_str[8];
         snprintf(idx_str, sizeof(idx_str), "%02d", i);
         cairo_text_extents_t iext;
@@ -1582,7 +1626,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
             cairo_close_path(cr);
             cairo_fill(cr);
 
-            cairo_set_font_size(cr, 8.5);
+            cairo_set_font_size(cr, 10.5);
             const char *head_lbl = "HEAD";
             cairo_text_extents_t hext;
             cairo_text_extents(cr, head_lbl, &hext);
@@ -1605,7 +1649,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
             cairo_close_path(cr);
             cairo_fill(cr);
 
-            cairo_set_font_size(cr, 8.5);
+            cairo_set_font_size(cr, 10.5);
             const char *tail_lbl = "TAIL";
             cairo_text_extents_t text;
             cairo_text_extents(cr, tail_lbl, &text);
@@ -1617,7 +1661,7 @@ gboolean on_draw_ram_buffer(GtkWidget *widget, cairo_t *cr, gpointer user_data) 
     /* Top Left Status Text */
     if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.941, 0.965, 0.988);
     else cairo_set_source_rgb(cr, 0.059, 0.090, 0.165);
-    cairo_set_font_size(cr, 9.5);
+    cairo_set_font_size(cr, 11.5);
     cairo_move_to(cr, margin_x, 14.0);
     cairo_show_text(cr, "CIRCULAR BUFFER MAP // 32 SLOTS (64KB EACH)");
 
@@ -1649,7 +1693,7 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
     if (gui->is_dark_mode) {
         cairo_set_source_rgb(cr, 0.086, 0.086, 0.078); /* #161614 */
     } else {
-        cairo_set_source_rgb(cr, 1.0, 1.0, 1.0); /* #FFFFFF */
+        cairo_set_source_rgb(cr, 0.973, 0.980, 0.988); /* #F8FAFC */
     }
     cairo_rectangle(cr, 0, 0, width, height);
     cairo_fill(cr);
@@ -1697,7 +1741,7 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
         switch (st) {
             case BLOCK_UNASSIGNED:
                 if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.129, 0.149, 0.176); /* #21262D */
-                else cairo_set_source_rgb(cr, 0.945, 0.961, 0.976); /* #F1F5F9 */
+                else cairo_set_source_rgb(cr, 0.902, 0.925, 0.949); /* #E6ECF2 - clearly distinct, soft blueprint cell */
                 count_unassigned++;
                 break;
             case BLOCK_DOWNLOADING:
@@ -1762,21 +1806,21 @@ gboolean on_draw_block_matrix(GtkWidget *widget, cairo_t *cr, gpointer user_data
         {"RACE CORRUPTED", count_corrupted, 0.863, 0.149, 0.149}
     };
 
-    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 9.0);
+    cairo_select_font_face(cr, "Liberation Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 11.5);
 
     for (int k = 0; k < 5; k++) {
-        /* 8x8px square badge */
+        /* 10x10px square badge */
         cairo_set_source_rgb(cr, legend_entries[k].r, legend_entries[k].g, legend_entries[k].b);
-        cairo_rectangle(cr, leg_x, leg_y - 7.5, 8, 8);
+        cairo_rectangle(cr, leg_x, leg_y - 9.0, 10, 10);
         cairo_fill_preserve(cr);
-        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.25, 0.25, 0.25);
-        else cairo_set_source_rgb(cr, 0.796, 0.835, 0.882);
-        cairo_set_line_width(cr, 0.8);
+        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.35, 0.35, 0.35);
+        else cairo_set_source_rgb(cr, 0.60, 0.65, 0.75);
+        cairo_set_line_width(cr, 1.0);
         cairo_stroke(cr);
 
-        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.545, 0.580, 0.620); /* #8B949E */
-        else cairo_set_source_rgb(cr, 0.278, 0.333, 0.412); /* #475569 */
+        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.95, 0.97, 0.99); /* #F8FAFC */
+        else cairo_set_source_rgb(cr, 0.06, 0.09, 0.16); /* #0F172A */
         char str_item[64];
         snprintf(str_item, sizeof(str_item), "%s: %d", legend_entries[k].label, legend_entries[k].count);
         cairo_move_to(cr, leg_x + 12, leg_y);
@@ -1880,14 +1924,14 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
     cairo_stroke(cr);
 
     /* Top Left: Peak Watermark */
-    cairo_select_font_face(cr, "monospace", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 8.0);
-    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.545, 0.580, 0.620);
-    else cairo_set_source_rgb(cr, 0.392, 0.455, 0.545);
+    cairo_select_font_face(cr, "Liberation Mono", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 10.5);
+    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.85, 0.90, 0.95);
+    else cairo_set_source_rgb(cr, 0.10, 0.15, 0.22);
 
     char max_lbl[32];
     snprintf(max_lbl, sizeof(max_lbl), "PEAK: %.1f MB/s", gui->max_speed_recorded);
-    cairo_move_to(cr, 6, 11);
+    cairo_move_to(cr, 6, 12.5);
     cairo_show_text(cr, max_lbl);
 
     /* Top Right: Multi-Channel Legend */
@@ -1896,7 +1940,8 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
     else cairo_set_source_rgb(cr, 0.047, 0.400, 0.894);
     cairo_rectangle(cr, leg_x, 5.0, 5, 5);
     cairo_fill(cr);
-    cairo_move_to(cr, leg_x + 8, 10.5);
+    cairo_set_font_size(cr, 10.0);
+    cairo_move_to(cr, leg_x + 8, 12.0);
     cairo_show_text(cr, "Net(P)");
 
     leg_x += 52;
@@ -1904,7 +1949,8 @@ gboolean on_draw_sidebar_sparkline(GtkWidget *widget, cairo_t *cr, gpointer user
     else cairo_set_source_rgb(cr, 0.086, 0.639, 0.290);
     cairo_rectangle(cr, leg_x, 5.0, 5, 5);
     cairo_fill(cr);
-    cairo_move_to(cr, leg_x + 8, 10.5);
+    cairo_set_font_size(cr, 10.0);
+    cairo_move_to(cr, leg_x + 8, 12.0);
     cairo_show_text(cr, "Disk(C)");
 
     return FALSE;
@@ -3111,15 +3157,11 @@ gboolean on_draw_bm_chart(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     cairo_stroke(cr);
 
     if (!gui->bm_has_results) {
-        cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-        cairo_set_font_size(cr, 11.5);
-        if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.545, 0.580, 0.620);
-        else cairo_set_source_rgb(cr, 0.392, 0.455, 0.545);
-        const char *msg = "CHƯA CÓ DỮ LIỆU ĐO ĐẠC // NHẤN NÚT [BẮT ĐẦU CHẠY SO SÁNH TỰ ĐỘNG] ĐỂ XEM ĐỒ THỊ TRỰC QUAN";
-        cairo_text_extents_t ext;
-        cairo_text_extents(cr, msg, &ext);
-        cairo_move_to(cr, (width - ext.width) / 2.0, (height / 2.0) + 4.0);
-        cairo_show_text(cr, msg);
+        double tr = gui->is_dark_mode ? 0.80 : 0.25;
+        pango_draw_text_centered(cr, width / 2.0, height / 2.0,
+            "Liberation Sans, DejaVu Sans, sans-serif Bold 12",
+            "CHƯA CÓ DỮ LIỆU ĐO ĐẠC // NHẤN NÚT [BẮT ĐẦU CHẠY SO SÁNH TỰ ĐỘNG] ĐỂ XEM ĐỒ THỊ TRỰC QUAN",
+            tr, tr, tr);
         return FALSE;
     }
 
@@ -3132,16 +3174,12 @@ gboolean on_draw_bm_chart(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     cairo_line_to(cr, mid_x, height - 8);
     cairo_stroke(cr);
 
-    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 10.0);
-    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.85, 0.85, 0.85);
-    else cairo_set_source_rgb(cr, 0.15, 0.15, 0.15);
+    double title_r = gui->is_dark_mode ? 0.95 : 0.08;
+    pango_draw_text(cr, 20, 14, "Liberation Sans, DejaVu Sans, sans-serif Bold 11.5",
+        "1. THỜI GIAN HOÀN THÀNH (GIÂY - CÀNG THẤP CÀNG NHANH)", title_r, title_r, title_r);
 
-    cairo_move_to(cr, 20, 22);
-    cairo_show_text(cr, "1. THỜI GIAN HOÀN THÀNH (GIÂY - CÀNG THẤP CÀNG NHANH)");
-
-    cairo_move_to(cr, mid_x + 20, 22);
-    cairo_show_text(cr, "2. TỐC ĐỘ GHI DỮ LIỆU (MB/s)");
+    pango_draw_text(cr, mid_x + 20, 14, "Liberation Sans, DejaVu Sans, sans-serif Bold 11.5",
+        "2. TỐC ĐỘ GHI DỮ LIỆU (MB/s - CÀNG CAO CÀNG TỐT)", title_r, title_r, title_r);
 
     double max_t = (gui->bm_sync_time_val > gui->bm_unsync_time_val) ? gui->bm_sync_time_val : gui->bm_unsync_time_val;
     if (max_t <= 0.001) max_t = 1.0;
@@ -3151,72 +3189,57 @@ gboolean on_draw_bm_chart(GtkWidget *widget, cairo_t *cr, gpointer user_data) {
     if (max_s <= 0.001) max_s = 100.0;
     max_s *= 1.30;
 
-    double bar_max_w = (mid_x - 170.0);
+    double bar_max_w = (mid_x - 180.0);
     if (bar_max_w < 60.0) bar_max_w = 60.0;
+
+    double lbl_color = gui->is_dark_mode ? 0.90 : 0.12;
 
     /* --- Left: Time Bars --- */
     /* Sync Time Bar */
     double sync_w = (gui->bm_sync_time_val / max_t) * bar_max_w;
     cairo_set_source_rgb(cr, 0.086, 0.639, 0.290); /* #16A34A */
-    cairo_rectangle(cr, 100, 40, sync_w, 20);
+    cairo_rectangle(cr, 115, 42, sync_w, 22);
     cairo_fill(cr);
 
-    cairo_set_font_size(cr, 9.5);
-    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
-    else cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
-    cairo_move_to(cr, 20, 54);
-    cairo_show_text(cr, "Có khóa:");
+    pango_draw_text(cr, 20, 45, "Liberation Sans, DejaVu Sans, sans-serif Bold 11.5", "Có khóa:", lbl_color, lbl_color, lbl_color);
 
     char buf[64];
-    snprintf(buf, sizeof(buf), "%.3fs (Khớp SHA)", gui->bm_sync_time_val);
-    cairo_move_to(cr, 110 + sync_w, 54);
-    cairo_show_text(cr, buf);
+    snprintf(buf, sizeof(buf), "%.3fs (Khớp SHA-256)", gui->bm_sync_time_val);
+    pango_draw_text(cr, 125 + sync_w, 45, "Liberation Mono, DejaVu Sans Mono, monospace Bold 11.5", buf, 0.086, 0.639, 0.290);
 
     /* Unsync Time Bar */
     double unsync_w = (gui->bm_unsync_time_val / max_t) * bar_max_w;
     cairo_set_source_rgb(cr, 0.863, 0.149, 0.149); /* #DC2626 */
-    cairo_rectangle(cr, 100, 72, unsync_w, 20);
+    cairo_rectangle(cr, 115, 76, unsync_w, 22);
     cairo_fill(cr);
 
-    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
-    else cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
-    cairo_move_to(cr, 20, 86);
-    cairo_show_text(cr, "Không khóa:");
+    pango_draw_text(cr, 20, 79, "Liberation Sans, DejaVu Sans, sans-serif Bold 11.5", "Không khóa:", lbl_color, lbl_color, lbl_color);
 
     snprintf(buf, sizeof(buf), "%.3fs (HỎNG HASH)", gui->bm_unsync_time_val);
-    cairo_move_to(cr, 110 + unsync_w, 86);
-    cairo_show_text(cr, buf);
+    pango_draw_text(cr, 125 + unsync_w, 79, "Liberation Mono, DejaVu Sans Mono, monospace Bold 11.5", buf, 0.863, 0.149, 0.149);
 
     /* --- Right: Speed Bars --- */
     /* Sync Speed Bar */
     double sync_sw = (gui->bm_sync_speed_val / max_s) * bar_max_w;
     cairo_set_source_rgb(cr, 0.047, 0.400, 0.894); /* #0C66E4 */
-    cairo_rectangle(cr, mid_x + 110, 40, sync_sw, 20);
+    cairo_rectangle(cr, mid_x + 125, 42, sync_sw, 22);
     cairo_fill(cr);
 
-    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
-    else cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
-    cairo_move_to(cr, mid_x + 20, 54);
-    cairo_show_text(cr, "Có khóa:");
+    pango_draw_text(cr, mid_x + 20, 45, "Liberation Sans, DejaVu Sans, sans-serif Bold 11.5", "Có khóa:", lbl_color, lbl_color, lbl_color);
 
     snprintf(buf, sizeof(buf), "%.1f MB/s", gui->bm_sync_speed_val);
-    cairo_move_to(cr, mid_x + 120 + sync_sw, 54);
-    cairo_show_text(cr, buf);
+    pango_draw_text(cr, mid_x + 135 + sync_sw, 45, "Liberation Mono, DejaVu Sans Mono, monospace Bold 11.5", buf, 0.047, 0.400, 0.894);
 
     /* Unsync Speed Bar */
     double unsync_sw = (gui->bm_unsync_speed_val / max_s) * bar_max_w;
     cairo_set_source_rgb(cr, 0.851, 0.467, 0.024); /* #D97706 */
-    cairo_rectangle(cr, mid_x + 110, 72, unsync_sw, 20);
+    cairo_rectangle(cr, mid_x + 125, 76, unsync_sw, 22);
     cairo_fill(cr);
 
-    if (gui->is_dark_mode) cairo_set_source_rgb(cr, 0.8, 0.8, 0.8);
-    else cairo_set_source_rgb(cr, 0.2, 0.2, 0.2);
-    cairo_move_to(cr, mid_x + 20, 86);
-    cairo_show_text(cr, "Không khóa:");
+    pango_draw_text(cr, mid_x + 20, 79, "Liberation Sans, DejaVu Sans, sans-serif Bold 11.5", "Không khóa:", lbl_color, lbl_color, lbl_color);
 
     snprintf(buf, sizeof(buf), "%.1f MB/s", gui->bm_unsync_speed_val);
-    cairo_move_to(cr, mid_x + 120 + unsync_sw, 86);
-    cairo_show_text(cr, buf);
+    pango_draw_text(cr, mid_x + 135 + unsync_sw, 79, "Liberation Mono, DejaVu Sans Mono, monospace Bold 11.5", buf, 0.851, 0.467, 0.024);
 
     return FALSE;
 }
@@ -3419,21 +3442,27 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     if (primary) {
         gdk_monitor_get_workarea(primary, &workarea);
     }
-    int win_w = 1140;
-    int win_h = 740;
-    if (win_w > workarea.width - 40) win_w = workarea.width - 40;
-    if (win_h > workarea.height - 40) win_h = workarea.height - 40;
+    int win_w = 1100;
+    int win_h = 660;
+    if (workarea.height <= 800) {
+        win_w = 1060;
+        win_h = workarea.height - 70;
+    }
+    if (win_w > workarea.width - 30) win_w = workarea.width - 30;
+    if (win_h > workarea.height - 30) win_h = workarea.height - 30;
     int win_x = workarea.x + (workarea.width - win_w) / 2;
     int win_y = workarea.y + (workarea.height - win_h) / 2;
-    if (win_x < workarea.x + 24) win_x = workarea.x + 24;
-    if (win_y < workarea.y + 24) win_y = workarea.y + 24;
+    if (win_x < workarea.x + 10) win_x = workarea.x + 10;
+    if (win_y < workarea.y + 10) win_y = workarea.y + 10;
 
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->main_window), "main-window");
     gtk_window_set_default_size(GTK_WINDOW(gui->main_window), win_w, win_h);
     gtk_window_move(GTK_WINDOW(gui->main_window), win_x, win_y);
     g_signal_connect(gui->main_window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     /* Root Horizontal Box: Sidebar on left, Stack on right */
     GtkWidget *root_h_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_style_context_add_class(gtk_widget_get_style_context(root_h_box), "main-window");
     gtk_container_add(GTK_CONTAINER(gui->main_window), root_h_box);
 
     /* 1. Left Navigation Sidebar */
@@ -3682,7 +3711,7 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     gtk_box_pack_start(GTK_BOX(workspace_box), lbl_cairo_top, FALSE, FALSE, 0);
 
     gui->drawing_ram_buffer = gtk_drawing_area_new();
-    gtk_widget_set_size_request(gui->drawing_ram_buffer, -1, 115);
+    gtk_widget_set_size_request(gui->drawing_ram_buffer, -1, 105);
     gtk_widget_set_has_tooltip(gui->drawing_ram_buffer, TRUE);
     gtk_widget_add_events(gui->drawing_ram_buffer, GDK_POINTER_MOTION_MASK);
     g_signal_connect(gui->drawing_ram_buffer, "query-tooltip", G_CALLBACK(on_query_tooltip_ram_buffer), gui);
@@ -3696,7 +3725,7 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     gtk_box_pack_start(GTK_BOX(workspace_box), lbl_cairo_bot, FALSE, FALSE, 4);
 
     gui->drawing_block_matrix = gtk_drawing_area_new();
-    gtk_widget_set_size_request(gui->drawing_block_matrix, -1, 195);
+    gtk_widget_set_size_request(gui->drawing_block_matrix, -1, 155);
     gtk_widget_set_has_tooltip(gui->drawing_block_matrix, TRUE);
     gtk_widget_add_events(gui->drawing_block_matrix, GDK_POINTER_MOTION_MASK);
     g_signal_connect(gui->drawing_block_matrix, "query-tooltip", G_CALLBACK(on_query_tooltip_block_matrix), gui);
@@ -3706,37 +3735,43 @@ int gui_dashboard_create(GuiDashboard *gui, AppContext *ctx, int argc, char **ar
     /* =====================================================================
      * 3. BOTTOM PANEL: SHA-256 AUDIT & COLORIZED KERNEL LOG STREAM
      * ===================================================================== */
-    GtkWidget *bot_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+    GtkWidget *bot_panel = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
     gtk_style_context_add_class(gtk_widget_get_style_context(bot_panel), "bottom-panel");
     gtk_box_pack_start(GTK_BOX(gui->page_workspace), bot_panel, FALSE, FALSE, 0);
 
-    /* Checksum Audit Row */
-    GtkWidget *sha_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-    gtk_box_pack_start(GTK_BOX(bot_panel), sha_box, FALSE, FALSE, 0);
+    /* Checksum Audit Row - Responsive 2-Row Layout */
+    GtkWidget *sha_vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
+    gtk_box_pack_start(GTK_BOX(bot_panel), sha_vbox, FALSE, FALSE, 0);
+
+    GtkWidget *sha_row1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    gtk_box_pack_start(GTK_BOX(sha_vbox), sha_row1, FALSE, FALSE, 0);
 
     GtkWidget *lbl_exp_tag = gtk_label_new("EXPECTED SHA-256:");
     gtk_style_context_add_class(gtk_widget_get_style_context(lbl_exp_tag), "section-header");
-    gtk_box_pack_start(GTK_BOX(sha_box), lbl_exp_tag, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(sha_row1), lbl_exp_tag, FALSE, FALSE, 0);
 
     gui->lbl_expected_sha = gtk_label_new("----------------------------------------------------------------");
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_expected_sha), "telemetry-val");
-    gtk_box_pack_start(GTK_BOX(sha_box), gui->lbl_expected_sha, FALSE, FALSE, 0);
-
-    GtkWidget *lbl_act_tag = gtk_label_new("ACTUAL SHA-256:");
-    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_act_tag), "section-header");
-    gtk_box_pack_start(GTK_BOX(sha_box), lbl_act_tag, FALSE, FALSE, 8);
-
-    gui->lbl_actual_sha = gtk_label_new("----------------------------------------------------------------");
-    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_actual_sha), "telemetry-val");
-    gtk_box_pack_start(GTK_BOX(sha_box), gui->lbl_actual_sha, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(sha_row1), gui->lbl_expected_sha, FALSE, FALSE, 0);
 
     gui->lbl_integrity_badge = gtk_label_new("[ STATUS: STANDBY // IDLE ]");
     gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_integrity_badge), "badge-idle");
-    gtk_box_pack_end(GTK_BOX(sha_box), gui->lbl_integrity_badge, FALSE, FALSE, 0);
+    gtk_box_pack_end(GTK_BOX(sha_row1), gui->lbl_integrity_badge, FALSE, FALSE, 0);
+
+    GtkWidget *sha_row2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+    gtk_box_pack_start(GTK_BOX(sha_vbox), sha_row2, FALSE, FALSE, 0);
+
+    GtkWidget *lbl_act_tag = gtk_label_new("ACTUAL SHA-256:  ");
+    gtk_style_context_add_class(gtk_widget_get_style_context(lbl_act_tag), "section-header");
+    gtk_box_pack_start(GTK_BOX(sha_row2), lbl_act_tag, FALSE, FALSE, 0);
+
+    gui->lbl_actual_sha = gtk_label_new("----------------------------------------------------------------");
+    gtk_style_context_add_class(gtk_widget_get_style_context(gui->lbl_actual_sha), "telemetry-val");
+    gtk_box_pack_start(GTK_BOX(sha_row2), gui->lbl_actual_sha, FALSE, FALSE, 0);
 
     /* Monospace Technical Log Area with Syntax Highlighting Tags */
     GtkWidget *scrolled_log = gtk_scrolled_window_new(NULL, NULL);
-    gtk_widget_set_size_request(scrolled_log, -1, 130);
+    gtk_widget_set_size_request(scrolled_log, -1, 100);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolled_log), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_box_pack_start(GTK_BOX(bot_panel), scrolled_log, FALSE, FALSE, 0);
 
